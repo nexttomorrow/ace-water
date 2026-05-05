@@ -275,7 +275,7 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
       {/* MEGA PANEL (Desktop Only) */}
       {displayed && hasDisplayedMega && (
         <div
-          className={`absolute left-0 right-0 top-full hidden overflow-hidden border-t border-neutral-200 bg-white shadow-[0_12px_24px_-12px_rgba(0,0,0,0.15)] transition-[opacity,transform] duration-300 ease-out min-[1022px]:block ${
+          className={`absolute left-0 right-0 top-full z-40 hidden overflow-hidden border-t border-neutral-200 bg-white shadow-[0_12px_24px_-12px_rgba(0,0,0,0.15)] transition-[opacity,transform] duration-300 ease-out min-[1022px]:block ${
             isPanelOpen
               ? 'translate-y-0 opacity-100'
               : 'pointer-events-none -translate-y-2 opacity-0'

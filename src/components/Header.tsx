@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import MainNav, { type NavTopCategory } from './MainNav'
 import NoticeTicker, { type TickerNotice } from './NoticeTicker'
+import SubNav from './SubNav'
 import type { Category } from '@/lib/types'
 
 export default async function Header() {
@@ -90,6 +91,8 @@ export default async function Header() {
         nickname={nickname}
         email={user?.email ?? null}
       />
+
+      <SubNav tops={tops} />
     </header>
   )
 }
