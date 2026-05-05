@@ -28,14 +28,14 @@ export default async function AdminCategoriesPage() {
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">카테고리 관리</h1>
-          <p className="mt-1 text-[13px] text-neutral-500">
+          <p className="mt-1 text-[0.875rem] text-neutral-500">
             메인 헤더 GNB 의 메가메뉴를 구성합니다. 상위 카테고리는 메뉴 아이템으로,
             하위 카테고리는 메가메뉴 안의 타일/링크로 노출됩니다.
           </p>
         </div>
         <Link
           href="/admin/categories/new"
-          className="rounded-full bg-black px-4 py-2 text-[13px] font-medium text-white hover:bg-neutral-800"
+          className="rounded-full bg-black px-4 py-2 text-[0.875rem] font-medium text-white hover:bg-neutral-800"
         >
           + 카테고리 추가
         </Link>
@@ -76,7 +76,7 @@ export default async function AdminCategoriesPage() {
 
                 {/* children */}
                 {kids.length === 0 ? (
-                  <p className="px-5 py-6 text-center text-[13px] text-neutral-400">
+                  <p className="px-5 py-6 text-center text-[0.875rem] text-neutral-400">
                     하위 카테고리 없음
                   </p>
                 ) : (

@@ -36,13 +36,13 @@ export default async function AdminHome() {
             href={s.href}
             className="rounded-xl border border-neutral-200 bg-white p-5 hover:border-neutral-400"
           >
-            <div className="text-[13px] text-neutral-500">{s.label}</div>
+            <div className="text-[0.875rem] text-neutral-500">{s.label}</div>
             <div className="mt-1 text-3xl font-bold">{s.count}</div>
           </Link>
         ))}
       </div>
 
-      <div className="mt-10 rounded-xl border border-blue-200 bg-blue-50 p-5 text-[13px] text-blue-900">
+      <div className="mt-10 rounded-xl border border-blue-200 bg-blue-50 p-5 text-[0.875rem] text-blue-900">
         <p className="font-semibold">처음이세요?</p>
         <p className="mt-1 leading-6">
           헤더의 GNB(메가메뉴)는 <strong>카테고리</strong> 데이터로 자동 구성됩니다.{' '}

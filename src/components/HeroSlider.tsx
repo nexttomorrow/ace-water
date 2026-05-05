@@ -86,7 +86,7 @@ export default function HeroSlider({ slides }: { slides: HeroSliderItem[] }) {
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20">
           <div className="mx-auto flex max-w-[1440px] items-end justify-between px-6 pb-8">
             <div className="pointer-events-auto flex items-center gap-5 text-white">
-              <div className="flex items-baseline gap-2 font-mono text-[13px] tracking-widest">
+              <div className="flex items-baseline gap-2 font-mono text-[0.875rem] tracking-widest">
                 <span className="text-[18px] font-bold">
                   {String(activeIndex + 1).padStart(2, '0')}
                 </span>

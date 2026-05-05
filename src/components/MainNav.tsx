@@ -42,11 +42,11 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
         <nav className="hidden flex-1 items-center md:flex">
           <div className="flex flex-1 justify-center">
             {categories.length === 0 ? (
-              <div className="px-5 py-3 text-[13px] text-neutral-400">
+              <div className="px-5 py-3 text-[0.875rem] text-neutral-400">
                 {isAdmin ? '메뉴를 추가해주세요' : '메뉴 준비 중'}
               </div>
             ) : (
-              <ul className="flex items-center gap-1 text-[15px] font-medium text-neutral-800">
+              <ul className="flex items-center gap-1 text-[1rem] font-medium text-neutral-800">
                 {categories.map((c) => {
                   const childCount = c.tiles.length + c.texts.length + c.links.length
                   const isActive = activeId === c.id
@@ -103,7 +103,7 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
 
           {isLoggedIn ? (
             <>
-              <span className="hidden items-center gap-2 px-3 py-2 text-[13px] text-neutral-700 sm:flex">
+              <span className="hidden items-center gap-2 px-3 py-2 text-[0.875rem] text-neutral-700 sm:flex">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="12" cy="8" r="4" />
                   <path d="M4 21c0-4 4-7 8-7s8 3 8 7" />
@@ -113,7 +113,7 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
               <form action={logout}>
                 <button
                   type="submit"
-                  className="rounded-full px-3 py-2 text-[13px] text-neutral-700 hover:bg-neutral-100"
+                  className="rounded-full px-3 py-2 text-[0.875rem] text-neutral-700 hover:bg-neutral-100"
                 >
                   로그아웃
                 </button>
@@ -136,7 +136,7 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
                       <Link
                         key={t.id}
                         href={t.href || '#'}
-                        className="relative whitespace-nowrap px-4 py-2 text-[13px] font-medium text-neutral-500 transition hover:text-black"
+                        className="relative whitespace-nowrap px-4 py-2 text-[0.875rem] font-medium text-neutral-500 transition hover:text-black"
                       >
                         {t.name}
                       </Link>
@@ -177,7 +177,7 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
                                 <div className="text-[10px] text-neutral-400">no image</div>
                               )}
                             </div>
-                            <p className="mt-3 text-[13px] font-medium text-neutral-800 group-hover:text-black">
+                            <p className="mt-3 text-[0.875rem] font-medium text-neutral-800 group-hover:text-black">
                               {t.name}
                             </p>
                           </Link>
@@ -195,7 +195,7 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
                           : 'w-full'
                       }
                     >
-                      <h4 className="mb-4 text-[13px] font-semibold text-neutral-500">더 알아보기</h4>
+                      <h4 className="mb-4 text-[0.875rem] font-semibold text-neutral-500">더 알아보기</h4>
                       <ul className="space-y-3">
                         {active.links.map((l) => (
                           <li key={l.id}>

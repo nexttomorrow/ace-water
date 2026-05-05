@@ -25,7 +25,7 @@ export default async function Footer() {
     <footer className="mt-20 border-t border-neutral-200 bg-neutral-50 text-neutral-700">
       {/* Top quick links bar */}
       <div className="border-b border-neutral-200">
-        <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-4 px-6 py-5 text-[13px]">
+        <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-4 px-6 py-5 text-[0.875rem]">
           <div className="flex flex-wrap items-center gap-5">
             <Link href="#" className="font-medium text-black hover:underline">
               고객센터
@@ -70,7 +70,7 @@ export default async function Footer() {
           >
             {columns.map((col) => (
               <div key={col.id}>
-                <h3 className="mb-4 text-[13px] font-bold text-black">
+                <h3 className="mb-4 text-[0.875rem] font-bold text-black">
                   {col.href ? (
                     <Link href={col.href} className="hover:underline">
                       {col.title}
@@ -80,7 +80,7 @@ export default async function Footer() {
                   )}
                 </h3>
                 {col.children.length > 0 && (
-                  <ul className="space-y-2.5 text-[13px] text-neutral-600">
+                  <ul className="space-y-2.5 text-[0.875rem] text-neutral-600">
                     {col.children.map((child) => (
                       <li key={child.id}>
                         <Link
