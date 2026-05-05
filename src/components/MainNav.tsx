@@ -22,6 +22,8 @@ type Props = {
 
 export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, email }: Props) {
   const [activeId, setActiveId] = useState<number | null>(null)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [expandedMobileId, setExpandedMobileId] = useState<number | null>(null)
   const active = categories.find((c) => c.id === activeId) ?? null
   const hasMega =
     active && (active.tiles.length > 0 || active.texts.length > 0 || active.links.length > 0)
@@ -39,7 +41,7 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
           <span className="text-[22px] font-extrabold tracking-tight text-black">ACEWATER</span>
         </Link>
 
-        <nav className="hidden flex-1 items-center md:flex">
+        <nav className="hidden flex-1 items-center min-[1022px]:flex">
           <div className="flex flex-1 justify-center">
             {categories.length === 0 ? (
               <div className="px-5 py-3 text-[0.875rem] text-neutral-400">
@@ -91,6 +93,23 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
           className="flex shrink-0 items-center gap-1 text-neutral-700"
           onMouseEnter={() => setActiveId(null)}
         >
+          {/* 햄버거 버튼 (모바일) */}
+          <button
+            aria-label="메뉴"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-neutral-100 min-[1022px]:hidden"
+          >
+            {isMobileMenuOpen ? (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4 12h16M4 6h16M4 18h16" />
+              </svg>
+            )}
+          </button>
+
           <button
             aria-label="검색"
             className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-neutral-100"
@@ -123,9 +142,105 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
         </div>
       </div>
 
-      {/* MEGA PANEL */}
+      {/* MOBILE PANEL */}
+      {isMobileMenuOpen && (
+        <div className="absolute left-0 right-0 top-full z-40 flex max-h-[calc(100vh-68px)] flex-col overflow-y-auto border-t border-neutral-200 bg-white shadow-2xl min-[1022px]:hidden">
+          <ul className="flex flex-col px-6 py-4">
+            {categories.length === 0 && (
+              <div className="py-4 text-[0.875rem] text-neutral-400">
+                {isAdmin ? '메뉴를 추가해주세요' : '메뉴 준비 중'}
+              </div>
+            )}
+            {categories.map((c) => {
+              const hasChildren = c.tiles.length > 0 || c.texts.length > 0 || c.links.length > 0
+              const isExpanded = expandedMobileId === c.id
+
+              return (
+                <li key={c.id} className="border-b border-neutral-100 last:border-none">
+                  <div className="flex items-center justify-between py-4">
+                    <Link
+                      href={c.href || '#'}
+                      className="text-[1rem] font-bold text-neutral-900"
+                      onClick={() => !hasChildren && setIsMobileMenuOpen(false)}
+                    >
+                      {c.name}
+                    </Link>
+                    {hasChildren && (
+                      <button
+                        onClick={() => setExpandedMobileId(isExpanded ? null : c.id)}
+                        className="flex h-8 w-8 items-center justify-center rounded-full bg-neutral-50 text-neutral-500 transition-colors hover:bg-neutral-100"
+                      >
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className={`transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
+                        >
+                          <path d="M6 9l6 6 6-6" />
+                        </svg>
+                      </button>
+                    )}
+                  </div>
+
+                  {isExpanded && hasChildren && (
+                    <div className="mb-4 flex flex-col gap-2 rounded-lg bg-neutral-50 px-4 py-3 text-[0.875rem] text-neutral-700">
+                      {[...c.texts, ...c.tiles, ...c.links].map((child) => (
+                        <Link
+                          key={child.id}
+                          href={child.href || '#'}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className="py-1.5 hover:text-black"
+                        >
+                          {child.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </li>
+              )
+            })}
+          </ul>
+          <div className="border-t border-neutral-100 bg-neutral-50 px-6 py-6 pb-12">
+            {isLoggedIn ? (
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center gap-2 text-[0.875rem] font-medium text-neutral-800">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="8" r="4" />
+                    <path d="M4 21c0-4 4-7 8-7s8 3 8 7" />
+                  </svg>
+                  {nickname ?? email?.split('@')[0]} 님
+                </div>
+                {isAdmin && (
+                  <Link
+                    href="/admin"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="inline-flex w-fit items-center gap-1 rounded-full bg-neutral-900 px-4 py-2 text-[0.875rem] font-semibold text-white"
+                  >
+                    관리자 페이지
+                  </Link>
+                )}
+                <form action={logout}>
+                  <button
+                    type="submit"
+                    className="text-[0.875rem] text-neutral-500 hover:text-black hover:underline"
+                  >
+                    로그아웃
+                  </button>
+                </form>
+              </div>
+            ) : null}
+          </div>
+        </div>
+      )}
+
+      {/* MEGA PANEL (Desktop Only) */}
       {active && hasMega && (
-        <div className="absolute left-0 right-0 top-full overflow-hidden border-t border-neutral-200 bg-white shadow-[0_12px_24px_-12px_rgba(0,0,0,0.15)]">
+        <div className="absolute left-0 right-0 top-full hidden overflow-hidden border-t border-neutral-200 bg-white shadow-[0_12px_24px_-12px_rgba(0,0,0,0.15)] min-[1022px]:block">
           <>
             {/* text tabs row (admin-nav style, full-width border) */}
             {active.texts.length > 0 && (

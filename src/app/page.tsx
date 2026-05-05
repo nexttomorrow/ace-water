@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import type { GalleryItem, HeroSlide, Post } from '@/lib/types'
 import HeroSlider, { type HeroSliderItem } from '@/components/HeroSlider'
 import PortfolioSlider, { type PortfolioItem } from '@/components/PortfolioSlider'
+import SectionHeader from '@/components/SectionHeader'
 
 export const revalidate = 0
 
@@ -247,10 +248,7 @@ export default async function Home() {
         <div className="mx-auto max-w-[1440px] px-6">
           {/* Best Seller */}
           <div className="mb-16">
-            <div className="mb-8 text-center">
-              <h2 className="text-[26px] font-bold tracking-tight md:text-[30px]">Best Seller</h2>
-              <div className="mx-auto mt-3 h-[2px] w-10 bg-neutral-900" />
-            </div>
+            <SectionHeader title="Best Seller" />
             <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 md:grid-cols-5">
               {bestSellers.map((p) => (
                 <Link
@@ -278,10 +276,7 @@ export default async function Home() {
 
           {/* New Product */}
           <div>
-            <div className="mb-8 text-center">
-              <h2 className="text-[26px] font-bold tracking-tight md:text-[30px]">New Product</h2>
-              <div className="mx-auto mt-3 h-[2px] w-10 bg-neutral-900" />
-            </div>
+            <SectionHeader title="New Product" />
             <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 md:grid-cols-5">
               {newProducts.map((p) => (
                 <Link
@@ -313,15 +308,10 @@ export default async function Home() {
       {/* ACEWATER SOLUTION */}
       <section className="bg-white py-20">
         <div className="mx-auto max-w-[1440px] px-6">
-          <div className="mb-10 text-center">
-            <h2 className="text-[26px] font-bold tracking-tight md:text-[30px]">
-              Acewater Solution
-            </h2>
-            <div className="mx-auto mt-3 h-[2px] w-10 bg-neutral-900" />
-            <p className="mt-4 text-[14px] text-neutral-500">
-              ACEWATER가 제공하는 차별화된 솔루션을 만나보세요
-            </p>
-          </div>
+          <SectionHeader
+            title="Acewater Solution"
+            desc="ACEWATER가 제공하는 차별화된 솔루션을 만나보세요"
+          />
 
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5 md:gap-2">
             {solutions.map((s) => (
@@ -355,14 +345,8 @@ export default async function Home() {
 
       {/* PORTFOLIO / 시공사례 */}
       <section className="bg-neutral-50 py-28">
-        <div className="mx-auto mb-12 flex max-w-[1440px] items-end justify-between px-6">
-          <h2 className="text-[28px] font-bold tracking-tight md:text-[36px]">시공사례</h2>
-          <Link
-            href="/portfolio"
-            className="text-[14px] font-medium text-neutral-500 transition hover:text-black"
-          >
-            + 더보기
-          </Link>
+        <div className="mx-auto max-w-[1440px] px-6">
+          <SectionHeader title="시공사례" moreHref="/portfolio" />
         </div>
         <PortfolioSlider items={portfolioItems} />
       </section>
@@ -402,16 +386,10 @@ export default async function Home() {
       {/* PROMO TILES */}
       <section className="bg-neutral-50 py-16">
         <div className="mx-auto max-w-[1440px] px-6">
-          <div className="mb-8 flex items-end justify-between">
-            <div>
-              <h2 className="text-[28px] font-bold leading-tight md:text-[32px]">
-                어디서나, 가까이
-              </h2>
-              <p className="mt-2 text-[14px] text-neutral-600">
-                관심 있는 영역으로 바로 이동하세요.
-              </p>
-            </div>
-          </div>
+          <SectionHeader
+            title="어디서나, 가까이"
+            desc="관심 있는 영역으로 바로 이동하세요."
+          />
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
             {promoTiles.map((t) => (
               <Link
@@ -439,22 +417,11 @@ export default async function Home() {
       {/* GALLERY PREVIEW */}
       <section className="bg-white py-16">
         <div className="mx-auto max-w-[1440px] px-6">
-          <div className="mb-8 flex items-end justify-between">
-            <div>
-              <p className="mb-2 text-[12px] font-medium tracking-widest text-neutral-500">
-                GALLERY
-              </p>
-              <h2 className="text-[28px] font-bold leading-tight md:text-[32px]">
-                최근 등록된 작품
-              </h2>
-            </div>
-            <Link
-              href="/gallery"
-              className="hidden text-[14px] font-medium text-neutral-700 hover:text-black md:inline"
-            >
-              전체 보기 →
-            </Link>
-          </div>
+          <SectionHeader
+            eyebrow="GALLERY"
+            title="최근 등록된 작품"
+            moreHref="/gallery"
+          />
 
           {items.length === 0 ? (
             <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
@@ -505,37 +472,17 @@ export default async function Home() {
               ))}
             </div>
           )}
-
-          <div className="mt-8 text-center md:hidden">
-            <Link
-              href="/gallery"
-              className="inline-block rounded-full border border-neutral-300 px-5 py-2 text-[13px] font-medium hover:border-black"
-            >
-              전체 보기
-            </Link>
-          </div>
         </div>
       </section>
 
       {/* NEWS / RECENT POSTS */}
       <section className="bg-neutral-50 py-16">
         <div className="mx-auto max-w-[1440px] px-6">
-          <div className="mb-8 flex items-end justify-between">
-            <div>
-              <p className="mb-2 text-[12px] font-medium tracking-widest text-neutral-500">
-                NEWS
-              </p>
-              <h2 className="text-[28px] font-bold leading-tight md:text-[32px]">
-                새로운 소식
-              </h2>
-            </div>
-            <Link
-              href="/board"
-              className="text-[14px] font-medium text-neutral-700 hover:text-black"
-            >
-              게시판 →
-            </Link>
-          </div>
+          <SectionHeader
+            eyebrow="NEWS"
+            title="새로운 소식"
+            moreHref="/board"
+          />
 
           {recentPosts.length === 0 ? (
             <p className="rounded-xl border border-dashed border-neutral-300 bg-white p-10 text-center text-[14px] text-neutral-500">
