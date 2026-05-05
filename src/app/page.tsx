@@ -1,10 +1,11 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/server'
-import type { GalleryItem, HeroSlide, Post } from '@/lib/types'
+import type { HeroSlide } from '@/lib/types'
 import HeroSlider, { type HeroSliderItem } from '@/components/HeroSlider'
 import PortfolioSlider, { type PortfolioItem } from '@/components/PortfolioSlider'
 import SectionHeader from '@/components/SectionHeader'
+import ClientsMarquee from '@/components/ClientsMarquee'
 
 export const revalidate = 0
 
@@ -25,26 +26,12 @@ export default async function Home() {
     isAdmin = profile?.role === 'admin'
   }
 
-  const [{ data: gallery }, { data: posts }, { data: heroData }] = await Promise.all([
-    supabase
-      .from('gallery_items')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(6),
-    supabase
-      .from('posts')
-      .select('id, title, created_at, author_id')
-      .order('created_at', { ascending: false })
-      .limit(4),
-    supabase
-      .from('hero_slides')
-      .select('*')
-      .order('sort_order', { ascending: true })
-      .order('id', { ascending: true }),
-  ])
+  const { data: heroData } = await supabase
+    .from('hero_slides')
+    .select('*')
+    .order('sort_order', { ascending: true })
+    .order('id', { ascending: true })
 
-  const items = (gallery ?? []) as GalleryItem[]
-  const recentPosts = (posts ?? []) as Pick<Post, 'id' | 'title' | 'created_at' | 'author_id'>[]
   const heroSlides = (heroData ?? []) as HeroSlide[]
 
   const heroPublicUrl = (path: string) =>
@@ -75,24 +62,8 @@ export default async function Home() {
         }))
       : fallbackHero
 
-  const publicUrl = (path: string) =>
-    `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/gallery/${path}`
-
   const placeholder = (seed: string, w = 1200, h = 600) =>
     `https://picsum.photos/seed/${seed}/${w}/${h}`
-
-  const featureCards = [
-    { seed: 'jasper-feature-1', title: '새로운 컬렉션', sub: '봄을 여는 첫 번째 이야기', cta: '둘러보기' },
-    { seed: 'jasper-feature-2', title: '에디터스 픽', sub: '큐레이터가 선정한 작품', cta: '자세히' },
-    { seed: 'jasper-feature-3', title: '한정 프로모션', sub: '이번 주만 만나는 혜택', cta: '바로가기' },
-  ]
-
-  const promoTiles = [
-    { seed: 'jasper-tile-1', label: '갤러리', href: '/gallery' },
-    { seed: 'jasper-tile-2', label: '게시판', href: '/board' },
-    { seed: 'jasper-tile-3', label: '공지', href: '/board' },
-    { seed: 'jasper-tile-4', label: '이벤트', href: '#' },
-  ]
 
   const bestSellers = [
     { seed: 'ace-best-1', model: 'AW-100', name: '정수기' },
@@ -248,7 +219,10 @@ export default async function Home() {
         <div className="mx-auto max-w-[1440px] px-6">
           {/* Best Seller */}
           <div className="mb-16">
-            <SectionHeader title="Best Seller" />
+            <SectionHeader
+              title="Best Seller"
+              desc="가장 많은 사랑을 받은 베스트셀러 제품입니다"
+            />
             <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 md:grid-cols-5">
               {bestSellers.map((p) => (
                 <Link
@@ -276,7 +250,10 @@ export default async function Home() {
 
           {/* New Product */}
           <div>
-            <SectionHeader title="New Product" />
+            <SectionHeader
+              title="New Product"
+              desc="새롭게 출시된 ACEWATER의 신제품입니다"
+            />
             <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 md:grid-cols-5">
               {newProducts.map((p) => (
                 <Link
@@ -346,194 +323,26 @@ export default async function Home() {
       {/* PORTFOLIO / 시공사례 */}
       <section className="bg-neutral-50 py-28">
         <div className="mx-auto max-w-[1440px] px-6">
-          <SectionHeader title="시공사례" moreHref="/portfolio" />
+          <SectionHeader
+            title="시공사례"
+            desc="ACEWATER가 함께해온 다양한 현장을 만나보세요"
+            moreHref="/portfolio"
+          />
         </div>
         <PortfolioSlider items={portfolioItems} />
       </section>
 
-      {/* FEATURE CARDS */}
-      <section className="bg-white py-16">
-        <div className="mx-auto max-w-[1440px] px-6">
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-            {featureCards.map((c) => (
-              <Link
-                key={c.seed}
-                href="/gallery"
-                className="group relative h-[420px] overflow-hidden rounded-2xl bg-neutral-200"
-              >
-                <Image
-                  src={placeholder(c.seed, 800, 1000)}
-                  alt={c.title}
-                  fill
-                  className="object-cover transition duration-500 group-hover:scale-105"
-                  unoptimized
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent" />
-                <div className="absolute inset-x-0 bottom-0 p-6 text-white">
-                  <p className="mb-1 text-[12px] tracking-wider opacity-90">{c.sub}</p>
-                  <h3 className="mb-3 text-[24px] font-bold leading-tight">{c.title}</h3>
-                  <span className="inline-flex items-center gap-1 text-[13px] font-medium opacity-90 group-hover:opacity-100">
-                    {c.cta}
-                    <span aria-hidden>→</span>
-                  </span>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* PROMO TILES */}
-      <section className="bg-neutral-50 py-16">
+      {/* CLIENTS / 고객사 */}
+      <section className="bg-white py-20">
         <div className="mx-auto max-w-[1440px] px-6">
           <SectionHeader
-            title="어디서나, 가까이"
-            desc="관심 있는 영역으로 바로 이동하세요."
+            title="고객사"
+            desc="ACEWATER와 함께하는 신뢰의 파트너입니다"
           />
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-            {promoTiles.map((t) => (
-              <Link
-                key={t.seed}
-                href={t.href}
-                className="group relative aspect-square overflow-hidden rounded-xl bg-white"
-              >
-                <Image
-                  src={placeholder(t.seed, 600, 600)}
-                  alt={t.label}
-                  fill
-                  className="object-cover transition duration-500 group-hover:scale-105"
-                  unoptimized
-                />
-                <div className="absolute inset-0 bg-black/15 transition group-hover:bg-black/25" />
-                <span className="absolute inset-x-0 bottom-0 p-4 text-[16px] font-bold text-white">
-                  {t.label}
-                </span>
-              </Link>
-            ))}
-          </div>
         </div>
+        <ClientsMarquee />
       </section>
 
-      {/* GALLERY PREVIEW */}
-      <section className="bg-white py-16">
-        <div className="mx-auto max-w-[1440px] px-6">
-          <SectionHeader
-            eyebrow="GALLERY"
-            title="최근 등록된 작품"
-            moreHref="/gallery"
-          />
-
-          {items.length === 0 ? (
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-              {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div
-                  key={i}
-                  className="relative aspect-[4/5] overflow-hidden rounded-xl bg-neutral-100"
-                >
-                  <Image
-                    src={placeholder(`gallery-skel-${i}`, 600, 750)}
-                    alt=""
-                    fill
-                    className="object-cover opacity-90"
-                    unoptimized
-                  />
-                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/40 to-transparent p-4">
-                    <p className="text-[14px] font-semibold text-white">샘플 이미지</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-              {items.map((item) => (
-                <Link
-                  key={item.id}
-                  href="/gallery"
-                  className="group relative aspect-[4/5] overflow-hidden rounded-xl bg-neutral-100"
-                >
-                  <Image
-                    src={publicUrl(item.image_path)}
-                    alt={item.title}
-                    fill
-                    className="object-cover transition duration-500 group-hover:scale-105"
-                    unoptimized
-                  />
-                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/55 to-transparent p-4">
-                    <p className="line-clamp-1 text-[14px] font-semibold text-white">
-                      {item.title}
-                    </p>
-                    {item.description && (
-                      <p className="line-clamp-1 text-[12px] text-white/85">
-                        {item.description}
-                      </p>
-                    )}
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* NEWS / RECENT POSTS */}
-      <section className="bg-neutral-50 py-16">
-        <div className="mx-auto max-w-[1440px] px-6">
-          <SectionHeader
-            eyebrow="NEWS"
-            title="새로운 소식"
-            moreHref="/board"
-          />
-
-          {recentPosts.length === 0 ? (
-            <p className="rounded-xl border border-dashed border-neutral-300 bg-white p-10 text-center text-[14px] text-neutral-500">
-              아직 게시글이 없어요. 첫 글을 작성해보세요.
-            </p>
-          ) : (
-            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
-              {recentPosts.map((p, i) => (
-                <Link
-                  key={p.id}
-                  href={`/board/${p.id}`}
-                  className="group flex flex-col overflow-hidden rounded-xl bg-white transition hover:shadow-lg"
-                >
-                  <div className="relative aspect-[16/10] bg-neutral-100">
-                    <Image
-                      src={placeholder(`news-${p.id}-${i}`, 600, 400)}
-                      alt=""
-                      fill
-                      className="object-cover transition duration-500 group-hover:scale-105"
-                      unoptimized
-                    />
-                  </div>
-                  <div className="flex flex-1 flex-col p-5">
-                    <p className="mb-1 text-[12px] font-medium tracking-widest text-neutral-500">
-                      NOTICE
-                    </p>
-                    <h3 className="mb-3 line-clamp-2 flex-1 text-[16px] font-bold leading-snug text-black group-hover:underline">
-                      {p.title}
-                    </h3>
-                    <p className="text-[12px] text-neutral-500">
-                      {new Date(p.created_at).toLocaleDateString('ko-KR')}
-                    </p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="bg-black text-white">
-        <div className="mx-auto flex max-w-[1440px] flex-col items-center gap-6 px-6 py-20 text-center">
-          <h2 className="text-[28px] font-bold leading-tight md:text-[36px]">
-            지금, ACEWATER 와 함께하세요
-          </h2>
-          <p className="text-[14px] text-white/75">
-            엄선된 작품과 새로운 소식을 만나보세요.
-          </p>
-        </div>
-      </section>
     </>
   )
 }

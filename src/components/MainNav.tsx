@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { logout } from '@/app/login/actions'
 import type { Category } from '@/lib/types'
 
@@ -22,11 +22,26 @@ type Props = {
 
 export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, email }: Props) {
   const [activeId, setActiveId] = useState<number | null>(null)
+  const [displayedId, setDisplayedId] = useState<number | null>(null)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [expandedMobileId, setExpandedMobileId] = useState<number | null>(null)
   const active = categories.find((c) => c.id === activeId) ?? null
+  const displayed = categories.find((c) => c.id === displayedId) ?? null
   const hasMega =
     active && (active.tiles.length > 0 || active.texts.length > 0 || active.links.length > 0)
+  const hasDisplayedMega =
+    displayed &&
+    (displayed.tiles.length > 0 || displayed.texts.length > 0 || displayed.links.length > 0)
+  const isPanelOpen = Boolean(hasMega)
+
+  useEffect(() => {
+    if (activeId !== null) {
+      setDisplayedId(activeId)
+      return
+    }
+    const t = setTimeout(() => setDisplayedId(null), 250)
+    return () => clearTimeout(t)
+  }, [activeId])
 
   const imageUrl = (path: string) =>
     `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/categories/${path}`
@@ -36,6 +51,16 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
       className="relative border-b border-neutral-200 bg-white"
       onMouseLeave={() => setActiveId(null)}
     >
+      <style>{`
+        @keyframes slideDownFade {
+          from { opacity: 0; transform: translateY(-8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slide-down {
+          animation: slideDownFade 0.25s ease-out forwards;
+        }
+      `}</style>
+
       <div className="mx-auto flex h-[68px] max-w-[1440px] items-center justify-between px-6">
         <Link href="/" className="shrink-0" onMouseEnter={() => setActiveId(null)}>
           <span className="text-[22px] font-extrabold tracking-tight text-black">ACEWATER</span>
@@ -63,8 +88,12 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
                         title={dimmed ? '비활성 (관리자에게만 보임)' : undefined}
                       >
                         {c.name}
-                        {isActive && childCount > 0 && (
-                          <span className="absolute bottom-0 left-5 right-5 h-[2px] bg-blue-600" />
+                        {childCount > 0 && (
+                          <span
+                            className={`absolute bottom-0 left-5 right-5 h-[2px] origin-center bg-blue-600 transition-transform duration-300 ease-out ${
+                              isActive ? 'scale-x-100' : 'scale-x-0'
+                            }`}
+                          />
                         )}
                       </Link>
                     </li>
@@ -99,15 +128,20 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-neutral-100 min-[1022px]:hidden"
           >
-            {isMobileMenuOpen ? (
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M18 6L6 18M6 6l12 12" />
-              </svg>
-            ) : (
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <div className="relative flex h-6 w-6 items-center justify-center">
+              <svg
+                width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                className={`absolute transition-all duration-300 ${isMobileMenuOpen ? 'scale-0 rotate-90 opacity-0' : 'scale-100 rotate-0 opacity-100'}`}
+              >
                 <path d="M4 12h16M4 6h16M4 18h16" />
               </svg>
-            )}
+              <svg
+                width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                className={`absolute transition-all duration-300 ${isMobileMenuOpen ? 'scale-100 rotate-0 opacity-100' : 'scale-0 -rotate-90 opacity-0'}`}
+              >
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </div>
           </button>
 
           <button
@@ -144,7 +178,7 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
 
       {/* MOBILE PANEL */}
       {isMobileMenuOpen && (
-        <div className="absolute left-0 right-0 top-full z-40 flex max-h-[calc(100vh-68px)] flex-col overflow-y-auto border-t border-neutral-200 bg-white shadow-2xl min-[1022px]:hidden">
+        <div className="absolute left-0 right-0 top-full z-40 flex max-h-[calc(100vh-68px)] flex-col overflow-y-auto border-t border-neutral-200 bg-white shadow-2xl min-[1022px]:hidden animate-slide-down">
           <ul className="flex flex-col px-6 py-4">
             {categories.length === 0 && (
               <div className="py-4 text-[0.875rem] text-neutral-400">
@@ -188,7 +222,7 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
                   </div>
 
                   {isExpanded && hasChildren && (
-                    <div className="mb-4 flex flex-col gap-2 rounded-lg bg-neutral-50 px-4 py-3 text-[0.875rem] text-neutral-700">
+                    <div className="mb-4 flex flex-col gap-2 rounded-lg bg-neutral-50 px-4 py-3 text-[0.875rem] text-neutral-700 animate-slide-down">
                       {[...c.texts, ...c.tiles, ...c.links].map((child) => (
                         <Link
                           key={child.id}
@@ -239,15 +273,22 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
       )}
 
       {/* MEGA PANEL (Desktop Only) */}
-      {active && hasMega && (
-        <div className="absolute left-0 right-0 top-full hidden overflow-hidden border-t border-neutral-200 bg-white shadow-[0_12px_24px_-12px_rgba(0,0,0,0.15)] min-[1022px]:block">
+      {displayed && hasDisplayedMega && (
+        <div
+          className={`absolute left-0 right-0 top-full hidden overflow-hidden border-t border-neutral-200 bg-white shadow-[0_12px_24px_-12px_rgba(0,0,0,0.15)] transition-[opacity,transform] duration-300 ease-out min-[1022px]:block ${
+            isPanelOpen
+              ? 'translate-y-0 opacity-100'
+              : 'pointer-events-none -translate-y-2 opacity-0'
+          }`}
+          onMouseEnter={() => setActiveId(displayed.id)}
+        >
           <>
             {/* text tabs row (admin-nav style, full-width border) */}
-            {active.texts.length > 0 && (
+            {displayed.texts.length > 0 && (
               <div className="border-b border-neutral-200">
                 <div className="mx-auto max-w-[1440px] px-6">
                   <div className="flex h-12 items-center gap-1 overflow-x-auto">
-                    {active.texts.map((t) => (
+                    {displayed.texts.map((t) => (
                       <Link
                         key={t.id}
                         href={t.href || '#'}
@@ -261,18 +302,18 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
               </div>
             )}
 
-            {(active.tiles.length > 0 || active.links.length > 0) && (
+            {(displayed.tiles.length > 0 || displayed.links.length > 0) && (
               <div className="mx-auto max-w-[1440px] px-6 py-10">
-                <div className={active.links.length > 0 ? 'grid grid-cols-12 gap-10' : ''}>
+                <div className={displayed.links.length > 0 ? 'grid grid-cols-12 gap-10' : ''}>
                   {/* tile grid */}
-                  {active.tiles.length > 0 && (
+                  {displayed.tiles.length > 0 && (
                     <div
                       className={
-                        active.links.length > 0 ? 'col-span-12 md:col-span-9' : 'w-full'
+                        displayed.links.length > 0 ? 'col-span-12 md:col-span-9' : 'w-full'
                       }
                     >
                       <div className="grid grid-cols-3 gap-x-4 gap-y-8 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7">
-                        {active.tiles.map((t) => (
+                        {displayed.tiles.map((t) => (
                           <Link
                             key={t.id}
                             href={t.href || '#'}
@@ -302,17 +343,17 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
                   )}
 
                   {/* link list */}
-                  {active.links.length > 0 && (
+                  {displayed.links.length > 0 && (
                     <div
                       className={
-                        active.tiles.length > 0
+                        displayed.tiles.length > 0
                           ? 'col-span-12 border-t border-neutral-200 pt-6 md:col-span-3 md:border-l md:border-t-0 md:pl-10 md:pt-0'
                           : 'w-full'
                       }
                     >
                       <h4 className="mb-4 text-[0.875rem] font-semibold text-neutral-500">더 알아보기</h4>
                       <ul className="space-y-3">
-                        {active.links.map((l) => (
+                        {displayed.links.map((l) => (
                           <li key={l.id}>
                             <Link
                               href={l.href || '#'}
