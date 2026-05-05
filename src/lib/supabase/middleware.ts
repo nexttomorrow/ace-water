@@ -29,6 +29,23 @@ export async function updateSession(request: NextRequest) {
 
   const path = request.nextUrl.pathname
 
+  // /signup is disabled
+  if (path === '/signup') {
+    const url = request.nextUrl.clone()
+    url.pathname = '/'
+    return NextResponse.redirect(url)
+  }
+
+  // /login is only reachable when redirecting to /admin
+  if (path === '/login') {
+    const redirectParam = request.nextUrl.searchParams.get('redirect') ?? ''
+    if (!redirectParam.startsWith('/admin')) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/'
+      return NextResponse.redirect(url)
+    }
+  }
+
   // protect /admin and write routes
   const requiresAuth =
     path.startsWith('/admin') ||

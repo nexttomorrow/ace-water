@@ -34,52 +34,54 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
     >
       <div className="mx-auto flex h-[68px] max-w-[1440px] items-center justify-between px-6">
         <Link href="/" className="shrink-0" onMouseEnter={() => setActiveId(null)}>
-          <span className="text-[22px] font-extrabold tracking-tight text-black">JASPERAGC</span>
+          <span className="text-[22px] font-extrabold tracking-tight text-black">ACEWATER</span>
         </Link>
 
-        <nav className="hidden flex-1 justify-center md:flex">
-          {categories.length === 0 ? (
-            <div className="px-5 py-3 text-[13px] text-neutral-400">
-              {isAdmin ? (
-                <Link href="/admin/categories/new" className="hover:underline">
-                  + 카테고리 등록
-                </Link>
-              ) : (
-                '메뉴 준비 중'
-              )}
-            </div>
-          ) : (
-            <ul className="flex items-center gap-1 text-[15px] font-medium text-neutral-800">
-              {categories.map((c) => {
-                const childCount = c.tiles.length + c.links.length
-                const isActive = activeId === c.id
-                return (
-                  <li key={c.id} onMouseEnter={() => setActiveId(c.id)}>
-                    <Link
-                      href={c.href || '#'}
-                      className={`relative block px-5 py-3 transition-colors ${
-                        isActive ? 'text-black' : 'hover:text-black'
-                      }`}
-                    >
-                      {c.name}
-                      {isActive && childCount > 0 && (
-                        <span className="absolute bottom-0 left-5 right-5 h-[2px] bg-blue-600" />
-                      )}
-                    </Link>
-                  </li>
-                )
-              })}
-              {isAdmin && (
-                <li onMouseEnter={() => setActiveId(null)}>
-                  <Link
-                    href="/admin"
-                    className="block px-5 py-3 font-semibold text-blue-600 hover:text-blue-700"
-                  >
-                    어드민
-                  </Link>
-                </li>
-              )}
-            </ul>
+        <nav className="hidden flex-1 items-center md:flex">
+          <div className="flex flex-1 justify-center">
+            {categories.length === 0 ? (
+              <div className="px-5 py-3 text-[13px] text-neutral-400">
+                {isAdmin ? '메뉴를 추가해주세요' : '메뉴 준비 중'}
+              </div>
+            ) : (
+              <ul className="flex items-center gap-1 text-[15px] font-medium text-neutral-800">
+                {categories.map((c) => {
+                  const childCount = c.tiles.length + c.links.length
+                  const isActive = activeId === c.id
+                  const dimmed = isAdmin && c.is_active === false
+                  return (
+                    <li key={c.id} onMouseEnter={() => setActiveId(c.id)}>
+                      <Link
+                        href={c.href || '#'}
+                        className={`relative block px-5 py-3 transition-colors ${
+                          dimmed ? 'text-neutral-400' : isActive ? 'text-black' : 'hover:text-black'
+                        }`}
+                        title={dimmed ? '비활성 (관리자에게만 보임)' : undefined}
+                      >
+                        {c.name}
+                        {isActive && childCount > 0 && (
+                          <span className="absolute bottom-0 left-5 right-5 h-[2px] bg-blue-600" />
+                        )}
+                      </Link>
+                    </li>
+                  )
+                })}
+              </ul>
+            )}
+          </div>
+
+          {isAdmin && (
+            <Link
+              href="/admin/categories/new"
+              onMouseEnter={() => setActiveId(null)}
+              className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-white px-4 py-2 text-[12px] font-semibold text-neutral-900 shadow-lg ring-1 ring-neutral-200 transition hover:bg-neutral-50"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 5v14" />
+                <path d="M5 12h14" />
+              </svg>
+              카테고리 등록
+            </Link>
           )}
         </nav>
 
@@ -115,22 +117,7 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
                 </button>
               </form>
             </>
-          ) : (
-            <>
-              <Link
-                href="/login"
-                className="rounded-full px-3 py-2 text-[13px] font-medium text-neutral-800 hover:bg-neutral-100"
-              >
-                로그인
-              </Link>
-              <Link
-                href="/signup"
-                className="rounded-full bg-black px-4 py-2 text-[13px] font-medium text-white hover:bg-neutral-800"
-              >
-                회원가입
-              </Link>
-            </>
-          )}
+          ) : null}
         </div>
       </div>
 

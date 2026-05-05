@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { HERO_SLIDES_MAX } from '@/lib/types'
 
 async function ensureAdmin() {
   const supabase = await createClient()
@@ -283,6 +284,133 @@ export async function deleteCategory(id: number) {
 
   revalidatePath('/admin/categories')
   revalidatePath('/', 'layout')
+}
+
+// ---------- hero slides ----------
+
+export async function createHeroSlide(formData: FormData) {
+  const { supabase } = await ensureAdmin()
+
+  const eyebrow = String(formData.get('eyebrow') ?? '').trim()
+  const title = String(formData.get('title') ?? '').trim()
+  const sortOrder = Number(formData.get('sort_order') ?? 0) || 0
+  const file = formData.get('image') as File | null
+
+  if (!title || !file || file.size === 0) {
+    redirect('/admin/hero/new?error=' + encodeURIComponent('타이틀과 이미지를 입력해주세요'))
+  }
+
+  const { count } = await supabase
+    .from('hero_slides')
+    .select('*', { count: 'exact', head: true })
+  if ((count ?? 0) >= HERO_SLIDES_MAX) {
+    redirect(
+      '/admin/hero/new?error=' +
+        encodeURIComponent(`슬라이드는 최대 ${HERO_SLIDES_MAX}개까지 등록할 수 있어요`)
+    )
+  }
+
+  const ext = file.name.split('.').pop() ?? 'jpg'
+  const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
+
+  const { error: uploadError } = await supabase.storage
+    .from('hero')
+    .upload(path, file, { contentType: file.type, upsert: false })
+  if (uploadError) {
+    redirect('/admin/hero/new?error=' + encodeURIComponent(uploadError.message))
+  }
+
+  const { error } = await supabase.from('hero_slides').insert({
+    eyebrow,
+    title,
+    image_path: path,
+    sort_order: sortOrder,
+  })
+  if (error) {
+    await supabase.storage.from('hero').remove([path])
+    redirect('/admin/hero/new?error=' + encodeURIComponent(error.message))
+  }
+
+  revalidatePath('/admin/hero')
+  revalidatePath('/')
+  redirect('/admin/hero')
+}
+
+export async function updateHeroSlide(id: number, formData: FormData) {
+  const { supabase } = await ensureAdmin()
+
+  const eyebrow = String(formData.get('eyebrow') ?? '').trim()
+  const title = String(formData.get('title') ?? '').trim()
+  const sortOrder = Number(formData.get('sort_order') ?? 0) || 0
+  const file = formData.get('image') as File | null
+
+  if (!title) {
+    redirect(`/admin/hero/${id}/edit?error=` + encodeURIComponent('타이틀을 입력해주세요'))
+  }
+
+  const update: {
+    eyebrow: string
+    title: string
+    sort_order: number
+    image_path?: string
+  } = {
+    eyebrow,
+    title,
+    sort_order: sortOrder,
+  }
+
+  let oldPath: string | null = null
+  if (file && file.size > 0) {
+    const { data: existing } = await supabase
+      .from('hero_slides')
+      .select('image_path')
+      .eq('id', id)
+      .single()
+    oldPath = existing?.image_path ?? null
+
+    const ext = file.name.split('.').pop() ?? 'jpg'
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
+    const { error: uploadError } = await supabase.storage
+      .from('hero')
+      .upload(path, file, { contentType: file.type })
+    if (uploadError) {
+      redirect(`/admin/hero/${id}/edit?error=` + encodeURIComponent(uploadError.message))
+    }
+    update.image_path = path
+  }
+
+  const { error } = await supabase.from('hero_slides').update(update).eq('id', id)
+  if (error) {
+    redirect(`/admin/hero/${id}/edit?error=` + encodeURIComponent(error.message))
+  }
+
+  if (oldPath && update.image_path) {
+    await supabase.storage.from('hero').remove([oldPath])
+  }
+
+  revalidatePath('/admin/hero')
+  revalidatePath('/')
+  redirect('/admin/hero')
+}
+
+export async function deleteHeroSlide(id: number) {
+  const { supabase } = await ensureAdmin()
+
+  const { data: existing } = await supabase
+    .from('hero_slides')
+    .select('image_path')
+    .eq('id', id)
+    .single()
+
+  const { error } = await supabase.from('hero_slides').delete().eq('id', id)
+  if (error) throw new Error(error.message)
+
+  if (existing?.image_path) {
+    await supabase.storage.from('hero').remove([existing.image_path])
+  }
+
+  revalidatePath('/admin/hero')
+  revalidatePath('/')
 }
 
 export async function toggleCategoryActive(id: number, currentValue: boolean) {

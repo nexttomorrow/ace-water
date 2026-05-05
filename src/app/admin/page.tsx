@@ -8,14 +8,17 @@ export default async function AdminHome() {
     { count: postCount },
     { count: userCount },
     { count: categoryCount },
+    { count: heroCount },
   ] = await Promise.all([
     supabase.from('gallery_items').select('*', { count: 'exact', head: true }),
     supabase.from('posts').select('*', { count: 'exact', head: true }),
     supabase.from('profiles').select('*', { count: 'exact', head: true }),
     supabase.from('categories').select('*', { count: 'exact', head: true }),
+    supabase.from('hero_slides').select('*', { count: 'exact', head: true }),
   ])
 
   const stats = [
+    { label: '메인 슬라이드', count: heroCount ?? 0, href: '/admin/hero' },
     { label: '카테고리', count: categoryCount ?? 0, href: '/admin/categories' },
     { label: '갤러리', count: galleryCount ?? 0, href: '/admin/gallery' },
     { label: '게시글', count: postCount ?? 0, href: '/admin/board' },
@@ -26,7 +29,7 @@ export default async function AdminHome() {
     <div className="mx-auto max-w-[1440px] px-6 py-12">
       <h1 className="mb-6 text-2xl font-bold">어드민</h1>
 
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
         {stats.map((s) => (
           <Link
             key={s.label}
@@ -41,8 +44,14 @@ export default async function AdminHome() {
 
       <div className="mt-8 flex flex-wrap gap-2">
         <Link
-          href="/admin/categories"
+          href="/admin/hero"
           className="rounded-full bg-black px-4 py-2 text-[13px] font-medium text-white hover:bg-neutral-800"
+        >
+          메인 슬라이드 관리
+        </Link>
+        <Link
+          href="/admin/categories"
+          className="rounded-full border border-neutral-300 px-4 py-2 text-[13px] hover:bg-neutral-100"
         >
           카테고리 관리
         </Link>

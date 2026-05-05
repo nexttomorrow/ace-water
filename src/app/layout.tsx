@@ -2,9 +2,10 @@ import type { Metadata } from 'next'
 import './globals.css'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import FloatingButtons from '@/components/FloatingButtons'
 
 export const metadata: Metadata = {
-  title: 'JASPERAGC',
+  title: 'ACEWATER',
   description: '갤러리 + 게시판 + 어드민',
 }
 
@@ -19,6 +20,7 @@ export default function RootLayout({
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
+        <FloatingButtons />
       </body>
     </html>
   )

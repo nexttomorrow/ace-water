@@ -6,17 +6,9 @@ import type { Category } from '@/lib/types'
 export default async function Header() {
   const supabase = await createClient()
 
-  const [{ data: userResult }, { data: catData }] = await Promise.all([
-    supabase.auth.getUser().then((r) => ({ data: r.data })),
-    supabase
-      .from('categories')
-      .select('*')
-      .eq('is_active', true)
-      .order('sort_order', { ascending: true })
-      .order('id', { ascending: true }),
-  ])
-
-  const user = userResult.user
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
   let isAdmin = false
   let nickname: string | null = null
@@ -29,6 +21,15 @@ export default async function Header() {
     isAdmin = profile?.role === 'admin'
     nickname = profile?.nickname ?? null
   }
+
+  // admin은 비활성 카테고리도 본다
+  let categoryQuery = supabase
+    .from('categories')
+    .select('*')
+    .order('sort_order', { ascending: true })
+    .order('id', { ascending: true })
+  if (!isAdmin) categoryQuery = categoryQuery.eq('is_active', true)
+  const { data: catData } = await categoryQuery
 
   // build tree
   const cats = (catData ?? []) as Category[]
@@ -45,15 +46,27 @@ export default async function Header() {
       {/* Top utility bar */}
       <div className="border-b border-neutral-200 bg-neutral-50">
         <div className="mx-auto flex h-8 max-w-[1440px] items-center justify-end gap-5 px-6 text-[12px] text-neutral-600">
-          <Link href="/gallery" className="hover:text-black">갤러리</Link>
+          {isAdmin && (
+            <>
+              <Link
+                href="/admin"
+                className="inline-flex items-center gap-1 rounded-full bg-neutral-900 px-3 py-1 text-[11px] font-semibold text-white hover:bg-black"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6z" />
+                </svg>
+                관리자
+              </Link>
+              <span className="text-neutral-300">|</span>
+            </>
+          )}
+          <Link href="#" className="hover:text-black">공지사항</Link>
           <span className="text-neutral-300">|</span>
           <Link href="/board" className="hover:text-black">게시판</Link>
           <span className="text-neutral-300">|</span>
           <Link href="#" className="hover:text-black">고객지원</Link>
           <span className="text-neutral-300">|</span>
           <Link href="#" className="hover:text-black">비즈니스</Link>
-          <span className="text-neutral-300">|</span>
-          <Link href="#" className="hover:text-black">한국 / 한국어</Link>
         </div>
       </div>
 

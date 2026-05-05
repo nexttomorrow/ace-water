@@ -42,3 +42,14 @@ export type Category = {
 export type CategoryWithChildren = Category & {
   children: Category[]
 }
+
+export type HeroSlide = {
+  id: number
+  eyebrow: string
+  title: string
+  image_path: string
+  sort_order: number
+  created_at: string
+}
+
+export const HERO_SLIDES_MAX = 6

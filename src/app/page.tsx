@@ -1,14 +1,30 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/server'
-import type { GalleryItem, Post } from '@/lib/types'
+import type { GalleryItem, HeroSlide, Post } from '@/lib/types'
+import HeroSlider, { type HeroSliderItem } from '@/components/HeroSlider'
+import PortfolioSlider, { type PortfolioItem } from '@/components/PortfolioSlider'
 
 export const revalidate = 0
 
 export default async function Home() {
   const supabase = await createClient()
 
-  const [{ data: gallery }, { data: posts }] = await Promise.all([
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  let isAdmin = false
+  if (user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+    isAdmin = profile?.role === 'admin'
+  }
+
+  const [{ data: gallery }, { data: posts }, { data: heroData }] = await Promise.all([
     supabase
       .from('gallery_items')
       .select('*')
@@ -19,10 +35,44 @@ export default async function Home() {
       .select('id, title, created_at, author_id')
       .order('created_at', { ascending: false })
       .limit(4),
+    supabase
+      .from('hero_slides')
+      .select('*')
+      .order('sort_order', { ascending: true })
+      .order('id', { ascending: true }),
   ])
 
   const items = (gallery ?? []) as GalleryItem[]
   const recentPosts = (posts ?? []) as Pick<Post, 'id' | 'title' | 'created_at' | 'author_id'>[]
+  const heroSlides = (heroData ?? []) as HeroSlide[]
+
+  const heroPublicUrl = (path: string) =>
+    `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/hero/${path}`
+
+  const fallbackHero: HeroSliderItem[] = [
+    {
+      key: 'fallback-1',
+      src: 'https://picsum.photos/seed/ace-hero-water-1/1920/1080',
+      eyebrow: 'ACE WATER',
+      title: '깨끗한 물, 더 나은 일상',
+    },
+    {
+      key: 'fallback-2',
+      src: 'https://picsum.photos/seed/ace-hero-water-2/1920/1080',
+      eyebrow: 'TECHNOLOGY',
+      title: '검증된 기술, 신뢰의 약속',
+    },
+  ]
+
+  const sliderItems: HeroSliderItem[] =
+    heroSlides.length > 0
+      ? heroSlides.map((s) => ({
+          key: String(s.id),
+          src: heroPublicUrl(s.image_path),
+          eyebrow: s.eyebrow || undefined,
+          title: s.title,
+        }))
+      : fallbackHero
 
   const publicUrl = (path: string) =>
     `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/gallery/${path}`
@@ -43,43 +93,279 @@ export default async function Home() {
     { seed: 'jasper-tile-4', label: '이벤트', href: '#' },
   ]
 
+  const bestSellers = [
+    { seed: 'ace-best-1', model: 'AW-100', name: '정수기' },
+    { seed: 'ace-best-2', model: 'AW-200', name: '연수기' },
+    { seed: 'ace-best-3', model: 'AW-300', name: '냉온정수기' },
+    { seed: 'ace-best-4', model: 'AW-400', name: '필터 시스템' },
+    { seed: 'ace-best-5', model: 'AW-500', name: '산업용 정수' },
+  ]
+
+  const newProducts = [
+    { seed: 'ace-new-1', model: 'AW-N01', name: '신제품 정수기' },
+    { seed: 'ace-new-2', model: 'AW-N02', name: '소형 정수기' },
+    { seed: 'ace-new-3', model: 'AW-N03', name: '대용량 정수기' },
+    { seed: 'ace-new-4', model: 'AW-N04', name: '미네랄 필터' },
+    { seed: 'ace-new-5', model: 'AW-N05', name: '스마트 정수' },
+  ]
+
+  const portfolioItems: PortfolioItem[] = [
+    {
+      key: 'ace-portfolio-1',
+      src: 'https://picsum.photos/seed/ace-portfolio-1/800/600',
+      title: '서울 강남 OO 빌딩',
+      desc: '오피스 정수 시스템 시공',
+      href: '/portfolio',
+    },
+    {
+      key: 'ace-portfolio-2',
+      src: 'https://picsum.photos/seed/ace-portfolio-2/800/600',
+      title: '부산 사하 OO 공장',
+      desc: '산업용 대용량 정수 설비',
+      href: '/portfolio',
+    },
+    {
+      key: 'ace-portfolio-3',
+      src: 'https://picsum.photos/seed/ace-portfolio-3/800/600',
+      title: '대구 수성 OO 아파트',
+      desc: '단지 전체 미네랄 워터 시스템',
+      href: '/portfolio',
+    },
+    {
+      key: 'ace-portfolio-4',
+      src: 'https://picsum.photos/seed/ace-portfolio-4/800/600',
+      title: '인천 송도 OO 호텔',
+      desc: '객실 정수 솔루션',
+      href: '/portfolio',
+    },
+    {
+      key: 'ace-portfolio-5',
+      src: 'https://picsum.photos/seed/ace-portfolio-5/800/600',
+      title: '광주 OO 종합병원',
+      desc: '의료용 정수 시스템',
+      href: '/portfolio',
+    },
+    {
+      key: 'ace-portfolio-6',
+      src: 'https://picsum.photos/seed/ace-portfolio-6/800/600',
+      title: '대전 OO 학교',
+      desc: '교내 직수형 정수기 시공',
+      href: '/portfolio',
+    },
+    {
+      key: 'ace-portfolio-7',
+      src: 'https://picsum.photos/seed/ace-portfolio-7/800/600',
+      title: '제주 OO 리조트',
+      desc: '풀빌라 정수 솔루션',
+      href: '/portfolio',
+    },
+    {
+      key: 'ace-portfolio-8',
+      src: 'https://picsum.photos/seed/ace-portfolio-8/800/600',
+      title: '울산 OO 산업단지',
+      desc: '공정수 시스템 구축',
+      href: '/portfolio',
+    },
+  ]
+
+  const solutions = [
+    {
+      seed: 'ace-solution-1',
+      title: '국내 최대 규모',
+      desc: '국내 최대 규모 제조공장 및\n자체도색설비 보유',
+      icon: (
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M3 21h18" />
+          <path d="M5 21V8l5 3V8l5 3V5l4 3v13" />
+        </svg>
+      ),
+    },
+    {
+      seed: 'ace-solution-2',
+      title: '세계 최대 디자인 보유',
+      desc: '2000가지 이상의\n환경 제품 디자인 보유',
+      icon: (
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="9" />
+          <path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18" />
+        </svg>
+      ),
+    },
+    {
+      seed: 'ace-solution-3',
+      title: '산업디자인 전문 기업',
+      desc: '전문 디자인연구소 보유 &\n디자인등록 다수',
+      icon: (
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z" />
+        </svg>
+      ),
+    },
+    {
+      seed: 'ace-solution-4',
+      title: '맞춤제작 가능',
+      desc: '현장의 목적과\n고객의 니즈에 맞는 컨설팅',
+      icon: (
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L4 17l3 3 5.3-5.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.5-2.5z" />
+        </svg>
+      ),
+    },
+    {
+      seed: 'ace-solution-5',
+      title: '각종 인증 완료',
+      desc: 'KC, ISO 및 벤처기업인증,\n특허, 디자인등록 등',
+      icon: (
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 2 4 6v6c0 5 3.5 9 8 10 4.5-1 8-5 8-10V6z" />
+          <path d="m9 12 2 2 4-4" />
+        </svg>
+      ),
+    },
+  ]
+
   return (
     <>
-      {/* HERO */}
-      <section className="relative h-[560px] w-full overflow-hidden bg-neutral-900 text-white">
-        <Image
-          src={placeholder('jasper-hero', 1920, 900)}
-          alt=""
-          fill
-          priority
-          className="object-cover opacity-80"
-          unoptimized
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-        <div className="relative z-10 mx-auto flex h-full max-w-[1440px] flex-col justify-end px-6 pb-16">
-          <p className="mb-3 text-[13px] font-medium tracking-widest text-white/80">
-            JASPERAGC SIGNATURE
-          </p>
-          <h1 className="mb-4 max-w-2xl text-[44px] font-extrabold leading-[1.15] md:text-[56px]">
-            지금, 새로운 시선을<br />만나보세요
-          </h1>
-          <p className="mb-8 max-w-xl text-[16px] text-white/90">
-            엄선된 작품과 이야기를 통해, 일상을 더 풍부하게.
-          </p>
-          <div className="flex flex-wrap gap-3">
+      <div className="relative">
+        <HeroSlider slides={sliderItems} />
+        {isAdmin && (
+          <Link
+            href="/admin/hero"
+            className="absolute right-6 top-6 z-30 inline-flex items-center gap-1.5 rounded-full bg-white/90 px-4 py-2 text-[12px] font-semibold text-neutral-900 shadow-lg backdrop-blur transition hover:bg-white"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 20h9" />
+              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z" />
+            </svg>
+            슬라이드 관리
+          </Link>
+        )}
+      </div>
+
+      {/* PRODUCT SHOWCASE — Best Seller / New Product */}
+      <section className="bg-white py-20">
+        <div className="mx-auto max-w-[1440px] px-6">
+          {/* Best Seller */}
+          <div className="mb-16">
+            <div className="mb-8 text-center">
+              <h2 className="text-[26px] font-bold tracking-tight md:text-[30px]">Best Seller</h2>
+              <div className="mx-auto mt-3 h-[2px] w-10 bg-neutral-900" />
+            </div>
+            <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 md:grid-cols-5">
+              {bestSellers.map((p) => (
+                <Link
+                  key={p.seed}
+                  href="#"
+                  className="group block"
+                >
+                  <div className="relative aspect-square overflow-hidden bg-neutral-100">
+                    <Image
+                      src={placeholder(p.seed, 600, 600)}
+                      alt={p.name}
+                      fill
+                      className="object-cover transition duration-500 group-hover:scale-105"
+                      unoptimized
+                    />
+                  </div>
+                  <div className="mt-4">
+                    <p className="text-[13px] font-bold text-neutral-900">{p.model}</p>
+                    <p className="mt-1 text-[12px] text-neutral-600">{p.name}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* New Product */}
+          <div>
+            <div className="mb-8 text-center">
+              <h2 className="text-[26px] font-bold tracking-tight md:text-[30px]">New Product</h2>
+              <div className="mx-auto mt-3 h-[2px] w-10 bg-neutral-900" />
+            </div>
+            <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 md:grid-cols-5">
+              {newProducts.map((p) => (
+                <Link
+                  key={p.seed}
+                  href="#"
+                  className="group block"
+                >
+                  <div className="relative aspect-square overflow-hidden bg-neutral-100">
+                    <Image
+                      src={placeholder(p.seed, 600, 600)}
+                      alt={p.name}
+                      fill
+                      className="object-cover transition duration-500 group-hover:scale-105"
+                      unoptimized
+                    />
+                    <span className="absolute left-3 top-3 z-10 rounded-full bg-neutral-900 px-2.5 py-0.5 text-[10px] font-bold tracking-wider text-white">NEW</span>
+                  </div>
+                  <div className="mt-4">
+                    <p className="text-[13px] font-bold text-neutral-900">{p.model}</p>
+                    <p className="mt-1 text-[12px] text-neutral-600">{p.name}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ACEWATER SOLUTION */}
+      <section className="bg-white py-20">
+        <div className="mx-auto max-w-[1440px] px-6">
+          <div className="mb-10 text-center">
+            <h2 className="text-[26px] font-bold tracking-tight md:text-[30px]">
+              Acewater Solution
+            </h2>
+            <div className="mx-auto mt-3 h-[2px] w-10 bg-neutral-900" />
+            <p className="mt-4 text-[14px] text-neutral-500">
+              ACEWATER가 제공하는 차별화된 솔루션을 만나보세요
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5 md:gap-2">
+            {solutions.map((s) => (
+              <div
+                key={s.seed}
+                className="group relative aspect-[3/5] overflow-hidden bg-neutral-300"
+              >
+                <Image
+                  src={placeholder(s.seed, 600, 1000)}
+                  alt={s.title}
+                  fill
+                  className="object-cover transition duration-500 group-hover:scale-105"
+                  unoptimized
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/40 to-black/70" />
+                <div className="relative z-10 flex h-full flex-col items-center justify-end px-4 pb-10 text-center text-white">
+                  <div className="mb-3 text-white/90">{s.icon}</div>
+                  <h3 className="mb-3 text-[16px] font-bold leading-tight md:text-[18px]">
+                    {s.title}
+                  </h3>
+                  <div className="mx-auto mb-3 h-[1px] w-6 bg-white/60" />
+                  <p className="whitespace-pre-line text-[12px] leading-relaxed text-white/85">
+                    {s.desc}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* PORTFOLIO / 시공사례 */}
+      <section className="bg-neutral-50 py-20">
+        <div className="mx-auto max-w-[1440px] px-6">
+          <div className="mb-8 flex items-baseline justify-center gap-6">
+            <h2 className="text-[26px] font-bold tracking-tight md:text-[30px]">시공사례</h2>
             <Link
-              href="/gallery"
-              className="rounded-full bg-white px-6 py-3 text-[14px] font-semibold text-black hover:bg-neutral-200"
+              href="/portfolio"
+              className="text-[13px] font-medium text-neutral-600 transition hover:text-black"
             >
-              갤러리 보기
-            </Link>
-            <Link
-              href="/board"
-              className="rounded-full border border-white/60 px-6 py-3 text-[14px] font-semibold text-white hover:bg-white/10"
-            >
-              자세히 알아보기
+              더보기 &gt;
             </Link>
           </div>
+          <PortfolioSlider items={portfolioItems} />
         </div>
       </section>
 
@@ -294,29 +580,13 @@ export default async function Home() {
 
       {/* CTA */}
       <section className="bg-black text-white">
-        <div className="mx-auto flex max-w-[1440px] flex-col items-center gap-6 px-6 py-20 text-center md:flex-row md:justify-between md:text-left">
-          <div>
-            <h2 className="text-[28px] font-bold leading-tight md:text-[36px]">
-              지금, JASPERAGC 와 함께하세요
-            </h2>
-            <p className="mt-2 text-[14px] text-white/75">
-              가입하고 새로운 작품과 소식을 가장 먼저 만나보세요.
-            </p>
-          </div>
-          <div className="flex gap-3">
-            <Link
-              href="/signup"
-              className="rounded-full bg-white px-6 py-3 text-[14px] font-semibold text-black hover:bg-neutral-200"
-            >
-              회원가입
-            </Link>
-            <Link
-              href="/login"
-              className="rounded-full border border-white/60 px-6 py-3 text-[14px] font-semibold text-white hover:bg-white/10"
-            >
-              로그인
-            </Link>
-          </div>
+        <div className="mx-auto flex max-w-[1440px] flex-col items-center gap-6 px-6 py-20 text-center">
+          <h2 className="text-[28px] font-bold leading-tight md:text-[36px]">
+            지금, ACEWATER 와 함께하세요
+          </h2>
+          <p className="text-[14px] text-white/75">
+            엄선된 작품과 새로운 소식을 만나보세요.
+          </p>
         </div>
       </section>
     </>

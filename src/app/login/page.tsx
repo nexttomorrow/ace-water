@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import { login } from './actions'
 
 export default async function LoginPage({
@@ -20,7 +19,7 @@ export default async function LoginPage({
       )}
 
       <form action={login} className="flex flex-col gap-3">
-        <input type="hidden" name="redirect" value={sp.redirect ?? '/'} />
+        <input type="hidden" name="redirect" value={sp.redirect ?? '/admin'} />
         <label className="flex flex-col text-sm">
           이메일
           <input
@@ -48,12 +47,6 @@ export default async function LoginPage({
         </button>
       </form>
 
-      <p className="mt-4 text-sm text-neutral-600">
-        계정이 없으세요?{' '}
-        <Link href="/signup" className="text-blue-600 underline">
-          회원가입
-        </Link>
-      </p>
     </div>
   )
 }
