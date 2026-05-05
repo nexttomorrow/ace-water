@@ -25,7 +25,7 @@ export default async function Footer() {
     <footer className="mt-20 border-t border-neutral-200 bg-neutral-50 text-neutral-700">
       {/* Top quick links bar */}
       <div className="border-b border-neutral-200">
-        <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-4 px-6 py-5 text-[0.875rem]">
+        <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-4 px-6 py-5 text-[14px]">
           <div className="flex flex-wrap items-center gap-5">
             <Link href="#" className="font-medium text-black hover:underline">
               고객센터
@@ -44,7 +44,7 @@ export default async function Footer() {
             </Link>
           </div>
           <div className="flex items-center gap-3 text-neutral-500">
-            <span className="text-[12px]">팔로우</span>
+            <span className="text-[14px]">팔로우</span>
             {['F', 'X', 'Y', 'I'].map((c) => (
               <Link
                 key={c}
@@ -102,7 +102,7 @@ export default async function Footer() {
       {/* Bottom company info */}
       <div className="border-t border-neutral-200">
         <div className="mx-auto max-w-[1440px] px-6 py-8">
-          <div className="flex flex-col gap-4 text-[12px] leading-6 text-neutral-500 md:flex-row md:items-start md:justify-between">
+          <div className="flex flex-col gap-4 text-[0.875rem] leading-6 text-neutral-500 md:flex-row md:items-start md:justify-between">
             <div className="space-y-1">
               <p className="font-semibold text-neutral-700">에이스엔지니어링</p>
               <p>
@@ -118,21 +118,21 @@ export default async function Footer() {
               </p>
             </div>
             <div className="flex flex-wrap gap-x-4 gap-y-1 text-neutral-500">
-              <Link href="#" className="hover:underline">
+              <Link href="/terms" className="hover:underline">
                 이용약관
               </Link>
               <Link
-                href="#"
+                href="/privacy"
                 className="font-semibold text-neutral-700 hover:underline"
               >
                 개인정보처리방침
               </Link>
-              <Link href="#" className="hover:underline">
+              {/* <Link href="#" className="hover:underline">
                 법적고지
               </Link>
               <Link href="#" className="hover:underline">
                 사이트맵
-              </Link>
+              </Link> */}
             </div>
           </div>
         </div>
