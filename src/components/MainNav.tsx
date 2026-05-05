@@ -1,0 +1,215 @@
+'use client'
+
+import Link from 'next/link'
+import Image from 'next/image'
+import { useState } from 'react'
+import { logout } from '@/app/login/actions'
+import type { Category } from '@/lib/types'
+
+export type NavTopCategory = Category & {
+  tiles: Category[]
+  links: Category[]
+}
+
+type Props = {
+  categories: NavTopCategory[]
+  isLoggedIn: boolean
+  isAdmin: boolean
+  nickname: string | null
+  email: string | null
+}
+
+export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, email }: Props) {
+  const [activeId, setActiveId] = useState<number | null>(null)
+  const active = categories.find((c) => c.id === activeId) ?? null
+  const hasMega = active && (active.tiles.length > 0 || active.links.length > 0)
+
+  const imageUrl = (path: string) =>
+    `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/categories/${path}`
+
+  return (
+    <div
+      className="relative border-b border-neutral-200 bg-white"
+      onMouseLeave={() => setActiveId(null)}
+    >
+      <div className="mx-auto flex h-[68px] max-w-[1440px] items-center justify-between px-6">
+        <Link href="/" className="shrink-0" onMouseEnter={() => setActiveId(null)}>
+          <span className="text-[22px] font-extrabold tracking-tight text-black">JASPERAGC</span>
+        </Link>
+
+        <nav className="hidden flex-1 justify-center md:flex">
+          {categories.length === 0 ? (
+            <div className="px-5 py-3 text-[13px] text-neutral-400">
+              {isAdmin ? (
+                <Link href="/admin/categories/new" className="hover:underline">
+                  + 카테고리 등록
+                </Link>
+              ) : (
+                '메뉴 준비 중'
+              )}
+            </div>
+          ) : (
+            <ul className="flex items-center gap-1 text-[15px] font-medium text-neutral-800">
+              {categories.map((c) => {
+                const childCount = c.tiles.length + c.links.length
+                const isActive = activeId === c.id
+                return (
+                  <li key={c.id} onMouseEnter={() => setActiveId(c.id)}>
+                    <Link
+                      href={c.href || '#'}
+                      className={`relative block px-5 py-3 transition-colors ${
+                        isActive ? 'text-black' : 'hover:text-black'
+                      }`}
+                    >
+                      {c.name}
+                      {isActive && childCount > 0 && (
+                        <span className="absolute bottom-0 left-5 right-5 h-[2px] bg-blue-600" />
+                      )}
+                    </Link>
+                  </li>
+                )
+              })}
+              {isAdmin && (
+                <li onMouseEnter={() => setActiveId(null)}>
+                  <Link
+                    href="/admin"
+                    className="block px-5 py-3 font-semibold text-blue-600 hover:text-blue-700"
+                  >
+                    어드민
+                  </Link>
+                </li>
+              )}
+            </ul>
+          )}
+        </nav>
+
+        <div
+          className="flex shrink-0 items-center gap-1 text-neutral-700"
+          onMouseEnter={() => setActiveId(null)}
+        >
+          <button
+            aria-label="검색"
+            className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-neutral-100"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="11" cy="11" r="7" />
+              <path d="m20 20-3.5-3.5" />
+            </svg>
+          </button>
+
+          {isLoggedIn ? (
+            <>
+              <span className="hidden items-center gap-2 px-3 py-2 text-[13px] text-neutral-700 sm:flex">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="8" r="4" />
+                  <path d="M4 21c0-4 4-7 8-7s8 3 8 7" />
+                </svg>
+                {nickname ?? email?.split('@')[0]}
+              </span>
+              <form action={logout}>
+                <button
+                  type="submit"
+                  className="rounded-full px-3 py-2 text-[13px] text-neutral-700 hover:bg-neutral-100"
+                >
+                  로그아웃
+                </button>
+              </form>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="rounded-full px-3 py-2 text-[13px] font-medium text-neutral-800 hover:bg-neutral-100"
+              >
+                로그인
+              </Link>
+              <Link
+                href="/signup"
+                className="rounded-full bg-black px-4 py-2 text-[13px] font-medium text-white hover:bg-neutral-800"
+              >
+                회원가입
+              </Link>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* MEGA PANEL */}
+      <div
+        className={`absolute left-0 right-0 top-full overflow-hidden border-t border-neutral-200 bg-white transition-all duration-200 ${
+          hasMega
+            ? 'max-h-[640px] opacity-100 shadow-[0_12px_24px_-12px_rgba(0,0,0,0.15)]'
+            : 'pointer-events-none max-h-0 opacity-0'
+        }`}
+      >
+        {active && hasMega && (
+          <div className="mx-auto max-w-[1440px] px-6 py-10">
+            <div className={active.links.length > 0 ? 'grid grid-cols-12 gap-10' : ''}>
+              {/* tile grid */}
+              {active.tiles.length > 0 && (
+                <div
+                  className={
+                    active.links.length > 0 ? 'col-span-12 md:col-span-9' : 'w-full'
+                  }
+                >
+                  <div className="grid grid-cols-3 gap-x-4 gap-y-8 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7">
+                    {active.tiles.map((t) => (
+                      <Link
+                        key={t.id}
+                        href={t.href || '#'}
+                        className="group flex flex-col items-center text-center"
+                      >
+                        <div className="flex h-[88px] w-[88px] items-center justify-center overflow-hidden rounded-md bg-neutral-50 transition group-hover:bg-neutral-100">
+                          {t.image_path ? (
+                            <Image
+                              src={imageUrl(t.image_path)}
+                              alt={t.name}
+                              width={88}
+                              height={88}
+                              className="h-full w-full object-contain"
+                              unoptimized
+                            />
+                          ) : (
+                            <div className="text-[10px] text-neutral-400">no image</div>
+                          )}
+                        </div>
+                        <p className="mt-3 text-[13px] font-medium text-neutral-800 group-hover:text-black">
+                          {t.name}
+                        </p>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* link list */}
+              {active.links.length > 0 && (
+                <div
+                  className={
+                    active.tiles.length > 0
+                      ? 'col-span-12 border-t border-neutral-200 pt-6 md:col-span-3 md:border-l md:border-t-0 md:pl-10 md:pt-0'
+                      : 'w-full'
+                  }
+                >
+                  <h4 className="mb-4 text-[13px] font-semibold text-neutral-500">더 알아보기</h4>
+                  <ul className="space-y-3">
+                    {active.links.map((l) => (
+                      <li key={l.id}>
+                        <Link
+                          href={l.href || '#'}
+                          className="text-[14px] text-neutral-800 hover:text-black hover:underline"
+                        >
+                          {l.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}

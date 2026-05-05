@@ -1,0 +1,87 @@
+import Link from 'next/link'
+import { notFound } from 'next/navigation'
+import { createClient } from '@/lib/supabase/server'
+import { deletePost } from '../actions'
+
+export const revalidate = 0
+
+export default async function PostDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const { id } = await params
+  const postId = Number(id)
+  if (!Number.isFinite(postId)) notFound()
+
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  const { data: post } = await supabase
+    .from('posts')
+    .select('*, profiles:author_id ( nickname )')
+    .eq('id', postId)
+    .single()
+
+  if (!post) notFound()
+
+  let isAdmin = false
+  if (user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+    isAdmin = profile?.role === 'admin'
+  }
+
+  const author = Array.isArray(post.profiles) ? post.profiles[0] : post.profiles
+  const canModify = !!user && (user.id === post.author_id || isAdmin)
+
+  const handleDelete = deletePost.bind(null, postId)
+
+  return (
+    <article className="mx-auto max-w-2xl px-6 py-12">
+      <header className="mb-5 border-b border-neutral-200 pb-4">
+        <h1 className="text-2xl font-bold">{post.title}</h1>
+        <p className="mt-1 text-xs text-neutral-500">
+          {author?.nickname ?? '익명'} · {new Date(post.created_at).toLocaleString('ko-KR')}
+          {post.updated_at !== post.created_at && (
+            <> · 수정됨 {new Date(post.updated_at).toLocaleString('ko-KR')}</>
+          )}
+        </p>
+      </header>
+
+      <div className="whitespace-pre-wrap text-[15px] leading-7">{post.content}</div>
+
+      <div className="mt-8 flex gap-2">
+        <Link
+          href="/board"
+          className="rounded border border-neutral-300 bg-white px-3 py-2 text-sm hover:bg-neutral-100"
+        >
+          목록
+        </Link>
+        {canModify && (
+          <>
+            <Link
+              href={`/board/${post.id}/edit`}
+              className="rounded border border-neutral-300 bg-white px-3 py-2 text-sm hover:bg-neutral-100"
+            >
+              수정
+            </Link>
+            <form action={handleDelete}>
+              <button
+                type="submit"
+                className="rounded border border-red-300 bg-white px-3 py-2 text-sm text-red-700 hover:bg-red-50"
+              >
+                삭제
+              </button>
+            </form>
+          </>
+        )}
+      </div>
+    </article>
+  )
+}
