@@ -109,7 +109,7 @@ export default function FloatingButtons() {
                 <span className="text-neutral-500 transition group-hover:text-white">
                   {item.icon}
                 </span>
-                <span className="whitespace-nowrap text-[11px] font-semibold tracking-tight">
+                <span className="whitespace-nowrap text-[12px] font-semibold tracking-tight">
                   {item.label}
                 </span>
               </a>

@@ -23,8 +23,8 @@ export default async function Footer() {
 
   return (
     <footer className="mt-20 border-t border-neutral-200 bg-neutral-50 text-neutral-700">
-      {/* Top quick links bar */}
-      <div className="border-b border-neutral-200">
+      {/* Top quick links bar — 추후 사용 예정으로 임시 숨김 */}
+      {/* <div className="border-b border-neutral-200">
         <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-4 px-6 py-5 text-[14px]">
           <div className="flex flex-wrap items-center gap-5">
             <Link href="#" className="font-medium text-black hover:underline">
@@ -57,7 +57,7 @@ export default async function Footer() {
             ))}
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Multi-column links — built from categories */}
       {columns.length > 0 && (
