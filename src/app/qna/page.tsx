@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import QnaAccordion, { type QnaItem } from './QnaAccordion'
+import PageHeader from '@/components/PageHeader'
 
 export const revalidate = 0
 
@@ -29,14 +30,11 @@ export default async function QnaPage() {
 
   return (
     <div className="mx-auto max-w-[960px] px-6 py-12">
-      <div className="mb-2 text-center">
-        <p className="mb-2 text-[12px] font-medium tracking-widest text-neutral-500">FAQ</p>
-        <h1 className="text-[28px] font-bold leading-tight md:text-[36px]">자주 묻는 질문</h1>
-        <div className="mx-auto mt-3 h-[2px] w-10 bg-neutral-900" />
-        <p className="mt-4 text-[14px] text-neutral-500">
-          ACEWATER 제품과 서비스에 대한 궁금증을 해결해드립니다
-        </p>
-      </div>
+      <PageHeader
+        href="/qna"
+        fallbackTitle="Q&A"
+        fallbackDescription="ACEWATER 제품과 서비스에 대한 궁금증을 해결해드립니다"
+      />
 
       <div className="mb-5 mt-10 flex items-center justify-between">
         <p className="text-[13px] text-neutral-500">

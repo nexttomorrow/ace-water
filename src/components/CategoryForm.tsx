@@ -28,6 +28,7 @@ export default function CategoryForm({
     name: initial?.name ?? '',
     slug: initial?.slug ?? '',
     href: initial?.href ?? '',
+    description: initial?.description ?? '',
     parent_id: initial?.parent_id ?? '',
     display_type: initial?.display_type ?? 'tile',
     sort_order: initial?.sort_order ?? 0,
@@ -93,6 +94,20 @@ export default function CategoryForm({
         />
         <span className="mt-1 text-[11px] text-neutral-500">
           비우면 # 으로 처리됩니다.
+        </span>
+      </label>
+
+      <label className="flex flex-col text-sm">
+        <span className="font-medium">설명 (서브페이지 부제목)</span>
+        <textarea
+          name="description"
+          rows={2}
+          defaultValue={v.description ?? ''}
+          placeholder="해당 페이지 상단에 보여질 한 줄 설명"
+          className="mt-1 resize-y rounded border border-neutral-300 bg-white px-3 py-2"
+        />
+        <span className="mt-1 text-[11px] text-neutral-500">
+          이 카테고리의 href와 일치하는 서브페이지 헤더에 노출됩니다.
         </span>
       </label>
 

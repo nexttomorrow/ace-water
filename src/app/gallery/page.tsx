@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/server'
 import type { GalleryItem } from '@/lib/types'
+import PageHeader from '@/components/PageHeader'
 
 export const revalidate = 0
 
@@ -17,7 +18,13 @@ export default async function GalleryPage() {
 
   return (
     <div className="mx-auto max-w-[1440px] px-6 py-12">
-      <h1 className="mb-5 text-2xl font-bold">갤러리</h1>
+      <PageHeader href="/gallery" fallbackTitle="갤러리" />
+
+      <div className="mb-5 mt-10 flex items-center justify-between">
+        <p className="text-[13px] text-neutral-500">
+          총 <span className="font-semibold text-neutral-900">{items.length}</span>개의 이미지
+        </p>
+      </div>
 
       {error && (
         <p className="mb-4 rounded bg-red-50 px-3 py-2 text-sm text-red-700">{error.message}</p>

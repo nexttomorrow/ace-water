@@ -31,6 +31,7 @@ export type Category = {
   parent_id: number | null
   name: string
   slug: string | null
+  description: string | null
   image_path: string | null
   display_type: 'tile' | 'link' | 'text'
   href: string | null

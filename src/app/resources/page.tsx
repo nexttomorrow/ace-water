@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { formatBytes, getFileColor } from '@/lib/files'
+import PageHeader from '@/components/PageHeader'
 
 export const revalidate = 0
 
@@ -43,14 +44,11 @@ export default async function ResourcesListPage({
 
   return (
     <div className="mx-auto max-w-[1440px] px-6 py-12">
-      <div className="mb-2 text-center">
-        <p className="mb-2 text-[12px] font-medium tracking-widest text-neutral-500">RESOURCES</p>
-        <h1 className="text-[28px] font-bold leading-tight md:text-[36px]">자료실</h1>
-        <div className="mx-auto mt-3 h-[2px] w-10 bg-neutral-900" />
-        <p className="mt-4 text-[14px] text-neutral-500">
-          제품 카탈로그·도면·기술자료 등을 다운로드하실 수 있습니다
-        </p>
-      </div>
+      <PageHeader
+        href="/resources"
+        fallbackTitle="자료실"
+        fallbackDescription="제품 카탈로그·도면·기술자료 등을 다운로드하실 수 있습니다"
+      />
 
       <div className="mb-5 mt-10 flex items-center justify-between">
         <p className="text-[13px] text-neutral-500">

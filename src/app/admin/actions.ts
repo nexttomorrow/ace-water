@@ -153,6 +153,7 @@ function parseCategoryForm(formData: FormData) {
   const name = String(formData.get('name') ?? '').trim()
   const slugRaw = String(formData.get('slug') ?? '').trim()
   const hrefRaw = String(formData.get('href') ?? '').trim()
+  const descriptionRaw = String(formData.get('description') ?? '').trim()
   const parentRaw = String(formData.get('parent_id') ?? '').trim()
   const rawDisplayType = String(formData.get('display_type') ?? 'tile')
   const display_type = (
@@ -165,6 +166,7 @@ function parseCategoryForm(formData: FormData) {
     name,
     slug: slugRaw || null,
     href: hrefRaw || null,
+    description: descriptionRaw || null,
     parent_id: parentRaw ? Number(parentRaw) : null,
     display_type,
     sort_order,

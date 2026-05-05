@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import PageHeader from '@/components/PageHeader'
 
 const ITEMS = [
   { seed: 'ace-portfolio-1', title: '서울 강남 OO 빌딩', desc: '오피스 정수 시스템 시공', region: '서울' },
@@ -18,13 +19,12 @@ const ITEMS = [
 export default function PortfolioPage() {
   return (
     <div className="mx-auto max-w-[1440px] px-6 py-16">
-      <div className="mb-10 text-center">
-        <p className="mb-2 text-[12px] font-medium tracking-widest text-neutral-500">PORTFOLIO</p>
-        <h1 className="text-[28px] font-bold leading-tight md:text-[36px]">시공사례</h1>
-        <div className="mx-auto mt-3 h-[2px] w-10 bg-neutral-900" />
-        <p className="mt-4 text-[14px] text-neutral-500">
-          ACEWATER가 함께해온 다양한 현장을 만나보세요
-        </p>
+      <div className="mb-10">
+        <PageHeader
+          href="/portfolio"
+          fallbackTitle="시공사례"
+          fallbackDescription="ACEWATER가 함께해온 다양한 현장을 만나보세요"
+        />
       </div>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
+import PageHeader from '@/components/PageHeader'
 
 export const revalidate = 0
 
@@ -44,13 +45,20 @@ export default async function BoardListPage({
 
   return (
     <div className="mx-auto max-w-[1440px] px-6 py-12">
-      <div className="mb-5 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">게시판</h1>
+      <PageHeader href="/board" fallbackTitle="게시판" />
+
+      <div className="mb-5 mt-10 flex items-center justify-between">
+        <p className="text-[13px] text-neutral-500">
+          총 <span className="font-semibold text-neutral-900">{total}</span>개의 게시글
+        </p>
         {isAdmin && (
           <Link
             href="/board/new"
-            className="rounded bg-neutral-900 px-3 py-2 text-sm font-medium text-white hover:bg-neutral-700"
+            className="inline-flex items-center gap-1.5 rounded bg-neutral-900 px-3 py-2 text-sm font-medium text-white hover:bg-neutral-700"
           >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
             글쓰기
           </Link>
         )}
