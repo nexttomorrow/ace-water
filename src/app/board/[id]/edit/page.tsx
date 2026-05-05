@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { updatePost } from '../../actions'
+import RichTextEditor from '@/components/RichTextEditor'
 
 export default async function EditPostPage({
   params,
@@ -37,7 +38,7 @@ export default async function EditPostPage({
   const action = updatePost.bind(null, postId)
 
   return (
-    <div className="mx-auto max-w-2xl px-6 py-12">
+    <div className="mx-auto max-w-[1440px] px-6 py-12">
       <h1 className="mb-5 text-2xl font-bold">글 수정</h1>
 
       {sp.error && (
@@ -49,15 +50,9 @@ export default async function EditPostPage({
           name="title"
           required
           defaultValue={post.title}
-          className="rounded border border-neutral-300 bg-white px-3 py-2"
+          className="rounded border border-neutral-300 bg-white px-3 py-2 text-lg"
         />
-        <textarea
-          name="content"
-          required
-          rows={12}
-          defaultValue={post.content}
-          className="rounded border border-neutral-300 bg-white px-3 py-2"
-        />
+        <RichTextEditor name="content" defaultValue={post.content} />
         <div className="flex gap-2">
           <button
             type="submit"

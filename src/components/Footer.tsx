@@ -1,36 +1,26 @@
-import Link from "next/link";
+import Link from 'next/link'
+import { createClient } from '@/lib/supabase/server'
+import type { Category } from '@/lib/types'
 
-const columns = [
-  {
-    title: "회사소개",
-    links: ["연혁", "조직도", "오시는길"],
-  },
-  {
-    title: "제품안내",
-    links: [
-      "음수대",
-      "세정대",
-      "세족대",
-      "차양",
-      "대용량정수기",
-      "샤워기/코인샤워기",
-    ],
-  },
-  {
-    title: "견적/도면문의",
-    links: ["실행견적 문의", "설계견적 문의", "도면요청", "제작의뢰"],
-  },
-  {
-    title: "시공사례",
-    links: ["시공사례"],
-  },
-  {
-    title: "자료실",
-    links: ["공지사항", "자료실", "Q&A"],
-  },
-];
+export default async function Footer() {
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from('categories')
+    .select('*')
+    .eq('is_active', true)
+    .order('sort_order', { ascending: true })
+    .order('id', { ascending: true })
 
-export default function Footer() {
+  const cats = (data ?? []) as Category[]
+  const columns = cats
+    .filter((c) => c.parent_id === null)
+    .map((top) => ({
+      id: top.id,
+      title: top.name,
+      href: top.href,
+      children: cats.filter((c) => c.parent_id === top.id),
+    }))
+
   return (
     <footer className="mt-20 border-t border-neutral-200 bg-neutral-50 text-neutral-700">
       {/* Top quick links bar */}
@@ -55,7 +45,7 @@ export default function Footer() {
           </div>
           <div className="flex items-center gap-3 text-neutral-500">
             <span className="text-[12px]">팔로우</span>
-            {["F", "X", "Y", "I"].map((c) => (
+            {['F', 'X', 'Y', 'I'].map((c) => (
               <Link
                 key={c}
                 href="#"
@@ -69,27 +59,45 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Multi-column links */}
-      <div className="mx-auto max-w-[1440px] px-6 py-12">
-        <div className="grid grid-cols-2 gap-10 md:grid-cols-5">
-          {columns.map((col) => (
-            <div key={col.title}>
-              <h3 className="mb-4 text-[13px] font-bold text-black">
-                {col.title}
-              </h3>
-              <ul className="space-y-2.5 text-[13px] text-neutral-600">
-                {col.links.map((label) => (
-                  <li key={label}>
-                    <Link href="#" className="hover:text-black hover:underline">
-                      {label}
+      {/* Multi-column links — built from categories */}
+      {columns.length > 0 && (
+        <div className="mx-auto max-w-[1440px] px-6 py-12">
+          <div
+            className="grid gap-10"
+            style={{
+              gridTemplateColumns: `repeat(auto-fit, minmax(160px, 1fr))`,
+            }}
+          >
+            {columns.map((col) => (
+              <div key={col.id}>
+                <h3 className="mb-4 text-[13px] font-bold text-black">
+                  {col.href ? (
+                    <Link href={col.href} className="hover:underline">
+                      {col.title}
                     </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+                  ) : (
+                    col.title
+                  )}
+                </h3>
+                {col.children.length > 0 && (
+                  <ul className="space-y-2.5 text-[13px] text-neutral-600">
+                    {col.children.map((child) => (
+                      <li key={child.id}>
+                        <Link
+                          href={child.href || '#'}
+                          className="hover:text-black hover:underline"
+                        >
+                          {child.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Bottom company info */}
       <div className="border-t border-neutral-200">
@@ -98,8 +106,7 @@ export default function Footer() {
             <div className="space-y-1">
               <p className="font-semibold text-neutral-700">에이스엔지니어링</p>
               <p>
-                대표: 구종철 &nbsp;|&nbsp; 주소: 경기도 파주시 탄현면 방촌로
-                449-58
+                대표: 구종철 &nbsp;|&nbsp; 주소: 경기도 파주시 탄현면 방촌로 449-58
               </p>
               <p>사업자등록번호: 111-24-75831</p>
               <p>
@@ -107,8 +114,7 @@ export default function Footer() {
                 acewater@acewater.net
               </p>
               <p className="pt-2 text-neutral-400">
-                © {new Date().getFullYear()} 에이스엔지니어링. All rights
-                reserved.
+                © {new Date().getFullYear()} 에이스엔지니어링. All rights reserved.
               </p>
             </div>
             <div className="flex flex-wrap gap-x-4 gap-y-1 text-neutral-500">
@@ -132,5 +138,5 @@ export default function Footer() {
         </div>
       </div>
     </footer>
-  );
+  )
 }

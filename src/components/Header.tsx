@@ -38,6 +38,7 @@ export default async function Header() {
     .map((top) => ({
       ...top,
       tiles: cats.filter((c) => c.parent_id === top.id && c.display_type === 'tile'),
+      texts: cats.filter((c) => c.parent_id === top.id && c.display_type === 'text'),
       links: cats.filter((c) => c.parent_id === top.id && c.display_type === 'link'),
     }))
 

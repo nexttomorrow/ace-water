@@ -42,33 +42,6 @@ export default async function AdminHome() {
         ))}
       </div>
 
-      <div className="mt-8 flex flex-wrap gap-2">
-        <Link
-          href="/admin/hero"
-          className="rounded-full bg-black px-4 py-2 text-[13px] font-medium text-white hover:bg-neutral-800"
-        >
-          메인 슬라이드 관리
-        </Link>
-        <Link
-          href="/admin/categories"
-          className="rounded-full border border-neutral-300 px-4 py-2 text-[13px] hover:bg-neutral-100"
-        >
-          카테고리 관리
-        </Link>
-        <Link
-          href="/admin/gallery"
-          className="rounded-full border border-neutral-300 px-4 py-2 text-[13px] hover:bg-neutral-100"
-        >
-          갤러리 관리
-        </Link>
-        <Link
-          href="/admin/board"
-          className="rounded-full border border-neutral-300 px-4 py-2 text-[13px] hover:bg-neutral-100"
-        >
-          게시판 관리
-        </Link>
-      </div>
-
       <div className="mt-10 rounded-xl border border-blue-200 bg-blue-50 p-5 text-[13px] text-blue-900">
         <p className="font-semibold">처음이세요?</p>
         <p className="mt-1 leading-6">

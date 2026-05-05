@@ -43,7 +43,7 @@ export default async function PostDetailPage({
   const handleDelete = deletePost.bind(null, postId)
 
   return (
-    <article className="mx-auto max-w-2xl px-6 py-12">
+    <article className="mx-auto max-w-[1440px] px-6 py-12">
       <header className="mb-5 border-b border-neutral-200 pb-4">
         <h1 className="text-2xl font-bold">{post.title}</h1>
         <p className="mt-1 text-xs text-neutral-500">
@@ -54,7 +54,10 @@ export default async function PostDetailPage({
         </p>
       </header>
 
-      <div className="whitespace-pre-wrap text-[15px] leading-7">{post.content}</div>
+      <div
+        className="prose prose-neutral max-w-none [&_table]:border [&_table]:border-collapse [&_th]:border [&_th]:border-neutral-300 [&_th]:bg-neutral-100 [&_th]:px-2 [&_th]:py-1 [&_td]:border [&_td]:border-neutral-300 [&_td]:px-2 [&_td]:py-1 [&_img]:rounded"
+        dangerouslySetInnerHTML={{ __html: post.content }}
+      />
 
       <div className="mt-8 flex gap-2">
         <Link

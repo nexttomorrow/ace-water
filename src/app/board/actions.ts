@@ -2,7 +2,51 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import DOMPurify from 'isomorphic-dompurify'
 import { createClient } from '@/lib/supabase/server'
+
+async function ensureAdmin() {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) return { supabase, user: null, isAdmin: false }
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+  return { supabase, user, isAdmin: profile?.role === 'admin' }
+}
+
+function sanitize(html: string) {
+  return DOMPurify.sanitize(html, {
+    USE_PROFILES: { html: true },
+    ADD_ATTR: ['target', 'rel', 'colspan', 'rowspan', 'colwidth', 'style'],
+  })
+}
+
+const POSTS_BUCKET = 'posts'
+
+export async function uploadPostImage(formData: FormData): Promise<{ url?: string; error?: string }> {
+  const { supabase, isAdmin } = await ensureAdmin()
+  if (!isAdmin) return { error: '권한이 없습니다.' }
+
+  const file = formData.get('image') as File | null
+  if (!file || file.size === 0) return { error: '이미지를 선택해주세요.' }
+  if (!file.type.startsWith('image/')) return { error: '이미지 파일만 업로드 가능합니다.' }
+
+  const ext = file.name.split('.').pop() ?? 'jpg'
+  const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
+
+  const { error: uploadError } = await supabase.storage
+    .from(POSTS_BUCKET)
+    .upload(path, file, { contentType: file.type, upsert: false })
+  if (uploadError) return { error: uploadError.message }
+
+  const url = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${POSTS_BUCKET}/${path}`
+  return { url }
+}
 
 export async function createPost(formData: FormData) {
   const supabase = await createClient()
@@ -11,10 +55,18 @@ export async function createPost(formData: FormData) {
   } = await supabase.auth.getUser()
   if (!user) redirect('/login?redirect=/board/new')
 
-  const title = String(formData.get('title') ?? '').trim()
-  const content = String(formData.get('content') ?? '').trim()
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+  if (profile?.role !== 'admin') redirect('/board')
 
-  if (!title || !content) {
+  const title = String(formData.get('title') ?? '').trim()
+  const rawContent = String(formData.get('content') ?? '').trim()
+  const content = sanitize(rawContent)
+
+  if (!title || !content || content === '<p></p>') {
     redirect('/board/new?error=' + encodeURIComponent('제목과 내용을 입력해주세요'))
   }
 
@@ -36,9 +88,10 @@ export async function createPost(formData: FormData) {
 export async function updatePost(id: number, formData: FormData) {
   const supabase = await createClient()
   const title = String(formData.get('title') ?? '').trim()
-  const content = String(formData.get('content') ?? '').trim()
+  const rawContent = String(formData.get('content') ?? '').trim()
+  const content = sanitize(rawContent)
 
-  if (!title || !content) {
+  if (!title || !content || content === '<p></p>') {
     redirect(`/board/${id}/edit?error=` + encodeURIComponent('제목과 내용을 입력해주세요'))
   }
 

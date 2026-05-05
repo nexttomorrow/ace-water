@@ -78,6 +78,7 @@ export default function CategoryForm({
           className="mt-1 rounded border border-neutral-300 bg-white px-3 py-2"
         >
           <option value="tile">tile — 메가메뉴 좌측 그리드 (이미지 + 이름)</option>
+          <option value="text">text — 메가메뉴 좌측 그리드 (이름만, 이미지 없음)</option>
           <option value="link">link — 메가메뉴 우측 텍스트 링크</option>
         </select>
       </label>

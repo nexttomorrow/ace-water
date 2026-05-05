@@ -354,19 +354,17 @@ export default async function Home() {
       </section>
 
       {/* PORTFOLIO / 시공사례 */}
-      <section className="bg-neutral-50 py-20">
-        <div className="mx-auto max-w-[1440px] px-6">
-          <div className="mb-8 flex items-baseline justify-center gap-6">
-            <h2 className="text-[26px] font-bold tracking-tight md:text-[30px]">시공사례</h2>
-            <Link
-              href="/portfolio"
-              className="text-[13px] font-medium text-neutral-600 transition hover:text-black"
-            >
-              더보기 &gt;
-            </Link>
-          </div>
-          <PortfolioSlider items={portfolioItems} />
+      <section className="bg-neutral-50 py-28">
+        <div className="mx-auto mb-12 flex max-w-[1440px] items-end justify-between px-6">
+          <h2 className="text-[28px] font-bold tracking-tight md:text-[36px]">시공사례</h2>
+          <Link
+            href="/portfolio"
+            className="text-[14px] font-medium text-neutral-500 transition hover:text-black"
+          >
+            + 더보기
+          </Link>
         </div>
+        <PortfolioSlider items={portfolioItems} />
       </section>
 
       {/* FEATURE CARDS */}

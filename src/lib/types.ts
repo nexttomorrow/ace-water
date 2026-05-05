@@ -32,7 +32,7 @@ export type Category = {
   name: string
   slug: string | null
   image_path: string | null
-  display_type: 'tile' | 'link'
+  display_type: 'tile' | 'link' | 'text'
   href: string | null
   sort_order: number
   is_active: boolean

@@ -8,6 +8,7 @@ import type { Category } from '@/lib/types'
 
 export type NavTopCategory = Category & {
   tiles: Category[]
+  texts: Category[]
   links: Category[]
 }
 
@@ -22,7 +23,8 @@ type Props = {
 export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, email }: Props) {
   const [activeId, setActiveId] = useState<number | null>(null)
   const active = categories.find((c) => c.id === activeId) ?? null
-  const hasMega = active && (active.tiles.length > 0 || active.links.length > 0)
+  const hasMega =
+    active && (active.tiles.length > 0 || active.texts.length > 0 || active.links.length > 0)
 
   const imageUrl = (path: string) =>
     `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/categories/${path}`
@@ -46,7 +48,7 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
             ) : (
               <ul className="flex items-center gap-1 text-[15px] font-medium text-neutral-800">
                 {categories.map((c) => {
-                  const childCount = c.tiles.length + c.links.length
+                  const childCount = c.tiles.length + c.texts.length + c.links.length
                   const isActive = activeId === c.id
                   const dimmed = isAdmin && c.is_active === false
                   return (
@@ -122,81 +124,98 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
       </div>
 
       {/* MEGA PANEL */}
-      <div
-        className={`absolute left-0 right-0 top-full overflow-hidden border-t border-neutral-200 bg-white transition-all duration-200 ${
-          hasMega
-            ? 'max-h-[640px] opacity-100 shadow-[0_12px_24px_-12px_rgba(0,0,0,0.15)]'
-            : 'pointer-events-none max-h-0 opacity-0'
-        }`}
-      >
-        {active && hasMega && (
-          <div className="mx-auto max-w-[1440px] px-6 py-10">
-            <div className={active.links.length > 0 ? 'grid grid-cols-12 gap-10' : ''}>
-              {/* tile grid */}
-              {active.tiles.length > 0 && (
-                <div
-                  className={
-                    active.links.length > 0 ? 'col-span-12 md:col-span-9' : 'w-full'
-                  }
-                >
-                  <div className="grid grid-cols-3 gap-x-4 gap-y-8 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7">
-                    {active.tiles.map((t) => (
+      {active && hasMega && (
+        <div className="absolute left-0 right-0 top-full overflow-hidden border-t border-neutral-200 bg-white shadow-[0_12px_24px_-12px_rgba(0,0,0,0.15)]">
+          <>
+            {/* text tabs row (admin-nav style, full-width border) */}
+            {active.texts.length > 0 && (
+              <div className="border-b border-neutral-200">
+                <div className="mx-auto max-w-[1440px] px-6">
+                  <div className="flex h-12 items-center gap-1 overflow-x-auto">
+                    {active.texts.map((t) => (
                       <Link
                         key={t.id}
                         href={t.href || '#'}
-                        className="group flex flex-col items-center text-center"
+                        className="relative whitespace-nowrap px-4 py-2 text-[13px] font-medium text-neutral-500 transition hover:text-black"
                       >
-                        <div className="flex h-[88px] w-[88px] items-center justify-center overflow-hidden rounded-md bg-neutral-50 transition group-hover:bg-neutral-100">
-                          {t.image_path ? (
-                            <Image
-                              src={imageUrl(t.image_path)}
-                              alt={t.name}
-                              width={88}
-                              height={88}
-                              className="h-full w-full object-contain"
-                              unoptimized
-                            />
-                          ) : (
-                            <div className="text-[10px] text-neutral-400">no image</div>
-                          )}
-                        </div>
-                        <p className="mt-3 text-[13px] font-medium text-neutral-800 group-hover:text-black">
-                          {t.name}
-                        </p>
+                        {t.name}
                       </Link>
                     ))}
                   </div>
                 </div>
-              )}
+              </div>
+            )}
 
-              {/* link list */}
-              {active.links.length > 0 && (
-                <div
-                  className={
-                    active.tiles.length > 0
-                      ? 'col-span-12 border-t border-neutral-200 pt-6 md:col-span-3 md:border-l md:border-t-0 md:pl-10 md:pt-0'
-                      : 'w-full'
-                  }
-                >
-                  <h4 className="mb-4 text-[13px] font-semibold text-neutral-500">더 알아보기</h4>
-                  <ul className="space-y-3">
-                    {active.links.map((l) => (
-                      <li key={l.id}>
-                        <Link
-                          href={l.href || '#'}
-                          className="text-[14px] text-neutral-800 hover:text-black hover:underline"
-                        >
-                          {l.name}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
+            {(active.tiles.length > 0 || active.links.length > 0) && (
+              <div className="mx-auto max-w-[1440px] px-6 py-10">
+                <div className={active.links.length > 0 ? 'grid grid-cols-12 gap-10' : ''}>
+                  {/* tile grid */}
+                  {active.tiles.length > 0 && (
+                    <div
+                      className={
+                        active.links.length > 0 ? 'col-span-12 md:col-span-9' : 'w-full'
+                      }
+                    >
+                      <div className="grid grid-cols-3 gap-x-4 gap-y-8 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7">
+                        {active.tiles.map((t) => (
+                          <Link
+                            key={t.id}
+                            href={t.href || '#'}
+                            className="group flex flex-col items-center text-center"
+                          >
+                            <div className="flex h-[88px] w-[88px] items-center justify-center overflow-hidden rounded-md bg-neutral-50 transition group-hover:bg-neutral-100">
+                              {t.image_path ? (
+                                <Image
+                                  src={imageUrl(t.image_path)}
+                                  alt={t.name}
+                                  width={88}
+                                  height={88}
+                                  className="h-full w-full object-contain"
+                                  unoptimized
+                                />
+                              ) : (
+                                <div className="text-[10px] text-neutral-400">no image</div>
+                              )}
+                            </div>
+                            <p className="mt-3 text-[13px] font-medium text-neutral-800 group-hover:text-black">
+                              {t.name}
+                            </p>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* link list */}
+                  {active.links.length > 0 && (
+                    <div
+                      className={
+                        active.tiles.length > 0
+                          ? 'col-span-12 border-t border-neutral-200 pt-6 md:col-span-3 md:border-l md:border-t-0 md:pl-10 md:pt-0'
+                          : 'w-full'
+                      }
+                    >
+                      <h4 className="mb-4 text-[13px] font-semibold text-neutral-500">더 알아보기</h4>
+                      <ul className="space-y-3">
+                        {active.links.map((l) => (
+                          <li key={l.id}>
+                            <Link
+                              href={l.href || '#'}
+                              className="text-[14px] text-neutral-800 hover:text-black hover:underline"
+                            >
+                              {l.name}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
+              </div>
+            )}
+          </>
+        </div>
+      )}
     </div>
   )
 }

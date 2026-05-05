@@ -154,9 +154,10 @@ function parseCategoryForm(formData: FormData) {
   const slugRaw = String(formData.get('slug') ?? '').trim()
   const hrefRaw = String(formData.get('href') ?? '').trim()
   const parentRaw = String(formData.get('parent_id') ?? '').trim()
-  const display_type = (String(formData.get('display_type') ?? 'tile') === 'link'
-    ? 'link'
-    : 'tile') as 'tile' | 'link'
+  const rawDisplayType = String(formData.get('display_type') ?? 'tile')
+  const display_type = (
+    rawDisplayType === 'link' || rawDisplayType === 'text' ? rawDisplayType : 'tile'
+  ) as 'tile' | 'link' | 'text'
   const sort_order = Number(formData.get('sort_order') ?? 0) || 0
   const is_active = formData.get('is_active') === 'on'
 
