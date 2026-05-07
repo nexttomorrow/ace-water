@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { HERO_SLIDES_MAX } from '@/lib/types'
+import { HERO_SLIDES_MAX, CASE_ADDITIONAL_MAX } from '@/lib/types'
 
 async function ensureAdmin() {
   const supabase = await createClient()
@@ -22,38 +22,96 @@ async function ensureAdmin() {
   return { supabase, user }
 }
 
-// ---------- gallery ----------
+// ---------- gallery (시공사례) ----------
+
+async function uploadToGallery(supabase: Awaited<ReturnType<typeof createClient>>, file: File) {
+  const ext = file.name.split('.').pop() ?? 'jpg'
+  const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
+  const { error } = await supabase.storage
+    .from('gallery')
+    .upload(path, file, { contentType: file.type, upsert: false })
+  if (error) throw error
+  return path
+}
+
+// Supabase 에러는 Error 인스턴스가 아닐 수 있어 직접 message 를 추출
+function getErrorMessage(e: unknown, fallback: string): string {
+  if (e instanceof Error) return e.message
+  if (typeof e === 'object' && e !== null && 'message' in e) {
+    const m = (e as { message?: unknown }).message
+    if (typeof m === 'string') return m
+  }
+  if (typeof e === 'string') return e
+  return fallback
+}
+
+function parseCaseFields(formData: FormData) {
+  const title = String(formData.get('title') ?? '').trim()
+  const description = String(formData.get('description') ?? '').trim()
+  const modelName = String(formData.get('model_name') ?? '').trim()
+  const siteName = String(formData.get('site_name') ?? '').trim()
+  const clientName = String(formData.get('client_name') ?? '').trim()
+  const productHrefs = formData
+    .getAll('product_hrefs')
+    .map((v) => String(v).trim())
+    .filter(Boolean)
+  const categoryRaw = String(formData.get('category_id') ?? '').trim()
+
+  return {
+    title,
+    description: description || null,
+    model_name: modelName || null,
+    site_name: siteName || null,
+    client_name: clientName || null,
+    product_hrefs: productHrefs,
+    category_id: categoryRaw ? Number(categoryRaw) : null,
+  }
+}
 
 export async function createGalleryItem(formData: FormData) {
   const { supabase } = await ensureAdmin()
+  const fields = parseCaseFields(formData)
+  const mainFile = formData.get('image') as File | null
+  const additionalFiles = formData.getAll('additional_images') as File[]
+  const validAdditional = additionalFiles.filter((f) => f && f.size > 0)
 
-  const title = String(formData.get('title') ?? '').trim()
-  const description = String(formData.get('description') ?? '').trim()
-  const file = formData.get('image') as File | null
-
-  if (!title || !file || file.size === 0) {
-    redirect('/admin/gallery/new?error=' + encodeURIComponent('제목과 이미지를 입력해주세요'))
+  if (!fields.title || !mainFile || mainFile.size === 0) {
+    redirect('/admin/gallery/new?error=' + encodeURIComponent('제목과 대표 이미지를 입력해주세요'))
   }
 
-  const ext = file.name.split('.').pop() ?? 'jpg'
-  const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
-
-  const { error: uploadError } = await supabase.storage
-    .from('gallery')
-    .upload(path, file, { contentType: file.type, upsert: false })
-
-  if (uploadError) {
-    redirect('/admin/gallery/new?error=' + encodeURIComponent(uploadError.message))
+  if (validAdditional.length > CASE_ADDITIONAL_MAX) {
+    redirect(
+      '/admin/gallery/new?error=' +
+        encodeURIComponent(
+          `추가 이미지는 최대 ${CASE_ADDITIONAL_MAX}장까지 등록할 수 있어요 (선택: ${validAdditional.length}장)`
+        )
+    )
   }
+
+  const uploaded: string[] = []
+  let mainPath: string
+  try {
+    mainPath = await uploadToGallery(supabase, mainFile)
+    uploaded.push(mainPath)
+    for (const f of validAdditional) {
+      const p = await uploadToGallery(supabase, f)
+      uploaded.push(p)
+    }
+  } catch (e) {
+    if (uploaded.length) await supabase.storage.from('gallery').remove(uploaded)
+    redirect('/admin/gallery/new?error=' + encodeURIComponent(getErrorMessage(e, '업로드 실패')))
+  }
+
+  const additionalPaths = uploaded.slice(1)
 
   const { error } = await supabase.from('gallery_items').insert({
-    title,
-    description: description || null,
-    image_path: path,
+    ...fields,
+    image_path: mainPath,
+    additional_images: additionalPaths,
   })
 
   if (error) {
-    await supabase.storage.from('gallery').remove([path])
+    await supabase.storage.from('gallery').remove(uploaded)
     redirect('/admin/gallery/new?error=' + encodeURIComponent(error.message))
   }
 
@@ -66,52 +124,80 @@ export async function createGalleryItem(formData: FormData) {
 
 export async function updateGalleryItem(id: number, formData: FormData) {
   const { supabase } = await ensureAdmin()
+  const fields = parseCaseFields(formData)
+  const mainFile = formData.get('image') as File | null
+  const additionalFiles = formData.getAll('additional_images') as File[]
+  // 기존 추가 이미지 중 제거할 path 들
+  const removedAdditional = formData.getAll('remove_additional').map(String).filter(Boolean)
 
-  const title = String(formData.get('title') ?? '').trim()
-  const description = String(formData.get('description') ?? '').trim()
-  const file = formData.get('image') as File | null
-
-  if (!title) {
+  if (!fields.title) {
     redirect(`/admin/gallery/${id}/edit?error=` + encodeURIComponent('제목을 입력해주세요'))
   }
 
-  const update: { title: string; description: string | null; image_path?: string } = {
-    title,
-    description: description || null,
+  const { data: existing } = await supabase
+    .from('gallery_items')
+    .select('image_path, additional_images')
+    .eq('id', id)
+    .single()
+
+  const currentAdditional = (existing?.additional_images ?? []) as string[]
+  const keptAdditional = currentAdditional.filter(
+    (p) => !removedAdditional.includes(p)
+  )
+  const validNewAdditional = additionalFiles.filter((f) => f && f.size > 0)
+  const finalCount = keptAdditional.length + validNewAdditional.length
+
+  if (finalCount > CASE_ADDITIONAL_MAX) {
+    redirect(
+      `/admin/gallery/${id}/edit?error=` +
+        encodeURIComponent(
+          `추가 이미지는 최대 ${CASE_ADDITIONAL_MAX}장까지 가능합니다 (현재 유지 ${keptAdditional.length}장 + 신규 ${validNewAdditional.length}장 = ${finalCount}장)`
+        )
+    )
   }
 
-  let oldPath: string | null = null
-  if (file && file.size > 0) {
-    const { data: existing } = await supabase
-      .from('gallery_items')
-      .select('image_path')
-      .eq('id', id)
-      .single()
-    oldPath = existing?.image_path ?? null
+  const update: Record<string, unknown> = { ...fields }
+  let oldMainPath: string | null = null
+  const newlyUploaded: string[] = []
 
-    const ext = file.name.split('.').pop() ?? 'jpg'
-    const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
-    const { error: uploadError } = await supabase.storage
-      .from('gallery')
-      .upload(path, file, { contentType: file.type })
-    if (uploadError) {
-      redirect(`/admin/gallery/${id}/edit?error=` + encodeURIComponent(uploadError.message))
+  try {
+    if (mainFile && mainFile.size > 0) {
+      oldMainPath = existing?.image_path ?? null
+      const p = await uploadToGallery(supabase, mainFile)
+      newlyUploaded.push(p)
+      update.image_path = p
     }
-    update.image_path = path
-  }
 
-  const { error } = await supabase.from('gallery_items').update(update).eq('id', id)
-  if (error) {
-    redirect(`/admin/gallery/${id}/edit?error=` + encodeURIComponent(error.message))
-  }
+    const additionalUploaded: string[] = []
+    for (const f of validNewAdditional) {
+      const p = await uploadToGallery(supabase, f)
+      newlyUploaded.push(p)
+      additionalUploaded.push(p)
+    }
 
-  if (oldPath && update.image_path) {
-    await supabase.storage.from('gallery').remove([oldPath])
+    update.additional_images = [...keptAdditional, ...additionalUploaded]
+
+    const { error } = await supabase.from('gallery_items').update(update).eq('id', id)
+    if (error) throw error
+
+    // 정리 — 교체된 메인 이미지 + 제거 요청된 추가 이미지 삭제
+    const toRemove: string[] = []
+    if (oldMainPath) toRemove.push(oldMainPath)
+    toRemove.push(...removedAdditional)
+    if (toRemove.length) {
+      await supabase.storage.from('gallery').remove(toRemove)
+    }
+  } catch (e) {
+    if (newlyUploaded.length) await supabase.storage.from('gallery').remove(newlyUploaded)
+    redirect(
+      `/admin/gallery/${id}/edit?error=` + encodeURIComponent(getErrorMessage(e, '업데이트 실패'))
+    )
   }
 
   revalidatePath('/admin/gallery')
   revalidatePath('/gallery')
   revalidatePath('/construction-cases')
+  revalidatePath(`/construction-cases/${id}`)
   revalidatePath('/')
   redirect('/admin/gallery')
 }
@@ -121,21 +207,101 @@ export async function deleteGalleryItem(id: number) {
 
   const { data: existing } = await supabase
     .from('gallery_items')
-    .select('image_path')
+    .select('image_path, additional_images')
     .eq('id', id)
     .single()
 
   const { error } = await supabase.from('gallery_items').delete().eq('id', id)
   if (error) throw new Error(error.message)
 
-  if (existing?.image_path) {
-    await supabase.storage.from('gallery').remove([existing.image_path])
+  const paths: string[] = []
+  if (existing?.image_path) paths.push(existing.image_path)
+  if (existing?.additional_images) paths.push(...(existing.additional_images as string[]))
+  if (paths.length) {
+    await supabase.storage.from('gallery').remove(paths)
   }
 
   revalidatePath('/admin/gallery')
   revalidatePath('/gallery')
   revalidatePath('/construction-cases')
   revalidatePath('/')
+}
+
+// ---------- 시공사례 카테고리 ----------
+
+export async function createCaseCategory(formData: FormData) {
+  const { supabase } = await ensureAdmin()
+  const name = String(formData.get('name') ?? '').trim()
+  const slug = String(formData.get('slug') ?? '').trim()
+  const sortOrder = Number(formData.get('sort_order') ?? 0) || 0
+  const isActive = formData.get('is_active') === 'on'
+
+  if (!name) {
+    redirect(
+      '/admin/gallery/categories/new?error=' + encodeURIComponent('이름을 입력해주세요')
+    )
+  }
+
+  const { error } = await supabase.from('construction_case_categories').insert({
+    name,
+    slug: slug || null,
+    sort_order: sortOrder,
+    is_active: isActive,
+  })
+
+  if (error) {
+    redirect('/admin/gallery/categories/new?error=' + encodeURIComponent(error.message))
+  }
+
+  revalidatePath('/admin/gallery')
+  revalidatePath('/admin/gallery/categories')
+  revalidatePath('/construction-cases')
+  redirect('/admin/gallery/categories')
+}
+
+export async function updateCaseCategory(id: number, formData: FormData) {
+  const { supabase } = await ensureAdmin()
+  const name = String(formData.get('name') ?? '').trim()
+  const slug = String(formData.get('slug') ?? '').trim()
+  const sortOrder = Number(formData.get('sort_order') ?? 0) || 0
+  const isActive = formData.get('is_active') === 'on'
+
+  if (!name) {
+    redirect(
+      `/admin/gallery/categories/${id}/edit?error=` + encodeURIComponent('이름을 입력해주세요')
+    )
+  }
+
+  const { error } = await supabase
+    .from('construction_case_categories')
+    .update({
+      name,
+      slug: slug || null,
+      sort_order: sortOrder,
+      is_active: isActive,
+    })
+    .eq('id', id)
+
+  if (error) {
+    redirect(
+      `/admin/gallery/categories/${id}/edit?error=` + encodeURIComponent(error.message)
+    )
+  }
+
+  revalidatePath('/admin/gallery')
+  revalidatePath('/admin/gallery/categories')
+  revalidatePath('/construction-cases')
+  redirect('/admin/gallery/categories')
+}
+
+export async function deleteCaseCategory(id: number) {
+  const { supabase } = await ensureAdmin()
+  const { error } = await supabase.from('construction_case_categories').delete().eq('id', id)
+  if (error) throw new Error(error.message)
+
+  revalidatePath('/admin/gallery')
+  revalidatePath('/admin/gallery/categories')
+  revalidatePath('/construction-cases')
 }
 
 // ---------- board (admin) ----------

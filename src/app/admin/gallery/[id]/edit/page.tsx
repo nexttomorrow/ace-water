@@ -1,8 +1,9 @@
-import Link from 'next/link'
-import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import CaseForm from '@/components/CaseForm'
 import { updateGalleryItem } from '../../../actions'
+import { fetchProductOptions } from '@/lib/products'
+import type { GalleryItem, ConstructionCaseCategory } from '@/lib/types'
 
 export default async function EditGalleryItemPage({
   params,
@@ -17,75 +18,47 @@ export default async function EditGalleryItemPage({
   if (!Number.isFinite(itemId)) notFound()
 
   const supabase = await createClient()
-  const { data: item } = await supabase.from('gallery_items').select('*').eq('id', itemId).single()
+  const { data: item } = await supabase
+    .from('gallery_items')
+    .select('*')
+    .eq('id', itemId)
+    .single()
   if (!item) notFound()
 
-  const publicUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/gallery/${item.image_path}`
+  const [{ data: catData }, products] = await Promise.all([
+    supabase
+      .from('construction_case_categories')
+      .select('*')
+      .order('sort_order', { ascending: true })
+      .order('id', { ascending: true }),
+    fetchProductOptions(),
+  ])
+  const categories = (catData ?? []) as ConstructionCaseCategory[]
+
+  const cs = item as GalleryItem
+  const base = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/gallery/`
+  const imageUrl = cs.image_path ? `${base}${cs.image_path}` : null
+  const additional = (cs.additional_images ?? []).map((p) => ({
+    path: p,
+    url: `${base}${p}`,
+  }))
   const action = updateGalleryItem.bind(null, itemId)
 
   return (
-    <div className="mx-auto max-w-lg px-6 py-12">
-      <h1 className="mb-5 text-2xl font-bold">시공사례 수정</h1>
-
-      {sp.error && (
-        <p className="mb-3 rounded bg-red-50 px-3 py-2 text-sm text-red-700">{sp.error}</p>
-      )}
-
-      <div className="mb-4 overflow-hidden rounded border border-neutral-200">
-        <Image
-          src={publicUrl}
-          alt={item.title}
-          width={500}
-          height={500}
-          className="h-auto w-full"
-          unoptimized
-        />
-      </div>
-
-      <form action={action} className="flex flex-col gap-3">
-        <label className="flex flex-col text-sm">
-          제목
-          <input
-            name="title"
-            required
-            defaultValue={item.title}
-            className="mt-1 rounded border border-neutral-300 bg-white px-3 py-2"
-          />
-        </label>
-        <label className="flex flex-col text-sm">
-          설명
-          <textarea
-            name="description"
-            rows={3}
-            defaultValue={item.description ?? ''}
-            className="mt-1 rounded border border-neutral-300 bg-white px-3 py-2"
-          />
-        </label>
-        <label className="flex flex-col text-sm">
-          이미지 교체 (선택)
-          <input
-            name="image"
-            type="file"
-            accept="image/*"
-            className="mt-1 rounded border border-neutral-300 bg-white px-3 py-2"
-          />
-        </label>
-
-        <div className="mt-2 flex gap-2">
-          <button
-            type="submit"
-            className="rounded bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700"
-          >
-            저장
-          </button>
-          <Link
-            href="/admin/gallery"
-            className="rounded border border-neutral-300 bg-white px-4 py-2 text-sm hover:bg-neutral-100"
-          >
-            취소
-          </Link>
-        </div>
-      </form>
+    <div className="mx-auto max-w-3xl px-6 py-12">
+      <h1 className="mb-1 text-2xl font-bold">시공사례 수정</h1>
+      <p className="mb-6 text-[13px] text-neutral-500">{cs.title}</p>
+      <CaseForm
+        action={action}
+        categories={categories}
+        products={products}
+        initial={cs}
+        errorMessage={sp.error}
+        submitLabel="저장"
+        cancelHref="/admin/gallery"
+        imageUrl={imageUrl}
+        additional={additional}
+      />
     </div>
   )
 }

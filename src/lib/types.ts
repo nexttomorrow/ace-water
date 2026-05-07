@@ -24,6 +24,28 @@ export type GalleryItem = {
   description: string | null
   image_path: string
   created_at: string
+  category_id: number | null
+  model_name: string | null
+  site_name: string | null
+  client_name: string | null
+  product_hrefs: string[]
+  additional_images: string[]
+}
+
+export type ProductOption = {
+  href: string
+  name: string
+  /** 부모(섹션) 이름. 없으면 최상위 메뉴 자체. */
+  group: string | null
+}
+
+export type ConstructionCaseCategory = {
+  id: number
+  name: string
+  slug: string | null
+  sort_order: number
+  is_active: boolean
+  created_at: string
 }
 
 export type Category = {
@@ -57,3 +79,4 @@ export type HeroSlide = {
 }
 
 export const HERO_SLIDES_MAX = 6
+export const CASE_ADDITIONAL_MAX = 8
