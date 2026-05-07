@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import MainNav, { type NavTopCategory } from './MainNav'
 import NoticeTicker, { type TickerNotice } from './NoticeTicker'
+import { applyProductCategoryHrefs } from '@/lib/products'
 import type { Category } from '@/lib/types'
 
 export default async function Header() {
@@ -32,8 +33,8 @@ export default async function Header() {
   if (!isAdmin) categoryQuery = categoryQuery.eq('is_active', true)
   const { data: catData } = await categoryQuery
 
-  // build tree
-  const cats = (catData ?? []) as Category[]
+  // build tree (제품안내 자식들의 href를 자동으로 /products?category={id} 로 매핑)
+  const cats = applyProductCategoryHrefs((catData ?? []) as Category[])
   const tops: NavTopCategory[] = cats
     .filter((c) => c.parent_id === null)
     .map((top) => ({

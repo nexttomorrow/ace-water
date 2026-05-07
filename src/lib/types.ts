@@ -32,6 +32,32 @@ export type GalleryItem = {
   additional_images: string[]
 }
 
+export type ProductComponent = {
+  name: string
+  target_id: number | null
+}
+
+export type Product = {
+  id: number
+  category_id: number | null
+  name: string
+  model_name: string | null
+  install_type: string | null
+  size_text: string | null
+  material: string | null
+  components: ProductComponent[]
+  extras_text: string | null
+  main_image_path: string
+  additional_images: string[]
+  description: string
+  spec_sheet_path: string | null
+  color_chart_path: string | null
+  is_active: boolean
+  sort_order: number
+  created_at: string
+  updated_at: string
+}
+
 export type ProductOption = {
   href: string
   name: string

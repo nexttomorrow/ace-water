@@ -2,7 +2,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import SubPageBanner from '@/components/SubPageBanner'
-import type { GalleryItem, ConstructionCaseCategory } from '@/lib/types'
+import { fetchProductCategories } from '@/lib/products'
+import type { GalleryItem } from '@/lib/types'
 
 export const revalidate = 0
 
@@ -17,13 +18,7 @@ export default async function ConstructionCasesPage({
   const sp = await searchParams
   const supabase = await createClient()
 
-  const { data: catData } = await supabase
-    .from('construction_case_categories')
-    .select('*')
-    .eq('is_active', true)
-    .order('sort_order', { ascending: true })
-    .order('id', { ascending: true })
-  const categories = (catData ?? []) as ConstructionCaseCategory[]
+  const categories = await fetchProductCategories()
 
   // category param: id or 'all'
   const activeCatId =

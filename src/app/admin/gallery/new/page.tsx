@@ -1,8 +1,6 @@
-import { createClient } from '@/lib/supabase/server'
 import CaseForm from '@/components/CaseForm'
 import { createGalleryItem } from '../../actions'
-import { fetchProductOptions } from '@/lib/products'
-import type { ConstructionCaseCategory } from '@/lib/types'
+import { fetchProductCategories, fetchProductOptions } from '@/lib/products'
 
 export default async function NewGalleryItemPage({
   searchParams,
@@ -10,17 +8,10 @@ export default async function NewGalleryItemPage({
   searchParams: Promise<{ error?: string }>
 }) {
   const sp = await searchParams
-  const supabase = await createClient()
-  const [{ data }, products] = await Promise.all([
-    supabase
-      .from('construction_case_categories')
-      .select('*')
-      .eq('is_active', true)
-      .order('sort_order', { ascending: true })
-      .order('id', { ascending: true }),
+  const [categories, products] = await Promise.all([
+    fetchProductCategories(),
     fetchProductOptions(),
   ])
-  const categories = (data ?? []) as ConstructionCaseCategory[]
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-12">

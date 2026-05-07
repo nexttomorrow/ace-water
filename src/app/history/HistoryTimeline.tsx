@@ -245,10 +245,10 @@ function Timeline() {
     <section className="border-t border-neutral-100">
       <div className="mx-auto max-w-[1100px] px-6 py-24 md:py-32">
         <header className="mb-16">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.4em] text-blue-700">
+          <p className="text-[14px] font-semibold uppercase tracking-[0.4em] text-blue-700">
             Timeline
           </p>
-          <h2 className="mt-3 text-[28px] font-bold leading-[1.3] md:text-[34px]">
+          <h2 className="text-[28px] font-bold leading-[1.3] md:text-[34px]">
             우리가 걸어온 길
           </h2>
           <p className="mt-3 max-w-[620px] text-[14px] leading-[1.85] text-neutral-500 md:text-[15px]">
@@ -354,7 +354,7 @@ function Closing() {
     <section ref={ref} className="border-t border-neutral-100 bg-neutral-50">
       <div className="mx-auto max-w-[900px] px-6 py-24 text-center md:py-32">
         <p
-          className={`text-[11px] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
+          className={`text-[14px] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
             shown ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
           }`}
         >

@@ -221,14 +221,14 @@ function ContactCards() {
       <div className="mx-auto max-w-[1200px] px-6 py-24 md:py-32">
         <header className="mb-12 max-w-[640px]">
           <p
-            className={`text-[11px] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
+            className={`text-[14px] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
               shown ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
             }`}
           >
             Contact
           </p>
           <h2
-            className={`mt-3 text-[28px] font-bold leading-[1.3] md:text-[34px] transition-all duration-1000 delay-100 ${
+            className={`text-[28px] font-bold leading-[1.3] md:text-[34px] transition-all duration-1000 delay-100 ${
               shown ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
             }`}
           >
@@ -367,14 +367,14 @@ function Directions() {
       <div className="mx-auto max-w-[1200px] px-6 py-24 md:py-32">
         <header className="mb-12 max-w-[640px]">
           <p
-            className={`text-[11px] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
+            className={`text-[14px] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
               shown ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
             }`}
           >
             Directions
           </p>
           <h2
-            className={`mt-3 text-[28px] font-bold leading-[1.3] md:text-[34px] transition-all duration-1000 delay-100 ${
+            className={`text-[28px] font-bold leading-[1.3] md:text-[34px] transition-all duration-1000 delay-100 ${
               shown ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
             }`}
           >

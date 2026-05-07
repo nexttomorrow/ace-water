@@ -2,8 +2,8 @@ import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import CaseForm from '@/components/CaseForm'
 import { updateGalleryItem } from '../../../actions'
-import { fetchProductOptions } from '@/lib/products'
-import type { GalleryItem, ConstructionCaseCategory } from '@/lib/types'
+import { fetchProductCategories, fetchProductOptions } from '@/lib/products'
+import type { GalleryItem } from '@/lib/types'
 
 export default async function EditGalleryItemPage({
   params,
@@ -25,15 +25,10 @@ export default async function EditGalleryItemPage({
     .single()
   if (!item) notFound()
 
-  const [{ data: catData }, products] = await Promise.all([
-    supabase
-      .from('construction_case_categories')
-      .select('*')
-      .order('sort_order', { ascending: true })
-      .order('id', { ascending: true }),
+  const [categories, products] = await Promise.all([
+    fetchProductCategories(),
     fetchProductOptions(),
   ])
-  const categories = (catData ?? []) as ConstructionCaseCategory[]
 
   const cs = item as GalleryItem
   const base = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/gallery/`

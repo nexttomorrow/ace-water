@@ -1,13 +1,16 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/server'
-import { deleteGalleryItem } from '../actions'
 import { fetchProductCategories } from '@/lib/products'
-import type { GalleryItem } from '@/lib/types'
+import { deleteProduct } from './actions'
+import type { Product } from '@/lib/types'
 
 export const revalidate = 0
 
-export default async function AdminGalleryPage({
+const fileUrl = (path: string) =>
+  `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/products/${path}`
+
+export default async function AdminProductsPage({
   searchParams,
 }: {
   searchParams: Promise<{ category?: string }>
@@ -21,27 +24,25 @@ export default async function AdminGalleryPage({
   const activeCatId = sp.category ? Number(sp.category) : null
 
   let q = supabase
-    .from('gallery_items')
+    .from('products')
     .select('*')
-    .order('created_at', { ascending: false })
+    .order('sort_order', { ascending: true })
+    .order('id', { ascending: false })
   if (activeCatId) q = q.eq('category_id', activeCatId)
 
   const { data } = await q
-  const items = (data ?? []) as GalleryItem[]
-
-  const publicUrl = (path: string) =>
-    `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/gallery/${path}`
+  const items = (data ?? []) as Product[]
 
   return (
     <div className="mx-auto max-w-[1440px] px-6 py-12">
       <div className="mb-2 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">시공사례 관리</h1>
+          <h1 className="text-2xl font-bold">제품 관리</h1>
           <p className="mt-1 text-[13px] text-neutral-500">
-            <Link href="/construction-cases" target="_blank" className="hover:underline">
-              /construction-cases
+            <Link href="/products" target="_blank" className="hover:underline">
+              /products
             </Link>{' '}
-            페이지에 노출되는 시공사례를 관리합니다.
+            상세 페이지에 노출되는 제품을 관리합니다.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -52,19 +53,19 @@ export default async function AdminGalleryPage({
             제품안내 메뉴 관리
           </Link>
           <Link
-            href="/admin/gallery/new"
+            href="/admin/products/new"
             className="rounded bg-neutral-900 px-3 py-2 text-sm font-medium text-white hover:bg-neutral-700"
           >
-            + 시공사례 추가
+            + 제품 추가
           </Link>
         </div>
       </div>
 
-      {/* 카테고리 필터 탭 */}
+      {/* 카테고리 필터 */}
       {categories.length > 0 && (
         <div className="mt-6 flex flex-wrap items-center gap-2 border-b border-neutral-200 pb-2">
           <Link
-            href="/admin/gallery"
+            href="/admin/products"
             className={`rounded-full px-3 py-1.5 text-[12px] font-medium transition ${
               !activeCatId
                 ? 'bg-neutral-900 text-white'
@@ -78,7 +79,7 @@ export default async function AdminGalleryPage({
             return (
               <Link
                 key={c.id}
-                href={`/admin/gallery?category=${c.id}`}
+                href={`/admin/products?category=${c.id}`}
                 className={`rounded-full px-3 py-1.5 text-[12px] font-medium transition ${
                   active
                     ? 'bg-neutral-900 text-white'
@@ -94,22 +95,24 @@ export default async function AdminGalleryPage({
 
       {items.length === 0 ? (
         <p className="mt-6 rounded border border-dashed border-neutral-300 p-8 text-center text-neutral-500">
-          시공사례를 추가해주세요.
+          제품을 추가해주세요.
         </p>
       ) : (
         <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
           {items.map((item) => {
-            const handleDelete = deleteGalleryItem.bind(null, item.id)
+            const handleDelete = deleteProduct.bind(null, item.id)
             const cat = item.category_id ? categoryNameById.get(item.category_id) : null
             return (
               <div
                 key={item.id}
-                className="overflow-hidden rounded-lg border border-neutral-200 bg-white"
+                className={`overflow-hidden rounded-lg border bg-white ${
+                  item.is_active ? 'border-neutral-200' : 'border-dashed border-neutral-300 opacity-70'
+                }`}
               >
                 <div className="aspect-square">
                   <Image
-                    src={publicUrl(item.image_path)}
-                    alt={item.title}
+                    src={fileUrl(item.main_image_path)}
+                    alt={item.name}
                     width={400}
                     height={400}
                     className="h-full w-full object-cover"
@@ -122,15 +125,18 @@ export default async function AdminGalleryPage({
                       {cat}
                     </p>
                   )}
-                  <p className="truncate text-sm font-medium">{item.title}</p>
                   {item.model_name && (
-                    <p className="truncate text-[11px] text-neutral-500">
+                    <p className="truncate text-[11px] font-bold text-neutral-900">
                       {item.model_name}
                     </p>
                   )}
+                  <p className="truncate text-sm text-neutral-700">{item.name}</p>
+                  {!item.is_active && (
+                    <p className="mt-1 text-[10px] font-semibold text-neutral-400">비공개</p>
+                  )}
                   <div className="mt-2 flex gap-2">
                     <Link
-                      href={`/admin/gallery/${item.id}/edit`}
+                      href={`/admin/products/${item.id}/edit`}
                       className="flex-1 rounded border border-neutral-300 px-2 py-1 text-center text-xs hover:bg-neutral-100"
                     >
                       수정

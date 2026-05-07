@@ -1,25 +1,25 @@
-import type { ProductOption } from '@/lib/types'
+import type { Category, ProductOption } from '@/lib/types'
 import { createClient } from '@/lib/supabase/server'
 
 /**
  * "제품안내" 최상위 카테고리 이름.
- * categories 테이블에서 name 으로 매칭하여 그 아래 자식들을 제품으로 간주.
- * (관리자가 이 메뉴 이름을 바꾸면 이 상수도 같이 바꿔야 함.)
+ * categories 테이블에서 name 으로 매칭하여 그 아래 자식들을 시공사례 카테고리로 사용.
  */
 export const PRODUCT_ROOT_NAME = '제품안내'
 
 /**
- * 시공사례 폼에서 "연결 제품" 선택지를 만드는 목록.
- * "제품안내" 최상위 카테고리의 자식들 중 href 가 있고 활성화된 것만 반환한다.
- * 제품안내 자체가 아직 없거나 자식이 없으면 빈 배열.
+ * 시공사례에서 사용할 카테고리 목록.
+ * "제품안내" 메뉴의 활성화된 자식 카테고리들을 반환한다.
+ * (예: 정수기 / 연수기 / 음수기 ...)
  */
-export async function fetchProductOptions(): Promise<ProductOption[]> {
+export async function fetchProductCategories(): Promise<
+  { id: number; name: string }[]
+> {
   const supabase = await createClient()
 
-  // 1) 제품 루트 카테고리 찾기
   const { data: root } = await supabase
     .from('categories')
-    .select('id, name')
+    .select('id')
     .is('parent_id', null)
     .eq('name', PRODUCT_ROOT_NAME)
     .order('id', { ascending: true })
@@ -28,32 +28,74 @@ export async function fetchProductOptions(): Promise<ProductOption[]> {
 
   if (!root) return []
 
-  // 2) 그 자식 카테고리 가져오기
   const { data: children } = await supabase
     .from('categories')
-    .select('id, name, href')
+    .select('id, name')
     .eq('parent_id', root.id)
-    .not('href', 'is', null)
-    .neq('href', '#')
     .eq('is_active', true)
     .order('sort_order', { ascending: true })
     .order('id', { ascending: true })
 
-  const seen = new Set<string>()
-  const products: ProductOption[] = []
-  for (const c of (children ?? []) as Array<{
+  return (children ?? []) as { id: number; name: string }[]
+}
+
+/**
+ * "제품안내" 하위 카테고리들의 href를 자동으로 /products?category={id} 로 바인딩.
+ * - 외부 URL (http로 시작)이면 그대로 둠
+ * - 그 외에는 관리자가 입력한 값을 무시하고 자동 매핑으로 덮어씀
+ */
+export function applyProductCategoryHrefs<T extends Category>(cats: T[]): T[] {
+  const root = cats.find(
+    (c) => c.parent_id === null && (c.name ?? '').trim() === PRODUCT_ROOT_NAME
+  )
+  if (!root) return cats
+  return cats.map((c) => {
+    if (c.parent_id !== root.id) return c
+    if (c.href && c.href.startsWith('http')) return c
+    return { ...c, href: `/products?category=${c.id}` }
+  })
+}
+
+/**
+ * 시공사례 폼의 "연결 제품" 선택지.
+ * products 테이블에서 활성화된 제품을 조회하고, 카테고리명으로 그룹화한다.
+ */
+export async function fetchProductOptions(): Promise<ProductOption[]> {
+  const supabase = await createClient()
+
+  const { data: products } = await supabase
+    .from('products')
+    .select('id, name, model_name, category_id')
+    .eq('is_active', true)
+    .order('sort_order', { ascending: true })
+    .order('id', { ascending: true })
+
+  const rows = (products ?? []) as Array<{
     id: number
     name: string
-    href: string | null
-  }>) {
-    if (!c.href || c.href === '#') continue
-    if (seen.has(c.href)) continue
-    seen.add(c.href)
-    products.push({
-      href: c.href,
-      name: c.name,
-      group: root.name, // 항상 "제품안내"
-    })
+    model_name: string | null
+    category_id: number | null
+  }>
+  if (rows.length === 0) return []
+
+  const catIds = Array.from(
+    new Set(rows.map((p) => p.category_id).filter((v): v is number => v != null))
+  )
+
+  let nameByCatId = new Map<number, string>()
+  if (catIds.length > 0) {
+    const { data: cats } = await supabase
+      .from('categories')
+      .select('id, name')
+      .in('id', catIds)
+    nameByCatId = new Map(
+      ((cats ?? []) as Array<{ id: number; name: string }>).map((c) => [c.id, c.name])
+    )
   }
-  return products
+
+  return rows.map((p) => ({
+    href: `/products/${p.id}`,
+    name: p.model_name ? `${p.model_name} ${p.name}` : p.name,
+    group: p.category_id ? nameByCatId.get(p.category_id) ?? null : null,
+  }))
 }

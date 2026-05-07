@@ -8,6 +8,7 @@ const tabs = [
   { label: '메인 슬라이드', href: '/admin/hero' },
   { label: '카테고리', href: '/admin/categories' },
   { label: '서브페이지 배너', href: '/admin/subpages' },
+  { label: '제품', href: '/admin/products' },
   { label: '시공사례', href: '/admin/gallery' },
   { label: '게시판', href: '/admin/board' },
 ]

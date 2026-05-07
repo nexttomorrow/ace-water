@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
+import { applyProductCategoryHrefs } from '@/lib/products'
 import type { Category } from '@/lib/types'
 
 export default async function Footer() {
@@ -11,7 +12,7 @@ export default async function Footer() {
     .order('sort_order', { ascending: true })
     .order('id', { ascending: true })
 
-  const cats = (data ?? []) as Category[]
+  const cats = applyProductCategoryHrefs((data ?? []) as Category[])
   const columns = cats
     .filter((c) => c.parent_id === null)
     .map((top) => ({

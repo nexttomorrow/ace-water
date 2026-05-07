@@ -53,11 +53,9 @@ export default function CaseDetail({
   const visible = showOverflow ? images.slice(0, VISIBLE_THUMBS - 1) : images
   const overflowCount = total - (VISIBLE_THUMBS - 1)
 
-  // 슬라이드 좌우 — 가장자리에서 멈춤 (감기지 않음)
-  const goPrev = () => setActiveIdx((i) => Math.max(0, i - 1))
-  const goNext = () => setActiveIdx((i) => Math.min(total - 1, i + 1))
-  const isFirst = activeIdx === 0
-  const isLast = activeIdx >= total - 1
+  // 슬라이드 좌우 — 끝에 도달하면 반대쪽으로 무한 루프
+  const goPrev = () => setActiveIdx((i) => (i - 1 + total) % total)
+  const goNext = () => setActiveIdx((i) => (i + 1) % total)
 
   // 모바일 스와이프 + 클릭(라이트박스) 분리
   const touchStart = useRef<{ x: number; y: number } | null>(null)
@@ -130,12 +128,11 @@ export default function CaseDetail({
                 <button
                   type="button"
                   aria-label="이전 이미지"
-                  disabled={isFirst}
                   onClick={(e) => {
                     e.stopPropagation()
                     goPrev()
                   }}
-                  className="absolute left-3 top-1/2 flex h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/95 text-neutral-900 shadow-md ring-1 ring-black/5 transition hover:bg-white disabled:pointer-events-none disabled:opacity-0 md:left-4 md:h-11 md:w-11 md:opacity-0 md:group-hover:opacity-100"
+                  className="absolute left-3 top-1/2 flex h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/95 text-neutral-900 shadow-md ring-1 ring-black/5 transition hover:bg-white md:left-4 md:h-11 md:w-11 md:opacity-0 md:group-hover:opacity-100"
                 >
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
                     <path d="M15 18l-6-6 6-6" />
@@ -144,12 +141,11 @@ export default function CaseDetail({
                 <button
                   type="button"
                   aria-label="다음 이미지"
-                  disabled={isLast}
                   onClick={(e) => {
                     e.stopPropagation()
                     goNext()
                   }}
-                  className="absolute right-3 top-1/2 flex h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/95 text-neutral-900 shadow-md ring-1 ring-black/5 transition hover:bg-white disabled:pointer-events-none disabled:opacity-0 md:right-4 md:h-11 md:w-11 md:opacity-0 md:group-hover:opacity-100"
+                  className="absolute right-3 top-1/2 flex h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/95 text-neutral-900 shadow-md ring-1 ring-black/5 transition hover:bg-white md:right-4 md:h-11 md:w-11 md:opacity-0 md:group-hover:opacity-100"
                 >
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
                     <path d="M9 18l6-6-6-6" />
@@ -184,10 +180,10 @@ export default function CaseDetail({
                     type="button"
                     key={src + i}
                     onClick={() => setActiveIdx(i)}
-                    className={`relative aspect-square overflow-hidden rounded transition ${
+                    className={`relative aspect-square overflow-hidden rounded transition duration-200 ${
                       isActive
-                        ? 'ring-2 ring-blue-600 ring-offset-2'
-                        : 'opacity-80 hover:opacity-100'
+                        ? 'opacity-100'
+                        : 'opacity-40 grayscale hover:opacity-80 hover:grayscale-0'
                     }`}
                   >
                     <Image
@@ -236,12 +232,12 @@ export default function CaseDetail({
         <aside className="md:col-span-5">
           <div className="md:sticky md:top-24">
             {categoryName && (
-              <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-blue-700">
+              <p className="text-[14px] font-semibold uppercase tracking-[0.3em] text-blue-700">
                 {categoryName}
               </p>
             )}
 
-            <h1 className="mt-3 text-[24px] font-extrabold leading-[1.3] tracking-tight md:text-[28px]">
+            <h1 className="mt-1 text-[24px] font-extrabold leading-[1.3] tracking-tight md:text-[28px]">
               {modelName || title}
             </h1>
 

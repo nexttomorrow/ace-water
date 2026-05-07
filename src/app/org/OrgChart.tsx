@@ -166,10 +166,10 @@ function Diagram() {
     <section className="border-t border-neutral-100">
       <div className="mx-auto max-w-[1200px] px-6 py-24 md:py-32">
         <header className="mb-16 text-center">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.4em] text-blue-700">
+          <p className="text-[14px] font-semibold uppercase tracking-[0.4em] text-blue-700">
             Org Chart
           </p>
-          <h2 className="mt-3 text-[28px] font-bold leading-[1.3] md:text-[34px]">조직 구조</h2>
+          <h2 className="text-[28px] font-bold leading-[1.3] md:text-[34px]">조직 구조</h2>
         </header>
 
         <div ref={wrapper.ref} className="relative">
@@ -422,7 +422,7 @@ function Closing() {
     <section ref={ref} className="border-t border-neutral-100 bg-neutral-50">
       <div className="mx-auto max-w-[900px] px-6 py-24 text-center md:py-32">
         <p
-          className={`text-[11px] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
+          className={`text-[14px] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
             shown ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
           }`}
         >

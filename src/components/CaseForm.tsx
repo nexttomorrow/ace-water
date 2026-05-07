@@ -6,13 +6,12 @@ import { useMemo, useState } from 'react'
 import {
   CASE_ADDITIONAL_MAX,
   type GalleryItem,
-  type ConstructionCaseCategory,
   type ProductOption,
 } from '@/lib/types'
 
 type Props = {
   action: (formData: FormData) => Promise<void>
-  categories: ConstructionCaseCategory[]
+  categories: { id: number; name: string }[]
   products: ProductOption[]
   initial?: Partial<GalleryItem>
   errorMessage?: string
@@ -149,13 +148,14 @@ export default function CaseForm({
           ))}
         </select>
         <span className="mt-1 text-[11px] text-neutral-500">
-          시공사례 페이지의 제품별 탭에 사용됩니다.{' '}
+          <strong>&ldquo;제품안내&rdquo;</strong> 메뉴의 하위 카테고리가 자동으로 노출됩니다.{' '}
           <Link
-            href="/admin/gallery/categories/new"
+            href="/admin/categories"
             className="text-blue-600 hover:underline"
           >
-            카테고리 추가
+            카테고리 관리
           </Link>
+          에서 추가/수정할 수 있어요.
         </span>
       </label>
 
@@ -211,9 +211,8 @@ export default function CaseForm({
           </p>
         </div>
         <p className="mt-0.5 text-[11px] text-neutral-500">
-          이 시공사례와 연관된 제품을 체크하세요. <strong>&ldquo;제품안내&rdquo;</strong>{' '}
-          메뉴 아래 등록된 제품만 표시됩니다. 상세 페이지에 &quot;제품 보기&quot; 버튼이 여러 개
-          노출됩니다.
+          상세 페이지 사이드바에 &quot;제품 보기&quot; 버튼으로 노출됩니다. 제품 마스터 데이터가
+          준비되면 여기에 자동으로 노출돼요.
         </p>
 
         {/* 선택된 chip */}
@@ -271,15 +270,8 @@ export default function CaseForm({
           {products.length === 0 ? (
             <div className="px-4 py-8 text-center text-[12px] text-neutral-500">
               <p>아직 등록된 제품이 없습니다.</p>
-              <p className="mt-1.5">
-                <Link
-                  href="/admin/categories/new"
-                  className="text-blue-600 hover:underline"
-                >
-                  카테고리 관리
-                </Link>
-                에서 <strong>&ldquo;제품안내&rdquo;</strong>의 하위 항목으로 추가하면 여기에 자동으로
-                나타납니다.
+              <p className="mt-1.5 text-neutral-400">
+                제품 마스터 데이터가 등록되면 여기에 노출됩니다.
               </p>
             </div>
           ) : groupedFiltered.length === 0 ? (

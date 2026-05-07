@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import CaseDetail from './CaseDetail'
-import type { GalleryItem, ConstructionCaseCategory } from '@/lib/types'
+import type { GalleryItem } from '@/lib/types'
 
 export const revalidate = 0
 
@@ -21,17 +21,24 @@ export default async function CaseDetailPage({
   const supabase = await createClient()
   const { data } = await supabase
     .from('gallery_items')
-    .select('*, construction_case_categories(*)')
+    .select('*')
     .eq('id', itemId)
     .single()
 
   if (!data) notFound()
 
-  type Row = GalleryItem & {
-    construction_case_categories: ConstructionCaseCategory | null
+  const item = data as GalleryItem
+
+  // 카테고리는 "제품안내" 하위 categories 에서 lookup
+  let category: { id: number; name: string } | null = null
+  if (item.category_id) {
+    const { data: catRow } = await supabase
+      .from('categories')
+      .select('id, name')
+      .eq('id', item.category_id)
+      .maybeSingle()
+    if (catRow) category = catRow as { id: number; name: string }
   }
-  const item = data as Row
-  const category = item.construction_case_categories ?? null
 
   const mainImage = itemUrl(item.image_path)
   const additionalImages = (item.additional_images ?? []).map(itemUrl)
