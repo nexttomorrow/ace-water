@@ -40,9 +40,10 @@ export async function fetchProductCategories(): Promise<
 }
 
 /**
- * "제품안내" 하위 카테고리들의 href를 자동으로 /products?category={id} 로 바인딩.
- * - 외부 URL (http로 시작)이면 그대로 둠
- * - 그 외에는 관리자가 입력한 값을 무시하고 자동 매핑으로 덮어씀
+ * "제품안내" 카테고리 트리의 href를 자동 바인딩.
+ * - 루트 "제품안내" → /products
+ * - 그 자식들 → /products?category={id}
+ * 외부 URL (http로 시작)은 보존, 그 외에는 모두 자동 매핑으로 덮어씀.
  */
 export function applyProductCategoryHrefs<T extends Category>(cats: T[]): T[] {
   const root = cats.find(
@@ -50,6 +51,10 @@ export function applyProductCategoryHrefs<T extends Category>(cats: T[]): T[] {
   )
   if (!root) return cats
   return cats.map((c) => {
+    if (c.id === root.id) {
+      if (c.href && c.href.startsWith('http')) return c
+      return { ...c, href: '/products' }
+    }
     if (c.parent_id !== root.id) return c
     if (c.href && c.href.startsWith('http')) return c
     return { ...c, href: `/products?category=${c.id}` }

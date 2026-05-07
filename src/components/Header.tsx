@@ -77,9 +77,9 @@ export default async function Header() {
             )}
             <Link href="/board" className="hover:text-black">게시판</Link>
             <span className="text-neutral-300">|</span>
-            <Link href="#" className="hover:text-black">고객지원</Link>
+            <Link href="/as" className="hover:text-black">AS센터</Link>
             <span className="text-neutral-300">|</span>
-            <Link href="#" className="hover:text-black">비즈니스</Link>
+            <Link href="/business" className="hover:text-black">비즈니스 문의</Link>
           </div>
         </div>
       </div>

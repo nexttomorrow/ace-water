@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
+import { applyProductCategoryHrefs } from '@/lib/products'
 import type { Category } from '@/lib/types'
 
 type Props = {
@@ -22,47 +23,33 @@ export default async function SubPageBanner({
 }: Props) {
   const supabase = await createClient()
 
-  // 현재 카테고리
-  const { data: current } = await supabase
+  // 모든 활성 카테고리를 한 번에 받아 helper 로 auto-binding 적용.
+  // (제품안내 트리의 href 가 DB 에 없어도 런타임에 자동으로 채워짐)
+  const { data: all } = await supabase
     .from('categories')
     .select('*')
-    .eq('href', href)
+    .eq('is_active', true)
+    .order('sort_order', { ascending: true })
     .order('id', { ascending: true })
-    .limit(1)
-    .maybeSingle()
+  const cats = applyProductCategoryHrefs((all ?? []) as Category[])
 
-  const cat = current as Category | null
+  // 현재 카테고리 — auto-bound 후의 href 로 매칭
+  const cat = cats.find((c) => c.href === href) ?? null
 
   // 부모 + 형제 (depth-2 탭용)
   let parent: Category | null = null
   let siblings: Category[] = []
 
   if (cat?.parent_id) {
-    const { data: parentRow } = await supabase
-      .from('categories')
-      .select('*')
-      .eq('id', cat.parent_id)
-      .single()
-    parent = (parentRow as Category | null) ?? null
-
-    const { data: sibData } = await supabase
-      .from('categories')
-      .select('*')
-      .eq('parent_id', cat.parent_id)
-      .eq('is_active', true)
-      .order('sort_order', { ascending: true })
-      .order('id', { ascending: true })
-    siblings = ((sibData ?? []) as Category[]).filter((c) => c.href && c.href !== '#')
+    parent = cats.find((c) => c.id === cat.parent_id) ?? null
+    siblings = cats
+      .filter((c) => c.parent_id === cat.parent_id)
+      .filter((c) => c.href && c.href !== '#')
   } else if (cat) {
     // 자기 자신이 최상위인 경우 — 자식들을 탭으로 노출
-    const { data: childData } = await supabase
-      .from('categories')
-      .select('*')
-      .eq('parent_id', cat.id)
-      .eq('is_active', true)
-      .order('sort_order', { ascending: true })
-      .order('id', { ascending: true })
-    siblings = ((childData ?? []) as Category[]).filter((c) => c.href && c.href !== '#')
+    siblings = cats
+      .filter((c) => c.parent_id === cat.id)
+      .filter((c) => c.href && c.href !== '#')
   }
 
   const title = cat?.banner_title || cat?.name || fallbackTitle

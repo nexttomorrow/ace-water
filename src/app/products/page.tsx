@@ -2,7 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { fetchProductCategories } from '@/lib/products'
-import PageHeader from '@/components/PageHeader'
+import SubPageBanner from '@/components/SubPageBanner'
 import type { Product } from '@/lib/types'
 
 export const revalidate = 0
@@ -42,29 +42,19 @@ export default async function ProductsPage({
     ? categories.find((c) => c.id === activeCatId) ?? null
     : null
 
+  // 활성 카테고리에 따라 SubPageBanner 가 카테고리를 찾아낼 href 결정
+  const bannerHref = activeCatId ? `/products?category=${activeCatId}` : '/products'
+
   return (
-    <div className="mx-auto max-w-[1440px] px-6 py-12">
-      <PageHeader
-        href="/products"
+    <>
+      <SubPageBanner
+        href={bannerHref}
         fallbackTitle="제품안내"
-        fallbackDescription="ACEWATER의 제품 라인업을 만나보세요"
+        fallbackSubtitle="ACEWATER의 제품 라인업을 만나보세요"
       />
 
-      {categories.length > 0 && (
-        <div className="mb-8 mt-10 flex flex-wrap items-center gap-2 border-b border-neutral-200 pb-3">
-          <CategoryPill href="/products" active={!activeCatId} label="전체" />
-          {categories.map((c) => (
-            <CategoryPill
-              key={c.id}
-              href={`/products?category=${c.id}`}
-              active={activeCatId === c.id}
-              label={c.name}
-            />
-          ))}
-        </div>
-      )}
-
-      <div className="mb-5 flex items-center justify-between">
+      <div className="mx-auto max-w-[1440px] px-6 py-12">
+        <div className="mb-5 flex items-center justify-between">
         <p className="text-[13px] text-neutral-500">
           {activeCat ? (
             <>
@@ -120,29 +110,7 @@ export default async function ProductsPage({
           ))}
         </div>
       )}
-    </div>
-  )
-}
-
-function CategoryPill({
-  href,
-  active,
-  label,
-}: {
-  href: string
-  active: boolean
-  label: string
-}) {
-  return (
-    <Link
-      href={href}
-      className={`whitespace-nowrap rounded-full px-3.5 py-1.5 text-[13px] font-medium transition ${
-        active
-          ? 'bg-neutral-900 text-white'
-          : 'border border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300 hover:text-neutral-900'
-      }`}
-    >
-      {label}
-    </Link>
+      </div>
+    </>
   )
 }
