@@ -12,6 +12,9 @@ type Props = {
   /** when editing, current image preview url */
   imageUrl?: string | null
   showRemoveImage?: boolean
+  /** when editing, current banner image preview url */
+  bannerImageUrl?: string | null
+  showRemoveBannerImage?: boolean
 }
 
 export default function CategoryForm({
@@ -23,6 +26,8 @@ export default function CategoryForm({
   cancelHref,
   imageUrl,
   showRemoveImage,
+  bannerImageUrl,
+  showRemoveBannerImage,
 }: Props) {
   const v = {
     name: initial?.name ?? '',
@@ -33,6 +38,8 @@ export default function CategoryForm({
     display_type: initial?.display_type ?? 'tile',
     sort_order: initial?.sort_order ?? 0,
     is_active: initial?.is_active ?? true,
+    banner_title: initial?.banner_title ?? '',
+    banner_subtitle: initial?.banner_subtitle ?? '',
   }
 
   return (
@@ -168,6 +175,66 @@ export default function CategoryForm({
         <input type="checkbox" name="is_active" defaultChecked={v.is_active} />
         <span>활성화 (체크 해제 시 비공개)</span>
       </label>
+
+      <fieldset className="mt-2 rounded-lg border border-neutral-200 bg-neutral-50/50 p-4">
+        <legend className="px-2 text-[13px] font-semibold text-neutral-700">
+          서브페이지 배너 (선택)
+        </legend>
+        <p className="mb-3 text-[11px] text-neutral-500">
+          이 카테고리의 href 페이지 상단에 노출되는 큰 배너입니다. 권장 1920×600.
+        </p>
+
+        <label className="flex flex-col text-sm">
+          <span className="font-medium">배너 이미지</span>
+          {bannerImageUrl && (
+            <div className="my-2 flex items-center gap-3">
+              <div className="h-20 w-40 overflow-hidden rounded border border-neutral-200">
+                <Image
+                  src={bannerImageUrl}
+                  alt=""
+                  width={320}
+                  height={160}
+                  className="h-full w-full object-cover"
+                  unoptimized
+                />
+              </div>
+              {showRemoveBannerImage && (
+                <label className="flex items-center gap-2 text-[12px] text-neutral-600">
+                  <input type="checkbox" name="remove_banner_image" />
+                  배너 제거
+                </label>
+              )}
+            </div>
+          )}
+          <input
+            name="banner_image"
+            type="file"
+            accept="image/*"
+            className="mt-1 rounded border border-neutral-300 bg-white px-3 py-2"
+          />
+        </label>
+
+        <label className="mt-3 flex flex-col text-sm">
+          <span className="font-medium">배너 제목</span>
+          <input
+            name="banner_title"
+            defaultValue={v.banner_title ?? ''}
+            placeholder="비우면 위의 카테고리 이름을 사용합니다"
+            className="mt-1 rounded border border-neutral-300 bg-white px-3 py-2"
+          />
+        </label>
+
+        <label className="mt-3 flex flex-col text-sm">
+          <span className="font-medium">배너 부제목</span>
+          <textarea
+            name="banner_subtitle"
+            rows={2}
+            defaultValue={v.banner_subtitle ?? ''}
+            placeholder="비우면 위의 설명을 사용합니다"
+            className="mt-1 resize-y rounded border border-neutral-300 bg-white px-3 py-2"
+          />
+        </label>
+      </fieldset>
 
       <div className="mt-2 flex gap-2">
         <button

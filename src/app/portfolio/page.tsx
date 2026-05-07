@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import PageHeader from '@/components/PageHeader'
+import SubPageBanner from '@/components/SubPageBanner'
 
 const ITEMS = [
   { seed: 'ace-portfolio-1', title: '서울 강남 OO 빌딩', desc: '오피스 정수 시스템 시공', region: '서울' },
@@ -18,16 +18,15 @@ const ITEMS = [
 
 export default function PortfolioPage() {
   return (
-    <div className="mx-auto max-w-[1440px] px-6 py-16">
-      <div className="mb-10">
-        <PageHeader
-          href="/portfolio"
-          fallbackTitle="시공사례"
-          fallbackDescription="ACEWATER가 함께해온 다양한 현장을 만나보세요"
-        />
-      </div>
+    <>
+      <SubPageBanner
+        href="/portfolio"
+        fallbackTitle="포트폴리오"
+        fallbackSubtitle="ACEWATER가 함께해온 다양한 현장을 만나보세요"
+      />
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mx-auto max-w-[1440px] px-6 py-12">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {ITEMS.map((item) => (
           <a key={item.seed} href="#" className="group block">
             <div className="relative aspect-[4/3] overflow-hidden bg-neutral-100">
@@ -50,7 +49,8 @@ export default function PortfolioPage() {
             </div>
           </a>
         ))}
+        </div>
       </div>
-    </div>
+    </>
   )
 }

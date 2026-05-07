@@ -39,7 +39,7 @@ export default async function EditQnaPage({
   const deleteAction = deleteQna.bind(null, qid)
 
   return (
-    <div className="mx-auto max-w-[960px] px-6 py-12">
+    <div className="mx-auto max-w-[1440px] px-6 py-12">
       <h1 className="mb-6 text-2xl font-bold">Q&amp;A 수정</h1>
 
       {sp.error && (

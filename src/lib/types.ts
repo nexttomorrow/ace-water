@@ -38,6 +38,9 @@ export type Category = {
   sort_order: number
   is_active: boolean
   created_at: string
+  banner_image_path: string | null
+  banner_title: string | null
+  banner_subtitle: string | null
 }
 
 export type CategoryWithChildren = Category & {

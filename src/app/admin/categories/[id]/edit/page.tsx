@@ -38,6 +38,9 @@ export default async function EditCategoryPage({
   const imageUrl = cat.image_path
     ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/categories/${cat.image_path}`
     : null
+  const bannerImageUrl = cat.banner_image_path
+    ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/category-banners/${cat.banner_image_path}`
+    : null
 
   return (
     <div className="mx-auto max-w-xl px-6 py-12">
@@ -51,6 +54,8 @@ export default async function EditCategoryPage({
         cancelHref="/admin/categories"
         imageUrl={imageUrl}
         showRemoveImage={!!cat.image_path}
+        bannerImageUrl={bannerImageUrl}
+        showRemoveBannerImage={!!cat.banner_image_path}
       />
     </div>
   )

@@ -46,6 +46,15 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
   const imageUrl = (path: string) =>
     `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/categories/${path}`
 
+  // 상위메뉴 클릭 시 갈 곳: 자식이 있으면 가장 먼저 정렬된 자식의 href, 없으면 자기 href.
+  const effectiveHref = (c: NavTopCategory) => {
+    const all = [...c.tiles, ...c.texts, ...c.links]
+      .filter((ch) => ch.href && ch.href !== '#')
+      .sort((a, b) => a.sort_order - b.sort_order || a.id - b.id)
+    if (all.length > 0) return all[0].href as string
+    return c.href || '#'
+  }
+
   return (
     <div
       className="relative border-b border-neutral-200 bg-white"
@@ -66,48 +75,46 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
           <span className="text-[22px] font-extrabold tracking-tight text-black">ACEWATER</span>
         </Link>
 
-        <nav className="hidden flex-1 items-center min-[1022px]:flex">
-          <div className="flex flex-1 justify-center">
-            {categories.length === 0 ? (
-              <div className="px-5 py-3 text-[0.875rem] text-neutral-400">
-                {isAdmin ? '메뉴를 추가해주세요' : '메뉴 준비 중'}
-              </div>
-            ) : (
-              <ul className="flex items-center gap-1 text-[1rem] font-medium text-neutral-800">
-                {categories.map((c) => {
-                  const childCount = c.tiles.length + c.texts.length + c.links.length
-                  const isActive = activeId === c.id
-                  const dimmed = isAdmin && c.is_active === false
-                  return (
-                    <li key={c.id} onMouseEnter={() => setActiveId(c.id)}>
-                      <Link
-                        href={c.href || '#'}
-                        className={`relative block px-5 py-3 transition-colors ${
-                          dimmed ? 'text-neutral-400' : isActive ? 'text-black' : 'hover:text-black'
-                        }`}
-                        title={dimmed ? '비활성 (관리자에게만 보임)' : undefined}
-                      >
-                        {c.name}
-                        {childCount > 0 && (
-                          <span
-                            className={`absolute bottom-0 left-5 right-5 h-[2px] origin-center bg-blue-600 transition-transform duration-300 ease-out ${
-                              isActive ? 'scale-x-100' : 'scale-x-0'
-                            }`}
-                          />
-                        )}
-                      </Link>
-                    </li>
-                  )
-                })}
-              </ul>
-            )}
-          </div>
+        <nav className="ml-6 hidden flex-1 items-center min-[1022px]:flex">
+          {categories.length === 0 ? (
+            <div className="px-5 py-3 text-[0.875rem] text-neutral-400">
+              {isAdmin ? '메뉴를 추가해주세요' : '메뉴 준비 중'}
+            </div>
+          ) : (
+            <ul className="flex items-center gap-1 text-[1rem] font-medium text-neutral-800">
+              {categories.map((c) => {
+                const childCount = c.tiles.length + c.texts.length + c.links.length
+                const isActive = activeId === c.id
+                const dimmed = isAdmin && c.is_active === false
+                return (
+                  <li key={c.id} onMouseEnter={() => setActiveId(c.id)}>
+                    <Link
+                      href={effectiveHref(c)}
+                      className={`relative block px-5 py-3 transition-colors ${
+                        dimmed ? 'text-neutral-400' : isActive ? 'text-black' : 'hover:text-black'
+                      }`}
+                      title={dimmed ? '비활성 (관리자에게만 보임)' : undefined}
+                    >
+                      {c.name}
+                      {childCount > 0 && (
+                        <span
+                          className={`absolute bottom-0 left-5 right-5 h-[2px] origin-center bg-blue-600 transition-transform duration-300 ease-out ${
+                            isActive ? 'scale-x-100' : 'scale-x-0'
+                          }`}
+                        />
+                      )}
+                    </Link>
+                  </li>
+                )
+              })}
+            </ul>
+          )}
 
           {isAdmin && (
             <Link
               href="/admin/categories/new"
               onMouseEnter={() => setActiveId(null)}
-              className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-white px-4 py-2 text-[12px] font-semibold text-neutral-900 shadow-lg ring-1 ring-neutral-200 transition hover:bg-neutral-50"
+              className="ml-auto inline-flex shrink-0 items-center gap-1.5 rounded-full bg-white px-4 py-2 text-[12px] font-semibold text-neutral-900 shadow-lg ring-1 ring-neutral-200 transition hover:bg-neutral-50"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 5v14" />
@@ -193,9 +200,9 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
                 <li key={c.id} className="border-b border-neutral-100 last:border-none">
                   <div className="flex items-center justify-between py-4">
                     <Link
-                      href={c.href || '#'}
+                      href={effectiveHref(c)}
                       className="text-[1rem] font-bold text-neutral-900"
-                      onClick={() => !hasChildren && setIsMobileMenuOpen(false)}
+                      onClick={() => setIsMobileMenuOpen(false)}
                     >
                       {c.name}
                     </Link>

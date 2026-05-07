@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { formatBytes, getFileColor } from '@/lib/files'
-import PageHeader from '@/components/PageHeader'
+import SubPageBanner from '@/components/SubPageBanner'
 
 export const revalidate = 0
 
@@ -43,14 +43,15 @@ export default async function ResourcesListPage({
   const currentPage = Math.min(page, totalPages)
 
   return (
-    <div className="mx-auto max-w-[1440px] px-6 py-12">
-      <PageHeader
+    <>
+      <SubPageBanner
         href="/resources"
         fallbackTitle="자료실"
-        fallbackDescription="제품 카탈로그·도면·기술자료 등을 다운로드하실 수 있습니다"
+        fallbackSubtitle="제품 카탈로그·도면·기술자료 등을 다운로드하실 수 있습니다"
       />
 
-      <div className="mb-5 mt-10 flex items-center justify-between">
+      <div className="mx-auto max-w-[1440px] px-6 py-12">
+        <div className="mb-5 flex items-center justify-between">
         <p className="text-[13px] text-neutral-500">
           총 <span className="font-semibold text-neutral-900">{total}</span>개의 자료
         </p>
@@ -147,7 +148,8 @@ export default async function ResourcesListPage({
           )}
         </>
       )}
-    </div>
+      </div>
+    </>
   )
 }
 

@@ -25,7 +25,7 @@ export default async function NewQnaPage({
   if (profile?.role !== 'admin') redirect('/qna')
 
   return (
-    <div className="mx-auto max-w-[960px] px-6 py-12">
+    <div className="mx-auto max-w-[1440px] px-6 py-12">
       <h1 className="mb-6 text-2xl font-bold">Q&amp;A 등록</h1>
 
       {sp.error && (

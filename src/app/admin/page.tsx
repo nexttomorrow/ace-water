@@ -20,7 +20,7 @@ export default async function AdminHome() {
   const stats = [
     { label: '메인 슬라이드', count: heroCount ?? 0, href: '/admin/hero' },
     { label: '카테고리', count: categoryCount ?? 0, href: '/admin/categories' },
-    { label: '갤러리', count: galleryCount ?? 0, href: '/admin/gallery' },
+    { label: '시공사례', count: galleryCount ?? 0, href: '/admin/gallery' },
     { label: '게시글', count: postCount ?? 0, href: '/admin/board' },
     { label: '회원', count: userCount ?? 0, href: '/admin' },
   ]

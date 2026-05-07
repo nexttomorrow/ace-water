@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import QnaAccordion, { type QnaItem } from './QnaAccordion'
-import PageHeader from '@/components/PageHeader'
+import SubPageBanner from '@/components/SubPageBanner'
 
 export const revalidate = 0
 
@@ -29,14 +29,15 @@ export default async function QnaPage() {
   const items = (data ?? []) as QnaItem[]
 
   return (
-    <div className="mx-auto max-w-[960px] px-6 py-12">
-      <PageHeader
+    <>
+      <SubPageBanner
         href="/qna"
         fallbackTitle="Q&A"
-        fallbackDescription="ACEWATER 제품과 서비스에 대한 궁금증을 해결해드립니다"
+        fallbackSubtitle="ACEWATER 제품과 서비스에 대한 궁금증을 해결해드립니다"
       />
 
-      <div className="mb-5 mt-10 flex items-center justify-between">
+      <div className="mx-auto max-w-[1440px] px-6 py-12">
+        <div className="mb-5 flex items-center justify-between">
         <p className="text-[13px] text-neutral-500">
           총 <span className="font-semibold text-neutral-900">{items.length}</span>개의 Q&amp;A
         </p>
@@ -68,6 +69,7 @@ export default async function QnaPage() {
       ) : (
         <QnaAccordion items={items} isAdmin={isAdmin} />
       )}
-    </div>
+      </div>
+    </>
   )
 }

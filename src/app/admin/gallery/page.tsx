@@ -19,19 +19,27 @@ export default async function AdminGalleryPage() {
 
   return (
     <div className="mx-auto max-w-[1440px] px-6 py-12">
-      <div className="mb-5 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">갤러리 관리</h1>
+      <div className="mb-2 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">시공사례 관리</h1>
+          <p className="mt-1 text-[13px] text-neutral-500">
+            <Link href="/construction-cases" target="_blank" className="hover:underline">
+              /construction-cases
+            </Link>{' '}
+            페이지에 노출되는 시공사례를 관리합니다.
+          </p>
+        </div>
         <Link
           href="/admin/gallery/new"
           className="rounded bg-neutral-900 px-3 py-2 text-sm font-medium text-white hover:bg-neutral-700"
         >
-          + 추가
+          + 시공사례 추가
         </Link>
       </div>
 
       {items.length === 0 ? (
-        <p className="rounded border border-dashed border-neutral-300 p-8 text-center text-neutral-500">
-          이미지를 추가해주세요.
+        <p className="mt-6 rounded border border-dashed border-neutral-300 p-8 text-center text-neutral-500">
+          시공사례를 추가해주세요.
         </p>
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">

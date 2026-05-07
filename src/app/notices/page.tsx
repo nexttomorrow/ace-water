@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import PageHeader from '@/components/PageHeader'
+import SubPageBanner from '@/components/SubPageBanner'
 
 export const revalidate = 0
 
@@ -44,10 +44,11 @@ export default async function NoticesListPage({
   const currentPage = Math.min(page, totalPages)
 
   return (
-    <div className="mx-auto max-w-[1440px] px-6 py-12">
-      <PageHeader href="/notices" fallbackTitle="공지사항" />
+    <>
+      <SubPageBanner href="/notices" fallbackTitle="공지사항" />
 
-      <div className="mb-5 mt-10 flex items-center justify-between">
+      <div className="mx-auto max-w-[1440px] px-6 py-12">
+        <div className="mb-5 flex items-center justify-between">
         <p className="text-[13px] text-neutral-500">
           총 <span className="font-semibold text-neutral-900">{total}</span>개의 공지
         </p>
@@ -104,7 +105,8 @@ export default async function NoticesListPage({
           )}
         </>
       )}
-    </div>
+      </div>
+    </>
   )
 }
 
