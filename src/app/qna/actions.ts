@@ -12,6 +12,13 @@ function sanitize(html: string) {
   })
 }
 
+function parseTags(formData: FormData): string[] {
+  return formData
+    .getAll('tags')
+    .map((v) => String(v).trim())
+    .filter(Boolean)
+}
+
 export async function createQna(formData: FormData) {
   const supabase = await createClient()
   const {
@@ -34,9 +41,21 @@ export async function createQna(formData: FormData) {
     redirect('/qna/new?error=' + encodeURIComponent('질문과 답변을 입력해주세요'))
   }
 
+  const tags = parseTags(formData)
+
+  // 새 글은 가장 위에 오도록 sort_order = (현재 최소값 - 1)
+  const { data: minRow } = await supabase
+    .from('qna')
+    .select('sort_order')
+    .order('sort_order', { ascending: true })
+    .limit(1)
+    .maybeSingle()
+  const minSort = (minRow as { sort_order: number } | null)?.sort_order ?? 0
+  const sortOrder = minSort - 1
+
   const { error } = await supabase
     .from('qna')
-    .insert({ question, answer, author_id: user.id })
+    .insert({ question, answer, tags, sort_order: sortOrder, author_id: user.id })
 
   if (error) {
     redirect('/qna/new?error=' + encodeURIComponent(error.message))
@@ -51,12 +70,16 @@ export async function updateQna(id: number, formData: FormData) {
   const question = String(formData.get('question') ?? '').trim()
   const rawAnswer = String(formData.get('answer') ?? '').trim()
   const answer = sanitize(rawAnswer)
+  const tags = parseTags(formData)
 
   if (!question || !answer || answer === '<p></p>') {
     redirect(`/qna/${id}/edit?error=` + encodeURIComponent('질문과 답변을 입력해주세요'))
   }
 
-  const { error } = await supabase.from('qna').update({ question, answer }).eq('id', id)
+  const { error } = await supabase
+    .from('qna')
+    .update({ question, answer, tags })
+    .eq('id', id)
 
   if (error) {
     redirect(`/qna/${id}/edit?error=` + encodeURIComponent(error.message))
@@ -76,4 +99,19 @@ export async function deleteQna(id: number) {
 
   revalidatePath('/qna')
   redirect('/qna')
+}
+
+/**
+ * 드래그 reorder — orderedIds 순서대로 sort_order = 0,1,2,... 갱신
+ * (관리자 권한은 RLS 가 보장)
+ */
+export async function reorderQna(orderedIds: number[]) {
+  if (orderedIds.length === 0) return
+  const supabase = await createClient()
+  await Promise.all(
+    orderedIds.map((id, idx) =>
+      supabase.from('qna').update({ sort_order: idx }).eq('id', id)
+    )
+  )
+  revalidatePath('/qna')
 }

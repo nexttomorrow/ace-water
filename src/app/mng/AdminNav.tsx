@@ -11,6 +11,7 @@ const tabs = [
   { label: "서브페이지 배너", href: "/mng/subpages" },
   { label: "제품 관리", href: "/mng/products" },
   { label: "필터 관리", href: "/mng/filters" },
+  { label: "태그 관리", href: "/mng/tags" },
   { label: "시공사례", href: "/mng/gallery" },
   { label: "견적문의", href: "/mng/estimates" },
   { label: "공지사항", href: "/mng/notices" },

@@ -123,20 +123,20 @@ function Tabs({
 
   const inactiveCls =
     tone === 'light'
-      ? 'text-white/70 hover:text-white'
-      : 'text-neutral-500 hover:text-neutral-900'
+      ? 'text-white/85 hover:text-white'
+      : 'text-neutral-600 hover:text-neutral-900'
   const activeCls = tone === 'light' ? 'text-white' : 'text-neutral-900'
   const indicatorCls = tone === 'light' ? 'bg-white' : 'bg-neutral-900'
 
   return (
-    <div className="flex flex-nowrap items-center gap-0.5">
+    <div className="-ml-4 flex flex-nowrap items-center gap-0.5">
       {items.map((c) => {
         const active = isActive(c.href)
         return (
           <Link
             key={c.id}
             href={c.href || '#'}
-            className={`relative whitespace-nowrap px-4 py-3 text-[0.875rem] font-medium transition md:text-[0.875rem] ${
+            className={`relative whitespace-nowrap px-4 py-3 text-[1rem] font-medium transition ${
               active ? activeCls : inactiveCls
             }`}
           >

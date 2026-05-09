@@ -59,7 +59,9 @@ function getErrorMessage(e: unknown, fallback: string): string {
   return fallback
 }
 
-const VALID_PRODUCT_TAGS = ['new', 'best', 'recommended', 'featured', 'pet', 'accessible']
+// 태그 화이트리스트는 이제 DB(tags 테이블)가 단일 출처. 어드민만 폼을 제출할 수 있으니
+// value 가 영문/숫자/하이픈 형태로만 들어오도록 가벼운 형태 검증만 수행.
+const TAG_VALUE_RE = /^[a-zA-Z0-9_-]+$/
 
 function parsePositiveNumber(raw: FormDataEntryValue | null): number | null {
   if (raw == null) return null
@@ -96,12 +98,12 @@ function parseProductFields(formData: FormData) {
     })
     .filter((v): v is ProductComponent => v !== null)
 
-  // tags: 화이트리스트에 있는 값만 통과 + 중복 제거
+  // tags: 형식 검증 + 중복 제거 (DB tags 테이블이 단일 출처)
   const tagsPresent = formData.get('tags_present') === '1'
   const rawTags = formData
     .getAll('tags')
     .map((v) => String(v).trim())
-    .filter((v) => VALID_PRODUCT_TAGS.includes(v))
+    .filter((v) => v && TAG_VALUE_RE.test(v))
   const tags = Array.from(new Set(rawTags))
 
   // colors: 색상 섹션이 렌더된 경우에만 갱신 (color_name[] / color_hex[] 같은 인덱스로 짝짓기)

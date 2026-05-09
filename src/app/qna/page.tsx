@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import QnaAccordion, { type QnaItem } from './QnaAccordion'
 import SubPageBanner from '@/components/SubPageBanner'
+import { fetchTags } from '@/lib/tags'
 
 export const revalidate = 0
 
@@ -21,10 +22,14 @@ export default async function QnaPage() {
     isAdmin = profile?.role === 'admin'
   }
 
-  const { data, error } = await supabase
-    .from('qna')
-    .select('id, question, answer')
-    .order('created_at', { ascending: false })
+  const [{ data, error }, qnaTags] = await Promise.all([
+    supabase
+      .from('qna')
+      .select('id, question, answer, tags, sort_order')
+      .order('sort_order', { ascending: true })
+      .order('created_at', { ascending: false }),
+    fetchTags('qna'),
+  ])
 
   const items = (data ?? []) as QnaItem[]
 
@@ -67,7 +72,7 @@ export default async function QnaPage() {
           <p className="text-[0.875rem]">등록된 Q&amp;A가 없습니다.</p>
         </div>
       ) : (
-        <QnaAccordion items={items} isAdmin={isAdmin} />
+        <QnaAccordion items={items} isAdmin={isAdmin} tags={qnaTags} />
       )}
       </div>
     </>

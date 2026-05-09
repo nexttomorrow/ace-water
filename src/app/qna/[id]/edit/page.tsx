@@ -3,6 +3,8 @@ import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { deleteQna, updateQna } from '../../actions'
 import RichTextEditor from '@/components/RichTextEditor'
+import TagPicker from '@/components/TagPicker'
+import { fetchTags } from '@/lib/tags'
 
 export default async function EditQnaPage({
   params,
@@ -37,6 +39,8 @@ export default async function EditQnaPage({
 
   const updateAction = updateQna.bind(null, qid)
   const deleteAction = deleteQna.bind(null, qid)
+  const tagOptions = await fetchTags('qna')
+  const initialTags = (qna.tags ?? []) as string[]
 
   return (
     <div className="mx-auto max-w-[1440px] px-6 py-12">
@@ -70,6 +74,18 @@ export default async function EditQnaPage({
             답변
           </label>
           <RichTextEditor name="answer" defaultValue={qna.answer} />
+        </div>
+
+        <div>
+          <label className="mb-1.5 block text-[0.875rem] font-semibold text-neutral-800">
+            태그 (선택)
+          </label>
+          <TagPicker
+            options={tagOptions}
+            name="tags"
+            initial={initialTags}
+            hint="질문 분류를 위한 태그를 선택하세요. /mng/tags 에서 추가/수정 가능."
+          />
         </div>
 
         <div className="mt-2 flex items-center justify-between gap-2">

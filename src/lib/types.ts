@@ -99,9 +99,46 @@ export type ProductFilter = {
   updated_at: string
 }
 
+// ───────────── 통합 태그 (DB driven) ─────────────
+
+export type TagScope = 'product' | 'qna'
+export type TagTone = 'blue' | 'red' | 'amber' | 'neutral' | 'green' | 'purple'
+
+export type Tag = {
+  id: number
+  scope: TagScope
+  value: string
+  label: string
+  tone: TagTone
+  sort_order: number
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+export const TAG_TONES: TagTone[] = ['blue', 'red', 'amber', 'neutral', 'green', 'purple']
+
+export const TAG_TONE_BADGE_CLS: Record<TagTone, string> = {
+  blue: 'bg-blue-600 text-white',
+  red: 'bg-red-600 text-white',
+  amber: 'bg-amber-500 text-white',
+  neutral: 'bg-neutral-900 text-white',
+  green: 'bg-emerald-600 text-white',
+  purple: 'bg-purple-600 text-white',
+}
+
+export const TAG_TONE_PILL_CLS: Record<TagTone, string> = {
+  blue: 'border-blue-200 bg-blue-50 text-blue-700',
+  red: 'border-red-200 bg-red-50 text-red-700',
+  amber: 'border-amber-200 bg-amber-50 text-amber-700',
+  neutral: 'border-neutral-200 bg-neutral-100 text-neutral-700',
+  green: 'border-emerald-200 bg-emerald-50 text-emerald-700',
+  purple: 'border-purple-200 bg-purple-50 text-purple-700',
+}
+
 /**
- * 제품 태그 — 배지·필터·메인 섹션 노출 기준.
- * 새 태그 추가 시 여기만 추가하면 어드민 폼·홈 섹션·배지 자동 반영.
+ * @deprecated DB 의 tags 테이블이 정식 출처입니다. 디스플레이 폴백용으로만 유지.
+ * 새 태그 추가는 /admin/tags 에서 하세요.
  */
 export const PRODUCT_TAGS = [
   {

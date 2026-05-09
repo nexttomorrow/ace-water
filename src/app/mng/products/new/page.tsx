@@ -5,6 +5,7 @@ import {
   fetchLinkableProductsForPicker,
 } from '@/lib/products'
 import { fetchAllFilters } from '@/lib/product-filters'
+import { fetchTags } from '@/lib/tags'
 
 export default async function NewProductPage({
   searchParams,
@@ -13,10 +14,11 @@ export default async function NewProductPage({
 }) {
   const sp = await searchParams
 
-  const [categories, linkableProducts, allFilters] = await Promise.all([
+  const [categories, linkableProducts, allFilters, productTags] = await Promise.all([
     fetchProductCategories(),
     fetchLinkableProductsForPicker(),
     fetchAllFilters(),
+    fetchTags('product'),
   ])
 
   return (
@@ -30,6 +32,7 @@ export default async function NewProductPage({
         categories={categories}
         linkableProducts={linkableProducts}
         allFilters={allFilters}
+        productTags={productTags}
         errorMessage={sp.error}
         submitLabel="등록"
         cancelHref="/mng/products"

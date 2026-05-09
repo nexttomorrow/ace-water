@@ -75,13 +75,13 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
           <span className="text-[1.375rem] font-extrabold tracking-tight text-black">ACEWATER</span>
         </Link>
 
-        <nav className="ml-6 hidden flex-1 items-center min-[1022px]:flex">
+        <nav className="ml-3 hidden flex-1 items-center min-[1022px]:flex">
           {categories.length === 0 ? (
-            <div className="px-5 py-3 text-[0.875rem] text-neutral-400">
+            <div className="px-3 py-3 text-[0.875rem] text-neutral-400">
               {isAdmin ? '메뉴를 추가해주세요' : '메뉴 준비 중'}
             </div>
           ) : (
-            <ul className="flex items-center gap-1 text-[1rem] font-medium text-neutral-800">
+            <ul className="flex items-center gap-0 text-[0.95rem] font-medium text-neutral-800">
               {categories.map((c) => {
                 const childCount = c.tiles.length + c.texts.length + c.links.length
                 const isActive = activeId === c.id
@@ -90,7 +90,7 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
                   <li key={c.id} onMouseEnter={() => setActiveId(c.id)}>
                     <Link
                       href={effectiveHref(c)}
-                      className={`relative block px-5 py-3 transition-colors ${
+                      className={`relative block whitespace-nowrap px-3 py-3 transition-colors lg:px-4 ${
                         dimmed ? 'text-neutral-400' : isActive ? 'text-black' : 'hover:text-black'
                       }`}
                       title={dimmed ? '비활성 (관리자에게만 보임)' : undefined}
@@ -98,7 +98,7 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
                       {c.name}
                       {childCount > 0 && (
                         <span
-                          className={`absolute bottom-0 left-5 right-5 h-[2px] origin-center bg-blue-600 transition-transform duration-300 ease-out ${
+                          className={`absolute bottom-0 left-3 right-3 h-[2px] origin-center bg-blue-600 transition-transform duration-300 ease-out lg:left-4 lg:right-4 ${
                             isActive ? 'scale-x-100' : 'scale-x-0'
                           }`}
                         />
@@ -320,7 +320,7 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
                         displayed.links.length > 0 ? 'col-span-12 md:col-span-9' : 'w-full'
                       }
                     >
-                      <div className="grid grid-cols-3 gap-x-4 gap-y-8 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7">
+                      <div className="grid grid-cols-3 gap-x-4 gap-y-8 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">
                         {displayed.tiles.map((t) => (
                           <Link
                             key={t.id}
@@ -334,7 +334,7 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
                                   alt={t.name}
                                   width={88}
                                   height={88}
-                                  className="h-full w-full object-contain"
+                                  className="h-full w-full object-contain transition-transform duration-300 ease-out group-hover:scale-110"
                                   unoptimized
                                 />
                               ) : (
@@ -344,6 +344,11 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
                             <p className="mt-3 text-[0.875rem] font-medium text-neutral-800 group-hover:text-black">
                               {t.name}
                             </p>
+                            {t.description && (
+                              <p className="mt-1 line-clamp-1 px-1 text-[0.75rem] text-neutral-500">
+                                {t.description}
+                              </p>
+                            )}
                           </Link>
                         ))}
                       </div>

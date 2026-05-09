@@ -135,7 +135,7 @@ export default function ProductCarouselCard({
             </span>
           )}
 
-          {/* 도트 인디케이터 — hover 만으로 즉시 미리보기 (peek) */}
+          {/* 도트 인디케이터 — 클릭 또는 모바일 스와이프로만 변경 */}
           {showControls && (
             <div className="absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 items-center gap-1.5">
               {item.images.map((_, i) => (
@@ -143,7 +143,6 @@ export default function ProductCarouselCard({
                   key={i}
                   type="button"
                   aria-label={`이미지 ${i + 1}`}
-                  onMouseEnter={() => setActive(i)}
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();

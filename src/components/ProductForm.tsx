@@ -11,10 +11,10 @@ import ComponentPickerModal, {
 } from '@/components/mng/ComponentPickerModal'
 import Select from '@/components/ui/Select'
 import {
-  PRODUCT_TAGS,
   type Product,
   type ProductComponent,
   type ProductFilter,
+  type Tag,
 } from '@/lib/types'
 import type { LinkableProductOption } from '@/lib/products'
 
@@ -23,6 +23,8 @@ const TAG_BADGE_CLS: Record<string, string> = {
   red: 'bg-red-600 text-white',
   amber: 'bg-amber-500 text-white',
   neutral: 'bg-neutral-900 text-white',
+  green: 'bg-emerald-600 text-white',
+  purple: 'bg-purple-600 text-white',
 }
 
 const TAG_TONE_CHECKED: Record<string, string> = {
@@ -30,6 +32,8 @@ const TAG_TONE_CHECKED: Record<string, string> = {
   red: 'border-red-300 bg-red-50/60',
   amber: 'border-amber-300 bg-amber-50/60',
   neutral: 'border-neutral-400 bg-neutral-100',
+  green: 'border-emerald-300 bg-emerald-50/60',
+  purple: 'border-purple-300 bg-purple-50/60',
 }
 
 type Props = {
@@ -53,6 +57,8 @@ type Props = {
   initialSelectedCaseIds?: number[]
   /** 전체 필터 정의 — 선택된 카테고리에 맞춰 노출 */
   allFilters?: ProductFilter[]
+  /** 제품 scope 의 활성 태그 목록 — DB driven (/mng/tags 에서 관리) */
+  productTags: Pick<Tag, 'value' | 'label' | 'tone'>[]
 }
 
 export default function ProductForm({
@@ -73,6 +79,7 @@ export default function ProductForm({
   cases,
   initialSelectedCaseIds,
   allFilters,
+  productTags,
 }: Props) {
   const v = {
     name: initial?.name ?? '',
@@ -271,54 +278,62 @@ export default function ProductForm({
 
       {/* 태그 — 메인 노출/배지 제어 */}
       <section className="rounded-lg border border-neutral-200 bg-white p-5">
-        <h2 className="text-[0.875rem] font-bold text-neutral-900">태그</h2>
+        <div className="flex items-baseline justify-between gap-3">
+          <h2 className="text-[0.875rem] font-bold text-neutral-900">태그</h2>
+          <Link
+            href="/mng/tags?scope=product"
+            className="text-[0.75rem] text-blue-600 hover:underline"
+          >
+            태그 관리
+          </Link>
+        </div>
         <p className="mt-1 text-[0.75rem] text-neutral-500">
           여러 개 선택 가능. <strong>NEW</strong>는 메인 &ldquo;New Product&rdquo;,{' '}
           <strong>BEST</strong>는 &ldquo;Best Seller&rdquo; 섹션에 자동 노출됩니다.
         </p>
 
-        <div className="mt-4 grid grid-cols-1 gap-2 md:grid-cols-2">
-          {PRODUCT_TAGS.map((t) => {
-            const checked = selectedTags.includes(t.value)
-            const toneCls = TAG_TONE_CHECKED[t.tone] ?? TAG_TONE_CHECKED.neutral
-            return (
-              <label
-                key={t.value}
-                className={`group flex cursor-pointer items-start gap-3 rounded-lg border p-3 transition ${
-                  checked
-                    ? toneCls
-                    : 'border-neutral-200 bg-white hover:border-neutral-300 hover:bg-neutral-50'
-                }`}
-              >
-                <input
-                  type="checkbox"
-                  name="tags"
-                  value={t.value}
-                  checked={checked}
-                  onChange={() => toggleTag(t.value)}
-                  className="mt-0.5 h-4 w-4 cursor-pointer accent-blue-600"
-                />
-                <span className="min-w-0 flex-1">
-                  <span className="flex items-baseline gap-2">
-                    <span
-                      className={`inline-flex shrink-0 items-center rounded px-1.5 py-0.5 text-[0.75rem] font-bold tracking-wider ${
-                        TAG_BADGE_CLS[t.tone] ?? TAG_BADGE_CLS.neutral
-                      }`}
-                    >
-                      {t.label}
-                    </span>
-                    <span className="text-[0.875rem] font-semibold text-neutral-900">
-                      {t.short}
-                    </span>
+        {productTags.length === 0 ? (
+          <p className="mt-4 rounded border border-dashed border-neutral-300 bg-neutral-50 px-3 py-3 text-[0.75rem] text-neutral-500">
+            등록된 제품 태그가 없습니다.{' '}
+            <Link href="/mng/tags?scope=product" className="text-blue-600 hover:underline">
+              태그 관리
+            </Link>{' '}
+            에서 추가해주세요.
+          </p>
+        ) : (
+          <div className="mt-4 flex flex-wrap gap-2">
+            {productTags.map((t) => {
+              const checked = selectedTags.includes(t.value)
+              const toneCls = TAG_TONE_CHECKED[t.tone] ?? TAG_TONE_CHECKED.neutral
+              return (
+                <label
+                  key={t.value}
+                  className={`group flex cursor-pointer items-center gap-2 px-3 py-1.5 transition ${
+                    checked
+                      ? toneCls
+                      : 'border-neutral-200 bg-white hover:border-neutral-300 hover:bg-neutral-50'
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    name="tags"
+                    value={t.value}
+                    checked={checked}
+                    onChange={() => toggleTag(t.value)}
+                    className="h-3.5 w-3.5 cursor-pointer accent-blue-600"
+                  />
+                  <span
+                    className={`inline-flex shrink-0 items-center rounded px-1.5 py-0.5 text-[0.75rem] font-bold tracking-wider ${
+                      TAG_BADGE_CLS[t.tone] ?? TAG_BADGE_CLS.neutral
+                    }`}
+                  >
+                    {t.label}
                   </span>
-                  <span className="mt-1 block text-[0.75rem] leading-[1.6] text-neutral-500">
-                    {t.desc}
-                  </span>
-                </span>
-              </label>
-            )
-          })}
-        </div>
+                </label>
+              )
+            })}
+          </div>
+        )}
 
         {/* 폼 제출 마커 — actions 가 태그 미체크(전부 해제) 와 폼에 섹션 자체가 없는 경우를 구분 */}
         <input type="hidden" name="tags_present" value="1" />

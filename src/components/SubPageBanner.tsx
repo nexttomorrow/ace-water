@@ -8,8 +8,8 @@ import type { Category } from '@/lib/types'
 type Props = {
   /** 현재 페이지 경로 — categories.href와 매칭됩니다 */
   href: string
-  /** 매칭되는 카테고리가 없을 때 사용할 기본 제목 */
-  fallbackTitle: string
+  /** 매칭되는 카테고리가 없을 때 사용할 기본 제목 (선택) */
+  fallbackTitle?: string
   /** 매칭되는 카테고리에 설명이 없을 때 사용할 기본 부제목 */
   fallbackSubtitle?: string
 }
@@ -53,12 +53,12 @@ export default async function SubPageBanner({
       .filter((c) => c.href && c.href !== '#')
   }
 
-  const title = cat?.banner_title || cat?.name || fallbackTitle
+  const title = cat?.banner_title || cat?.name || fallbackTitle || ''
   const subtitle = cat?.banner_subtitle || cat?.description || fallbackSubtitle || ''
   // 자식 카테고리에 배너 이미지가 없으면 부모의 배너 이미지를 자동 상속
   const imagePath = cat?.banner_image_path ?? parent?.banner_image_path ?? null
 
-  // 텍스트 폴백 (배너 이미지 없을 때) — 기존 PageHeader 와 비슷하지만 좌측 정렬 + breadcrumb 포함
+  // 텍스트 폴백 (배너 이미지 없을 때) — 좌측 정렬 + breadcrumb 포함
   if (!imagePath) {
     return (
       <section className="border-b border-neutral-200 bg-neutral-50">
@@ -68,7 +68,7 @@ export default async function SubPageBanner({
             {title}
           </h1>
           {subtitle && (
-            <p className="mt-2 text-[0.875rem] text-neutral-600 md:text-[1rem]">{subtitle}</p>
+            <p className="mt-2 text-[1rem] text-neutral-700 md:text-[1.125rem]">{subtitle}</p>
           )}
           {siblings.length > 0 && (
             <StickySubmenuTabs items={siblings} activeHref={href} tone="dark" className="mt-6" />
@@ -90,7 +90,7 @@ export default async function SubPageBanner({
         unoptimized
         sizes="100vw"
       />
-      <div className="absolute inset-0 bg-black/40" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/55 to-black/65" />
 
       <div className="relative z-10 mx-auto flex h-full max-w-[1440px] flex-col px-6 py-8 text-white md:py-10">
         <Breadcrumb parent={parent} current={title} tone="light" />
@@ -98,7 +98,7 @@ export default async function SubPageBanner({
         <div className="mt-auto">
           <h1 className="text-[1.75rem] font-bold leading-tight md:text-[2.75rem]">{title}</h1>
           {subtitle && (
-            <p className="mt-2 max-w-2xl text-[0.875rem] text-white/85 md:text-[1rem]">
+            <p className="mt-2 max-w-2xl text-[1rem] font-medium text-white/95 md:text-[1.125rem]">
               {subtitle}
             </p>
           )}
@@ -120,13 +120,13 @@ function Breadcrumb({
   current: string
   tone: 'light' | 'dark'
 }) {
-  const baseCls = tone === 'light' ? 'text-white/80' : 'text-neutral-500'
-  const sepCls = tone === 'light' ? 'text-white/50' : 'text-neutral-300'
+  const baseCls = tone === 'light' ? 'text-white/95' : 'text-neutral-600'
+  const sepCls = tone === 'light' ? 'text-white/60' : 'text-neutral-400'
   const currentCls = tone === 'light' ? 'text-white' : 'text-neutral-900'
   return (
     <nav
       aria-label="Breadcrumb"
-      className={`flex flex-wrap items-center gap-1.5 text-[0.75rem] ${baseCls}`}
+      className={`flex flex-wrap items-center gap-1.5 text-[0.875rem] font-medium ${baseCls}`}
     >
       <Link href="/" className="transition hover:opacity-80">
         HOME
@@ -148,4 +148,3 @@ function Breadcrumb({
     </nav>
   )
 }
-

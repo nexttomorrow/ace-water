@@ -7,6 +7,7 @@ import {
   fetchLinkableProductsForPicker,
 } from '@/lib/products'
 import { fetchAllFilters } from '@/lib/product-filters'
+import { fetchTags } from '@/lib/tags'
 import type { Product, GalleryItem } from '@/lib/types'
 
 const fileUrl = (path: string) =>
@@ -38,7 +39,7 @@ export default async function EditProductPage({
   const product = item as Product
   const productHref = `/products/${itemId}`
 
-  const [categories, linkableProducts, { data: allCasesData }, allFilters] =
+  const [categories, linkableProducts, { data: allCasesData }, allFilters, productTags] =
     await Promise.all([
       fetchProductCategories(),
       fetchLinkableProductsForPicker(itemId),
@@ -48,6 +49,7 @@ export default async function EditProductPage({
         .select('id, title, image_path, site_name, model_name, product_hrefs, created_at')
         .order('created_at', { ascending: false }),
       fetchAllFilters(),
+      fetchTags('product'),
     ])
 
   const allCases = (allCasesData ?? []) as Pick<
@@ -95,6 +97,7 @@ export default async function EditProductPage({
         categories={categories}
         linkableProducts={linkableProducts}
         allFilters={allFilters}
+        productTags={productTags}
         initial={product}
         errorMessage={sp.error}
         submitLabel="저장"
