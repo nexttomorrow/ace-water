@@ -22,7 +22,7 @@ export default async function ExecutionEstimatePage({
       <SubPageBanner
         href="/execution-estimate"
         fallbackTitle="견적·도면 문의"
-        fallbackSubtitle="실행견적·설계견적·도면·제작의뢰 — 한 번의 폼으로 빠르게 접수해드립니다"
+        fallbackSubtitle=""
       />
 
       <div className="mx-auto max-w-[900px] px-6 py-16 md:py-20">

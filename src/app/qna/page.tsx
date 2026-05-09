@@ -38,7 +38,7 @@ export default async function QnaPage() {
       <SubPageBanner
         href="/qna"
         fallbackTitle="Q&A"
-        fallbackSubtitle="ACEWATER 제품과 서비스에 대한 궁금증을 해결해드립니다"
+        fallbackSubtitle=""
       />
 
       <div className="mx-auto max-w-[1440px] px-6 py-12">

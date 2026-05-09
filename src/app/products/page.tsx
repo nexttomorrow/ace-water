@@ -136,11 +136,24 @@ export default async function ProductsPage({
       <SubPageBanner
         href={bannerHref}
         fallbackTitle="제품안내"
-        fallbackSubtitle="ACEWATER의 제품 라인업을 만나보세요"
+        fallbackSubtitle=""
       />
 
       <div className="mx-auto max-w-[1440px] px-6 py-12">
-        {/* 카테고리 필터 칩 — SubPageBanner 의 SubmenuTabs 와 중복이므로 숨김 */}
+        {/* 카테고리 필터 칩 */}
+        {categories.length > 0 && (
+          <div className="-mt-2 mb-6 flex flex-wrap items-center gap-2 pb-4">
+            <CategoryPill href="/products" active={!activeCatId} label="전체" />
+            {categories.map((c) => (
+              <CategoryPill
+                key={c.id}
+                href={`/products?category=${c.id}`}
+                active={activeCatId === c.id}
+                label={c.name}
+              />
+            ))}
+          </div>
+        )}
 
         {/* 핀 드롭다운 필터 바 (어드민 product_filters 정의 기반) */}
         <ProductFilterBar
@@ -269,6 +282,28 @@ function matchesAllFilters(
   return true
 }
 
+function CategoryPill({
+  href,
+  active,
+  label,
+}: {
+  href: string
+  active: boolean
+  label: string
+}) {
+  return (
+    <Link
+      href={href}
+      className={`whitespace-nowrap rounded-full px-4 py-1.5 text-[0.875rem] font-medium transition ${
+        active
+          ? 'bg-neutral-900 text-white'
+          : 'border border-neutral-200 bg-white text-neutral-600 hover:border-neutral-400 hover:text-neutral-900'
+      }`}
+    >
+      {label}
+    </Link>
+  )
+}
 
 function Pagination({
   currentPage,

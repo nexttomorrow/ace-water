@@ -9,7 +9,7 @@ export default function MapPage() {
       <SubPageBanner
         href="/map"
         fallbackTitle="오시는 길"
-        fallbackSubtitle="에이스엔지니어링이 자리한 자리, 직접 만나러 와주세요"
+        fallbackSubtitle=""
       />
       <LocationContent />
     </>

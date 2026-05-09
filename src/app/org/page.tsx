@@ -9,7 +9,7 @@ export default function OrgPage() {
       <SubPageBanner
         href="/org"
         fallbackTitle="조직도"
-        fallbackSubtitle="사람과 기능이 만나, 더 나은 환경을 만들어 갑니다"
+        fallbackSubtitle=""
       />
       <OrgChart />
     </>

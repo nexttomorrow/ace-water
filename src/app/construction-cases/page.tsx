@@ -61,7 +61,7 @@ export default async function ConstructionCasesPage({
       <SubPageBanner
         href="/construction-cases"
         fallbackTitle="시공사례"
-        fallbackSubtitle="ACEWATER가 진행한 시공 프로젝트를 소개합니다"
+        fallbackSubtitle=""
       />
 
       <div className="mx-auto max-w-[1440px] px-6 py-12">

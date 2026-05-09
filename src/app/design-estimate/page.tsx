@@ -31,7 +31,7 @@ export default async function DesignEstimatePage({
       <SubPageBanner
         href="/design-estimate"
         fallbackTitle="실행견적 문의"
-        fallbackSubtitle="현장 정보와 모델·수량을 알려주시면 빠르게 견적을 회신드립니다"
+        fallbackSubtitle=""
       />
 
       <div className="mx-auto max-w-[900px] px-6 py-16 md:py-20">

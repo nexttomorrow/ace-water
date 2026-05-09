@@ -47,7 +47,7 @@ export default async function ResourcesListPage({
       <SubPageBanner
         href="/resources"
         fallbackTitle="자료실"
-        fallbackSubtitle="제품 카탈로그·도면·기술자료 등을 다운로드하실 수 있습니다"
+        fallbackSubtitle=""
       />
 
       <div className="mx-auto max-w-[1440px] px-6 py-12">

@@ -9,7 +9,7 @@ export default function HistoryPage() {
       <SubPageBanner
         href="/history"
         fallbackTitle="연혁"
-        fallbackSubtitle="에이스엔지니어링이 걸어온 길, 그리고 다음 한 걸음"
+        fallbackSubtitle=""
       />
       <HistoryTimeline />
     </>
