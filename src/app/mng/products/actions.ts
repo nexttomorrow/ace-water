@@ -87,14 +87,22 @@ function parseProductFields(formData: FormData) {
   const sortOrder = Number(formData.get('sort_order') ?? 0) || 0
   const isActive = formData.get('is_active') === 'on'
 
-  // components: 폼에서는 component_name[] / component_target_id[] 두 배열로 옴
+  // components: component_name[] / component_target_id[] / component_quantity[] — 인덱스로 짝짓기
   const compNames = formData.getAll('component_name').map((v) => String(v).trim())
   const compTargets = formData.getAll('component_target_id').map((v) => String(v).trim())
+  const compQtys = formData.getAll('component_quantity').map((v) => String(v).trim())
   const components: ProductComponent[] = compNames
     .map((name, i): ProductComponent | null => {
       if (!name) return null
       const tid = compTargets[i] ? Number(compTargets[i]) : NaN
-      return { name, target_id: Number.isFinite(tid) ? tid : null }
+      const qtyRaw = compQtys[i] ? Number(compQtys[i]) : NaN
+      const quantity =
+        Number.isFinite(qtyRaw) && qtyRaw > 0 ? Math.floor(qtyRaw) : null
+      return {
+        name,
+        target_id: Number.isFinite(tid) ? tid : null,
+        quantity,
+      }
     })
     .filter((v): v is ProductComponent => v !== null)
 

@@ -36,6 +36,8 @@ export type GalleryItem = {
 export type ProductComponent = {
   name: string
   target_id: number | null
+  /** 수량 — 미지정·0·1 이면 표시상 "× N" 생략 */
+  quantity?: number | null
 }
 
 export type ProductColor = {

@@ -89,6 +89,7 @@ export default async function ProductDetailPage({
     name: c.name,
     targetId: c.target_id,
     targetName: c.target_id ? targetNameById.get(c.target_id) ?? null : null,
+    quantity: c.quantity ?? null,
   }))
 
   const mainImage = fileUrl(product.main_image_path)

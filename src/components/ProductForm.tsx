@@ -140,6 +140,15 @@ export default function ProductForm({
   const removeComponent = (i: number) =>
     setComponents((prev) => prev.filter((_, idx) => idx !== i))
 
+  const updateComponentQuantity = (i: number, raw: string) => {
+    const n = Number(raw)
+    const next: number | null =
+      Number.isFinite(n) && n > 0 ? Math.floor(n) : null
+    setComponents((prev) =>
+      prev.map((c, idx) => (idx === i ? { ...c, quantity: next } : c))
+    )
+  }
+
   const handlePicked = (picks: PickedComponent[]) => {
     setComponents((prev) => {
       const existingIds = new Set(
@@ -147,7 +156,7 @@ export default function ProductForm({
       )
       const additions = picks
         .filter((p) => !existingIds.has(p.id))
-        .map<ProductComponent>((p) => ({ name: p.name, target_id: p.id }))
+        .map<ProductComponent>((p) => ({ name: p.name, target_id: p.id, quantity: 1 }))
       return [...prev, ...additions]
     })
   }
@@ -587,6 +596,18 @@ export default function ProductForm({
                       )}
                     </div>
                   </div>
+                  <label className="flex shrink-0 items-center gap-1.5 text-[0.75rem] text-neutral-500">
+                    <span className="font-medium">수량</span>
+                    <input
+                      type="number"
+                      min={1}
+                      step={1}
+                      value={c.quantity ?? 1}
+                      onChange={(e) => updateComponentQuantity(i, e.target.value)}
+                      aria-label={`${c.name} 수량`}
+                      className="w-16 rounded border border-neutral-300 bg-white px-2 py-1.5 text-center text-[0.875rem] tabular-nums text-neutral-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                    />
+                  </label>
                   <button
                     type="button"
                     onClick={() => removeComponent(i)}
@@ -597,12 +618,17 @@ export default function ProductForm({
                       <path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14" />
                     </svg>
                   </button>
-                  {/* 서버 액션이 component_name[] / component_target_id[] 짝으로 받기 위한 hidden */}
+                  {/* 서버 액션이 component_name[] / component_target_id[] / component_quantity[] 짝으로 받기 위한 hidden */}
                   <input type="hidden" name="component_name" value={c.name} />
                   <input
                     type="hidden"
                     name="component_target_id"
                     value={c.target_id ?? ''}
+                  />
+                  <input
+                    type="hidden"
+                    name="component_quantity"
+                    value={c.quantity ?? 1}
                   />
                 </li>
               )

@@ -17,6 +17,12 @@ export type LinkableProductOption = {
 export const PRODUCT_ROOT_NAME = '제품안내'
 
 /**
+ * 구성품 카테고리 이름.
+ * 제품 등록 폼의 "구성품" 검색 모달에서 이 카테고리에 속한 제품만 노출됨.
+ */
+export const COMPONENT_CATEGORY_NAME = '부속품'
+
+/**
  * 시공사례에서 사용할 카테고리 목록.
  * "제품안내" 메뉴의 활성화된 자식 카테고리들을 반환한다.
  * (예: 정수기 / 연수기 / 음수기 ...)
@@ -116,6 +122,7 @@ export async function fetchProductOptions(): Promise<ProductOption[]> {
 
 /**
  * 제품 등록 폼의 "구성품" 검색 모달용 데이터.
+ * "부속품" 카테고리에 속한 활성 제품만 반환.
  * 자기 자신은 제외 가능 (excludeId).
  */
 export async function fetchLinkableProductsForPicker(
@@ -123,10 +130,25 @@ export async function fetchLinkableProductsForPicker(
 ): Promise<LinkableProductOption[]> {
   const supabase = await createClient()
 
+  // 1) "부속품" 카테고리 id 찾기 — 못 찾으면 빈 배열
+  const { data: componentCat } = await supabase
+    .from('categories')
+    .select('id')
+    .eq('name', COMPONENT_CATEGORY_NAME)
+    .eq('is_active', true)
+    .order('id', { ascending: true })
+    .limit(1)
+    .maybeSingle()
+
+  if (!componentCat) return []
+  const componentCatId = (componentCat as { id: number }).id
+
+  // 2) 그 카테고리의 활성 제품만 조회
   let q = supabase
     .from('products')
     .select('id, name, model_name, category_id, main_image_path, sort_order')
     .eq('is_active', true)
+    .eq('category_id', componentCatId)
     .order('sort_order', { ascending: true })
     .order('id', { ascending: true })
   if (excludeId != null) q = q.neq('id', excludeId)

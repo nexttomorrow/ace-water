@@ -9,6 +9,12 @@ type ComponentTag = {
   name: string
   targetId: number | null
   targetName: string | null
+  quantity: number | null
+}
+
+function withQuantity(name: string, quantity: number | null): string {
+  if (!quantity || quantity <= 1) return name
+  return `${name} × ${quantity}`
 }
 
 type LinkedCase = {
@@ -228,6 +234,7 @@ export default function ProductDetail({
                     {componentTags.map((t, i) => {
                       const baseCls =
                         'inline-flex items-center rounded-full px-3 py-1 text-[0.75rem] font-medium transition'
+                      const display = withQuantity(t.name, t.quantity)
                       if (t.targetId) {
                         return (
                           <Link
@@ -235,7 +242,7 @@ export default function ProductDetail({
                             href={`/products/${t.targetId}`}
                             className={`${baseCls} border border-blue-200 bg-blue-50 text-blue-700 hover:border-blue-600 hover:bg-blue-600 hover:text-white`}
                           >
-                            {t.name}
+                            {display}
                           </Link>
                         )
                       }
@@ -244,7 +251,7 @@ export default function ProductDetail({
                           key={i}
                           className={`${baseCls} border border-neutral-200 bg-white text-neutral-700`}
                         >
-                          {t.name}
+                          {display}
                         </span>
                       )
                     })}
@@ -496,24 +503,25 @@ function DetailTabContent({
               </dt>
               <dd className="col-span-12 md:col-span-9">
                 <div className="flex flex-wrap gap-1.5">
-                  {componentTags.map((t, i) =>
-                    t.targetId ? (
+                  {componentTags.map((t, i) => {
+                    const display = withQuantity(t.name, t.quantity)
+                    return t.targetId ? (
                       <Link
                         key={i}
                         href={`/products/${t.targetId}`}
                         className="inline-flex items-center rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-[0.75rem] font-medium text-blue-700 transition hover:border-blue-600 hover:bg-blue-600 hover:text-white"
                       >
-                        {t.name}
+                        {display}
                       </Link>
                     ) : (
                       <span
                         key={i}
                         className="inline-flex items-center rounded-full border border-neutral-200 bg-white px-3 py-1 text-[0.75rem] font-medium text-neutral-700"
                       >
-                        {t.name}
+                        {display}
                       </span>
                     )
-                  )}
+                  })}
                 </div>
               </dd>
             </div>
