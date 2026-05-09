@@ -42,21 +42,23 @@ export default async function ProductDetailPage({
     if (cat) categoryName = (cat as { name: string }).name
   }
 
-  // 연결된 시공사례
+  // 연결된 시공사례 — Supabase jsonb contains 가 환경에 따라 까다로워 JS 필터로 안전 처리
+  const productHref = `/products/${itemId}`
   const { data: cases } = await supabase
     .from('gallery_items')
     .select('id, title, site_name, image_path, product_hrefs')
-    .contains('product_hrefs', [`/products/${itemId}`])
     .order('created_at', { ascending: false })
 
   const linkedCases = ((cases ?? []) as Array<
-    Pick<GalleryItem, 'id' | 'title' | 'site_name' | 'image_path'>
-  >).map((c) => ({
-    id: c.id,
-    title: c.title,
-    siteName: c.site_name ?? null,
-    imageUrl: galleryUrl(c.image_path),
-  }))
+    Pick<GalleryItem, 'id' | 'title' | 'site_name' | 'image_path' | 'product_hrefs'>
+  >)
+    .filter((c) => Array.isArray(c.product_hrefs) && c.product_hrefs.includes(productHref))
+    .map((c) => ({
+      id: c.id,
+      title: c.title,
+      siteName: c.site_name ?? null,
+      imageUrl: galleryUrl(c.image_path),
+    }))
 
   // 구성품 → 연결된 제품명 lookup
   const components = (product.components ?? []) as ProductComponent[]

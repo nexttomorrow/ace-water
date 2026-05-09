@@ -4,7 +4,22 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useMemo, useState } from 'react'
 import RichTextEditor from '@/components/RichTextEditor'
-import type { Product, ProductComponent } from '@/lib/types'
+import LinkedCasesField, { type CaseOption } from '@/components/LinkedCasesField'
+import { PRODUCT_TAGS, type Product, type ProductComponent } from '@/lib/types'
+
+const TAG_BADGE_CLS: Record<string, string> = {
+  blue: 'bg-blue-600 text-white',
+  red: 'bg-red-600 text-white',
+  amber: 'bg-amber-500 text-white',
+  neutral: 'bg-neutral-900 text-white',
+}
+
+const TAG_TONE_CHECKED: Record<string, string> = {
+  blue: 'border-blue-300 bg-blue-50/60',
+  red: 'border-red-300 bg-red-50/60',
+  amber: 'border-amber-300 bg-amber-50/60',
+  neutral: 'border-neutral-400 bg-neutral-100',
+}
 
 type Props = {
   action: (formData: FormData) => Promise<void>
@@ -21,6 +36,10 @@ type Props = {
   specSheetName?: string | null
   colorChartUrl?: string | null
   colorChartName?: string | null
+  /** 시공사례 멀티셀렉트 — 수정 모드에서만 의미있음 */
+  productId?: number
+  cases?: CaseOption[]
+  initialSelectedCaseIds?: number[]
 }
 
 export default function ProductForm({
@@ -37,6 +56,9 @@ export default function ProductForm({
   specSheetName,
   colorChartUrl,
   colorChartName,
+  productId,
+  cases,
+  initialSelectedCaseIds,
 }: Props) {
   const v = {
     name: initial?.name ?? '',
@@ -71,6 +93,13 @@ export default function ProductForm({
     setComponents((prev) => prev.filter((_, idx) => idx !== i))
   const updateComponent = (i: number, patch: Partial<ProductComponent>) =>
     setComponents((prev) => prev.map((c, idx) => (idx === i ? { ...c, ...patch } : c)))
+
+  // ── 태그 선택 ──
+  const [selectedTags, setSelectedTags] = useState<string[]>(initial?.tags ?? [])
+  const toggleTag = (tag: string) =>
+    setSelectedTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+    )
 
   // ── 추가 이미지 / 파일 제거 토글 ──
   const initialAdditional = additional ?? []
@@ -137,6 +166,61 @@ export default function ProductForm({
             </span>
           </label>
         </div>
+      </section>
+
+      {/* 태그 — 메인 노출/배지 제어 */}
+      <section className="rounded-lg border border-neutral-200 bg-white p-5">
+        <h2 className="text-[14px] font-bold text-neutral-900">태그</h2>
+        <p className="mt-1 text-[12px] text-neutral-500">
+          여러 개 선택 가능. <strong>NEW</strong>는 메인 &ldquo;New Product&rdquo;,{' '}
+          <strong>BEST</strong>는 &ldquo;Best Seller&rdquo; 섹션에 자동 노출됩니다.
+        </p>
+
+        <div className="mt-4 grid grid-cols-1 gap-2 md:grid-cols-2">
+          {PRODUCT_TAGS.map((t) => {
+            const checked = selectedTags.includes(t.value)
+            const toneCls = TAG_TONE_CHECKED[t.tone] ?? TAG_TONE_CHECKED.neutral
+            return (
+              <label
+                key={t.value}
+                className={`group flex cursor-pointer items-start gap-3 rounded-lg border p-3 transition ${
+                  checked
+                    ? toneCls
+                    : 'border-neutral-200 bg-white hover:border-neutral-300 hover:bg-neutral-50'
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  name="tags"
+                  value={t.value}
+                  checked={checked}
+                  onChange={() => toggleTag(t.value)}
+                  className="mt-0.5 h-4 w-4 cursor-pointer accent-blue-600"
+                />
+                <span className="min-w-0 flex-1">
+                  <span className="flex items-baseline gap-2">
+                    <span
+                      className={`inline-flex shrink-0 items-center rounded px-1.5 py-0.5 text-[10px] font-bold tracking-wider ${
+                        TAG_BADGE_CLS[t.tone] ?? TAG_BADGE_CLS.neutral
+                      }`}
+                    >
+                      {t.label}
+                    </span>
+                    <span className="text-[13px] font-semibold text-neutral-900">
+                      {t.short}
+                    </span>
+                  </span>
+                  <span className="mt-1 block text-[11.5px] leading-[1.6] text-neutral-500">
+                    {t.desc}
+                  </span>
+                </span>
+              </label>
+            )
+          })}
+        </div>
+
+        {/* 폼 제출 마커 — actions 가 태그 미체크(전부 해제) 와 폼에 섹션 자체가 없는 경우를 구분 */}
+        <input type="hidden" name="tags_present" value="1" />
       </section>
 
       {/* 사양 */}
@@ -348,6 +432,15 @@ export default function ProductForm({
           />
         </div>
       </section>
+
+      {/* 시공사례 연결 — 이미지 섹션 직후, 메인 저장 버튼에 통합 */}
+      {cases && (
+        <LinkedCasesField
+          cases={cases}
+          initialSelectedIds={initialSelectedCaseIds ?? []}
+          productId={productId}
+        />
+      )}
 
       {/* 다운로드 자료 */}
       <section className="rounded-lg border border-neutral-200 bg-white p-5">

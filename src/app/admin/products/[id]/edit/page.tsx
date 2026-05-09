@@ -3,10 +3,13 @@ import { createClient } from '@/lib/supabase/server'
 import ProductForm from '@/components/ProductForm'
 import { updateProduct } from '../../actions'
 import { fetchProductCategories } from '@/lib/products'
-import type { Product } from '@/lib/types'
+import type { Product, GalleryItem } from '@/lib/types'
 
 const fileUrl = (path: string) =>
   `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/products/${path}`
+
+const galleryUrl = (path: string) =>
+  `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/gallery/${path}`
 
 export default async function EditProductPage({
   params,
@@ -29,8 +32,9 @@ export default async function EditProductPage({
   if (!item) notFound()
 
   const product = item as Product
+  const productHref = `/products/${itemId}`
 
-  const [categories, { data: linkable }] = await Promise.all([
+  const [categories, { data: linkable }, { data: allCasesData }] = await Promise.all([
     fetchProductCategories(),
     supabase
       .from('products')
@@ -39,6 +43,11 @@ export default async function EditProductPage({
       .neq('id', itemId)
       .order('sort_order', { ascending: true })
       .order('id', { ascending: true }),
+    // 시공사례 멀티셀렉트 후보 — 전체
+    supabase
+      .from('gallery_items')
+      .select('id, title, image_path, site_name, model_name, product_hrefs, created_at')
+      .order('created_at', { ascending: false }),
   ])
 
   const linkableProducts = (linkable ?? []) as {
@@ -46,6 +55,23 @@ export default async function EditProductPage({
     name: string
     model_name: string | null
   }[]
+
+  const allCases = (allCasesData ?? []) as Pick<
+    GalleryItem,
+    'id' | 'title' | 'image_path' | 'site_name' | 'model_name' | 'product_hrefs' | 'created_at'
+  >[]
+
+  const initialSelectedCaseIds = allCases
+    .filter((c) => (c.product_hrefs ?? []).includes(productHref))
+    .map((c) => c.id)
+
+  const caseOptions = allCases.map((c) => ({
+    id: c.id,
+    title: c.title,
+    imageUrl: galleryUrl(c.image_path),
+    modelName: c.model_name,
+    siteName: c.site_name,
+  }))
 
   const imageUrl = product.main_image_path ? fileUrl(product.main_image_path) : null
   const additional = (product.additional_images ?? []).map((p) => ({
@@ -84,6 +110,9 @@ export default async function EditProductPage({
         specSheetName={specSheetName}
         colorChartUrl={colorChartUrl}
         colorChartName={colorChartName}
+        productId={itemId}
+        cases={caseOptions}
+        initialSelectedCaseIds={initialSelectedCaseIds}
       />
     </div>
   )

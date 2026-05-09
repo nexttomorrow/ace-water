@@ -59,6 +59,8 @@ function getErrorMessage(e: unknown, fallback: string): string {
   return fallback
 }
 
+const VALID_PRODUCT_TAGS = ['new', 'best', 'recommended', 'featured']
+
 function parseProductFields(formData: FormData) {
   const name = String(formData.get('name') ?? '').trim()
   const modelName = String(formData.get('model_name') ?? '').trim()
@@ -82,6 +84,14 @@ function parseProductFields(formData: FormData) {
     })
     .filter((v): v is ProductComponent => v !== null)
 
+  // tags: 화이트리스트에 있는 값만 통과 + 중복 제거
+  const tagsPresent = formData.get('tags_present') === '1'
+  const rawTags = formData
+    .getAll('tags')
+    .map((v) => String(v).trim())
+    .filter((v) => VALID_PRODUCT_TAGS.includes(v))
+  const tags = Array.from(new Set(rawTags))
+
   return {
     name,
     model_name: modelName || null,
@@ -94,6 +104,8 @@ function parseProductFields(formData: FormData) {
     category_id: categoryRaw ? Number(categoryRaw) : null,
     sort_order: sortOrder,
     is_active: isActive,
+    // 폼에 태그 섹션이 렌더된 경우에만 갱신 — 안 그러면 키를 빼서 기존 값 유지
+    ...(tagsPresent ? { tags } : {}),
   }
 }
 
@@ -164,6 +176,7 @@ export async function createProduct(formData: FormData) {
   revalidatePath('/admin/products')
   revalidatePath('/products')
   revalidatePath(`/products/${data!.id}`)
+  revalidatePath('/') // 메인 Best Seller / New Product 갱신
   redirect('/admin/products')
 }
 
@@ -242,6 +255,9 @@ export async function updateProduct(id: number, formData: FormData) {
     const { error } = await supabase.from('products').update(update).eq('id', id)
     if (error) throw error
 
+    // 시공사례 연결 동기화 (메인 저장과 통합)
+    await syncProductLinkedCases(supabase, id, formData)
+
     if (oldFilesToRemove.length) {
       await supabase.storage.from(PRODUCTS_BUCKET).remove(oldFilesToRemove)
     }
@@ -258,7 +274,103 @@ export async function updateProduct(id: number, formData: FormData) {
   revalidatePath('/admin/products')
   revalidatePath('/products')
   revalidatePath(`/products/${id}`)
+  revalidatePath('/construction-cases')
+  revalidatePath('/admin/gallery')
+  revalidatePath('/') // 메인 Best Seller / New Product 갱신
   redirect('/admin/products')
+}
+
+/**
+ * 시공사례 양방향 동기화 (내부 헬퍼).
+ * formData 의 case_ids 체크박스를 바탕으로 각 케이스의 product_hrefs 배열을 갱신.
+ *
+ * - cases_picker_present 마커가 없으면 (= 폼에 피커가 렌더되지 않은 등록 모드 등) 아무 것도 하지 않음
+ * - 선택된 id: product_hrefs 에 productHref 추가 (없을 때만)
+ * - 해제된 id (현재 연결돼있지만 미선택): productHref 제거
+ */
+async function syncProductLinkedCases(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  productId: number,
+  formData: FormData
+) {
+  if (formData.get('cases_picker_present') !== '1') return
+
+  const productHref = `/products/${productId}`
+  const selectedIds = new Set(
+    formData
+      .getAll('case_ids')
+      .map((v) => Number(v))
+      .filter((v) => Number.isFinite(v))
+  )
+
+  // jsonb contains 가 환경에 따라 까다로워 전체 가져와 JS 로 필터
+  const { data: allCases } = await supabase
+    .from('gallery_items')
+    .select('id, product_hrefs')
+
+  const currentlyLinkedById = new Map<number, string[]>()
+  for (const r of (allCases ?? []) as Array<{
+    id: number
+    product_hrefs: string[]
+  }>) {
+    if (Array.isArray(r.product_hrefs) && r.product_hrefs.includes(productHref)) {
+      currentlyLinkedById.set(r.id, r.product_hrefs)
+    }
+  }
+
+  const toAddIds = Array.from(selectedIds).filter(
+    (id) => !currentlyLinkedById.has(id)
+  )
+  const toRemoveIds = Array.from(currentlyLinkedById.keys()).filter(
+    (id) => !selectedIds.has(id)
+  )
+
+  if (toAddIds.length > 0) {
+    const { data: addRows } = await supabase
+      .from('gallery_items')
+      .select('id, product_hrefs')
+      .in('id', toAddIds)
+
+    const addResults = await Promise.all(
+      ((addRows ?? []) as Array<{ id: number; product_hrefs: string[] }>).map(
+        (r) => {
+          const next = Array.from(new Set([...(r.product_hrefs ?? []), productHref]))
+          return supabase
+            .from('gallery_items')
+            .update({ product_hrefs: next })
+            .eq('id', r.id)
+        }
+      )
+    )
+    const failed = addResults.find((r) => r.error)
+    if (failed?.error) {
+      throw new Error('시공사례 연결 추가 실패: ' + failed.error.message)
+    }
+  }
+
+  if (toRemoveIds.length > 0) {
+    const removeResults = await Promise.all(
+      toRemoveIds.map((id) => {
+        const cur = currentlyLinkedById.get(id) ?? []
+        const next = cur.filter((h) => h !== productHref)
+        return supabase
+          .from('gallery_items')
+          .update({ product_hrefs: next })
+          .eq('id', id)
+      })
+    )
+    const failed = removeResults.find((r) => r.error)
+    if (failed?.error) {
+      throw new Error('시공사례 연결 해제 실패: ' + failed.error.message)
+    }
+  }
+
+  console.log('[product cases sync]', {
+    productId,
+    selected: Array.from(selectedIds),
+    added: toAddIds,
+    removed: toRemoveIds,
+  })
 }
 
 export async function deleteProduct(id: number) {

@@ -1,11 +1,12 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/server'
-import type { HeroSlide } from '@/lib/types'
+import type { HeroSlide, GalleryItem, Product } from '@/lib/types'
 import HeroSlider, { type HeroSliderItem } from '@/components/HeroSlider'
 import PortfolioSlider, { type PortfolioItem } from '@/components/PortfolioSlider'
 import SectionHeader from '@/components/SectionHeader'
 import ClientsMarquee from '@/components/ClientsMarquee'
+import ProductCard, { type ProductCardItem } from '@/components/ProductCard'
 
 export const revalidate = 0
 
@@ -26,16 +27,59 @@ export default async function Home() {
     isAdmin = profile?.role === 'admin'
   }
 
-  const { data: heroData } = await supabase
-    .from('hero_slides')
-    .select('*')
-    .order('sort_order', { ascending: true })
-    .order('id', { ascending: true })
+  const [{ data: heroData }, { data: caseData }, { data: productData }] = await Promise.all([
+    supabase
+      .from('hero_slides')
+      .select('*')
+      .order('sort_order', { ascending: true })
+      .order('id', { ascending: true }),
+    supabase
+      .from('gallery_items')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(12),
+    // 활성 제품 — 태그별 메인 노출용 (jsonb contains 호환성을 위해 JS 필터)
+    supabase
+      .from('products')
+      .select('id, name, model_name, main_image_path, tags, sort_order, created_at')
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true })
+      .order('created_at', { ascending: false }),
+  ])
 
   const heroSlides = (heroData ?? []) as HeroSlide[]
+  const caseItems = (caseData ?? []) as GalleryItem[]
+  const allProducts = (productData ?? []) as Pick<
+    Product,
+    'id' | 'name' | 'model_name' | 'main_image_path' | 'tags'
+  >[]
+
+  const productImageUrl = (path: string) =>
+    `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/products/${path}`
+
+  const galleryUrl = (path: string) =>
+    `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/gallery/${path}`
 
   const heroPublicUrl = (path: string) =>
     `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/hero/${path}`
+
+  const toCardItem = (p: (typeof allProducts)[number]): ProductCardItem => ({
+    id: p.id,
+    name: p.name,
+    modelName: p.model_name,
+    imageUrl: productImageUrl(p.main_image_path),
+    tags: p.tags ?? [],
+  })
+
+  const bestSellerProducts = allProducts
+    .filter((p) => Array.isArray(p.tags) && p.tags.includes('best'))
+    .slice(0, 5)
+    .map(toCardItem)
+
+  const newProductItems = allProducts
+    .filter((p) => Array.isArray(p.tags) && p.tags.includes('new'))
+    .slice(0, 5)
+    .map(toCardItem)
 
   const fallbackHero: HeroSliderItem[] = [
     {
@@ -65,80 +109,50 @@ export default async function Home() {
   const placeholder = (seed: string, w = 1200, h = 600) =>
     `https://picsum.photos/seed/${seed}/${w}/${h}`
 
-  const bestSellers = [
-    { seed: 'ace-best-1', model: 'AW-100', name: '정수기' },
-    { seed: 'ace-best-2', model: 'AW-200', name: '연수기' },
-    { seed: 'ace-best-3', model: 'AW-300', name: '냉온정수기' },
-    { seed: 'ace-best-4', model: 'AW-400', name: '필터 시스템' },
-    { seed: 'ace-best-5', model: 'AW-500', name: '산업용 정수' },
-  ]
-
-  const newProducts = [
-    { seed: 'ace-new-1', model: 'AW-N01', name: '신제품 정수기' },
-    { seed: 'ace-new-2', model: 'AW-N02', name: '소형 정수기' },
-    { seed: 'ace-new-3', model: 'AW-N03', name: '대용량 정수기' },
-    { seed: 'ace-new-4', model: 'AW-N04', name: '미네랄 필터' },
-    { seed: 'ace-new-5', model: 'AW-N05', name: '스마트 정수' },
-  ]
-
-  const portfolioItems: PortfolioItem[] = [
-    {
-      key: 'ace-portfolio-1',
-      src: 'https://picsum.photos/seed/ace-portfolio-1/800/600',
-      title: '서울 강남 OO 빌딩',
-      desc: '오피스 정수 시스템 시공',
-      href: '/portfolio',
-    },
-    {
-      key: 'ace-portfolio-2',
-      src: 'https://picsum.photos/seed/ace-portfolio-2/800/600',
-      title: '부산 사하 OO 공장',
-      desc: '산업용 대용량 정수 설비',
-      href: '/portfolio',
-    },
-    {
-      key: 'ace-portfolio-3',
-      src: 'https://picsum.photos/seed/ace-portfolio-3/800/600',
-      title: '대구 수성 OO 아파트',
-      desc: '단지 전체 미네랄 워터 시스템',
-      href: '/portfolio',
-    },
-    {
-      key: 'ace-portfolio-4',
-      src: 'https://picsum.photos/seed/ace-portfolio-4/800/600',
-      title: '인천 송도 OO 호텔',
-      desc: '객실 정수 솔루션',
-      href: '/portfolio',
-    },
-    {
-      key: 'ace-portfolio-5',
-      src: 'https://picsum.photos/seed/ace-portfolio-5/800/600',
-      title: '광주 OO 종합병원',
-      desc: '의료용 정수 시스템',
-      href: '/portfolio',
-    },
-    {
-      key: 'ace-portfolio-6',
-      src: 'https://picsum.photos/seed/ace-portfolio-6/800/600',
-      title: '대전 OO 학교',
-      desc: '교내 직수형 정수기 시공',
-      href: '/portfolio',
-    },
-    {
-      key: 'ace-portfolio-7',
-      src: 'https://picsum.photos/seed/ace-portfolio-7/800/600',
-      title: '제주 OO 리조트',
-      desc: '풀빌라 정수 솔루션',
-      href: '/portfolio',
-    },
-    {
-      key: 'ace-portfolio-8',
-      src: 'https://picsum.photos/seed/ace-portfolio-8/800/600',
-      title: '울산 OO 산업단지',
-      desc: '공정수 시스템 구축',
-      href: '/portfolio',
-    },
-  ]
+  // 시공사례: gallery_items 실데이터를 사용, 비어있을 때만 placeholder fallback
+  const portfolioItems: PortfolioItem[] =
+    caseItems.length > 0
+      ? caseItems.map((item) => ({
+          key: String(item.id),
+          src: galleryUrl(item.image_path),
+          title: item.title,
+          desc:
+            item.site_name ||
+            item.model_name ||
+            item.description ||
+            '시공사례',
+          href: `/construction-cases/${item.id}`,
+        }))
+      : [
+          {
+            key: 'placeholder-1',
+            src: 'https://picsum.photos/seed/ace-portfolio-1/800/600',
+            title: '서울 강남 OO 빌딩',
+            desc: '오피스 정수 시스템 시공',
+            href: '/construction-cases',
+          },
+          {
+            key: 'placeholder-2',
+            src: 'https://picsum.photos/seed/ace-portfolio-2/800/600',
+            title: '부산 사하 OO 공장',
+            desc: '산업용 대용량 정수 설비',
+            href: '/construction-cases',
+          },
+          {
+            key: 'placeholder-3',
+            src: 'https://picsum.photos/seed/ace-portfolio-3/800/600',
+            title: '대구 수성 OO 아파트',
+            desc: '단지 전체 미네랄 워터 시스템',
+            href: '/construction-cases',
+          },
+          {
+            key: 'placeholder-4',
+            src: 'https://picsum.photos/seed/ace-portfolio-4/800/600',
+            title: '인천 송도 OO 호텔',
+            desc: '객실 정수 솔루션',
+            href: '/construction-cases',
+          },
+        ]
 
   const solutions = [
     {
@@ -214,71 +228,54 @@ export default async function Home() {
         )}
       </div>
 
-      {/* PRODUCT SHOWCASE — Best Seller / New Product */}
+      {/* PRODUCT SHOWCASE — Best Seller / New Product (실데이터, 태그 기반) */}
       <section className="bg-white py-20">
         <div className="mx-auto max-w-[1440px] px-6">
           {/* Best Seller */}
-          <div className="mb-16">
-            <SectionHeader
-              title="Best Seller"
-              desc="가장 많은 사랑을 받은 베스트셀러 제품입니다"
-            />
-            <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 md:grid-cols-5">
-              {bestSellers.map((p) => (
-                <Link
-                  key={p.seed}
-                  href="#"
-                  className="group block"
-                >
-                  <div className="relative aspect-square overflow-hidden bg-neutral-100">
-                    <Image
-                      src={placeholder(p.seed, 600, 600)}
-                      alt={p.name}
-                      fill
-                      className="object-cover transition duration-500 group-hover:scale-105"
-                      unoptimized
-                    />
-                  </div>
-                  <div className="mt-4">
-                    <p className="text-[13px] font-bold text-neutral-900">{p.model}</p>
-                    <p className="mt-1 text-[12px] text-neutral-600">{p.name}</p>
-                  </div>
-                </Link>
-              ))}
+          {bestSellerProducts.length > 0 && (
+            <div className="mb-16">
+              <SectionHeader
+                title="Best Seller"
+                desc="가장 많은 사랑을 받은 베스트셀러 제품입니다"
+                moreHref="/products?tag=best"
+              />
+              <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 md:grid-cols-5">
+                {bestSellerProducts.map((p) => (
+                  <ProductCard key={p.id} item={p} />
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* New Product */}
-          <div>
-            <SectionHeader
-              title="New Product"
-              desc="새롭게 출시된 ACEWATER의 신제품입니다"
-            />
-            <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 md:grid-cols-5">
-              {newProducts.map((p) => (
-                <Link
-                  key={p.seed}
-                  href="#"
-                  className="group block"
-                >
-                  <div className="relative aspect-square overflow-hidden bg-neutral-100">
-                    <Image
-                      src={placeholder(p.seed, 600, 600)}
-                      alt={p.name}
-                      fill
-                      className="object-cover transition duration-500 group-hover:scale-105"
-                      unoptimized
-                    />
-                    <span className="absolute left-3 top-3 z-10 rounded-full bg-neutral-900 px-2.5 py-0.5 text-[10px] font-bold tracking-wider text-white">NEW</span>
-                  </div>
-                  <div className="mt-4">
-                    <p className="text-[13px] font-bold text-neutral-900">{p.model}</p>
-                    <p className="mt-1 text-[12px] text-neutral-600">{p.name}</p>
-                  </div>
-                </Link>
-              ))}
+          {newProductItems.length > 0 && (
+            <div>
+              <SectionHeader
+                title="New Product"
+                desc="새롭게 출시된 ACEWATER의 신제품입니다"
+                moreHref="/products?tag=new"
+              />
+              <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 md:grid-cols-5">
+                {newProductItems.map((p) => (
+                  <ProductCard key={p.id} item={p} />
+                ))}
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* 양쪽 다 비어있을 때 — 어드민에게 안내 */}
+          {bestSellerProducts.length === 0 && newProductItems.length === 0 && isAdmin && (
+            <div className="rounded-xl border border-dashed border-blue-200 bg-blue-50/50 p-8 text-center text-[13px] text-blue-900">
+              <p className="font-semibold">제품 태그 안내</p>
+              <p className="mt-1.5 leading-6">
+                <Link href="/admin/products" className="underline hover:no-underline">
+                  /admin/products
+                </Link>
+                에서 제품을 등록하고 <strong>BEST</strong> 또는 <strong>NEW</strong>{' '}
+                태그를 추가하면 이 영역에 자동으로 노출됩니다.
+              </p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -326,7 +323,7 @@ export default async function Home() {
           <SectionHeader
             title="시공사례"
             desc="ACEWATER가 함께해온 다양한 현장을 만나보세요"
-            moreHref="/portfolio"
+            moreHref="/construction-cases"
           />
         </div>
         <PortfolioSlider items={portfolioItems} />

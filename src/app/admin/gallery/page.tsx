@@ -10,7 +10,7 @@ export const revalidate = 0
 export default async function AdminGalleryPage({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string }>
+  searchParams: Promise<{ category?: string; error?: string }>
 }) {
   const sp = await searchParams
   const supabase = await createClient()
@@ -34,6 +34,11 @@ export default async function AdminGalleryPage({
 
   return (
     <div className="mx-auto max-w-[1440px] px-6 py-12">
+      {sp.error && (
+        <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-[13px] text-red-700">
+          {sp.error}
+        </div>
+      )}
       <div className="mb-2 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">시공사례 관리</h1>

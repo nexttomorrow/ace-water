@@ -1,4 +1,4 @@
--- ============================================
+  -- ============================================
 -- ACEWATER :: Supabase schema + RLS (consolidated)
 -- Run this in Supabase Dashboard > SQL Editor
 -- ============================================

@@ -212,19 +212,29 @@ export async function deleteGalleryItem(id: number) {
     .single()
 
   const { error } = await supabase.from('gallery_items').delete().eq('id', id)
-  if (error) throw new Error(error.message)
+  if (error) {
+    redirect(
+      '/admin/gallery?error=' +
+        encodeURIComponent('시공사례 삭제 실패: ' + error.message)
+    )
+  }
 
+  // 스토리지 정리 — 실패해도 행은 이미 삭제됐으니 무시 (로그만)
   const paths: string[] = []
   if (existing?.image_path) paths.push(existing.image_path)
   if (existing?.additional_images) paths.push(...(existing.additional_images as string[]))
   if (paths.length) {
-    await supabase.storage.from('gallery').remove(paths)
+    const { error: storageErr } = await supabase.storage.from('gallery').remove(paths)
+    if (storageErr) {
+      console.warn('[delete gallery] storage cleanup failed', storageErr)
+    }
   }
 
   revalidatePath('/admin/gallery')
   revalidatePath('/gallery')
   revalidatePath('/construction-cases')
   revalidatePath('/')
+  redirect('/admin/gallery')
 }
 
 // ---------- 시공사례 카테고리 ----------

@@ -9,15 +9,21 @@ export default async function AdminHome() {
     { count: userCount },
     { count: categoryCount },
     { count: heroCount },
+    { count: newEstimateCount },
   ] = await Promise.all([
     supabase.from('gallery_items').select('*', { count: 'exact', head: true }),
     supabase.from('posts').select('*', { count: 'exact', head: true }),
     supabase.from('profiles').select('*', { count: 'exact', head: true }),
     supabase.from('categories').select('*', { count: 'exact', head: true }),
     supabase.from('hero_slides').select('*', { count: 'exact', head: true }),
+    supabase
+      .from('estimate_inquiries')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'new'),
   ])
 
   const stats = [
+    { label: '신규 견적문의', count: newEstimateCount ?? 0, href: '/admin/estimates' },
     { label: '메인 슬라이드', count: heroCount ?? 0, href: '/admin/hero' },
     { label: '카테고리', count: categoryCount ?? 0, href: '/admin/categories' },
     { label: '시공사례', count: galleryCount ?? 0, href: '/admin/gallery' },

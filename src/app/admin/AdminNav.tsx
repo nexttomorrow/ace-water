@@ -10,6 +10,7 @@ const tabs = [
   { label: '서브페이지 배너', href: '/admin/subpages' },
   { label: '제품', href: '/admin/products' },
   { label: '시공사례', href: '/admin/gallery' },
+  { label: '견적문의', href: '/admin/estimates' },
   { label: '게시판', href: '/admin/board' },
 ]
 
