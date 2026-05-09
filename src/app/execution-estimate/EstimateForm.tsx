@@ -11,6 +11,7 @@ import {
 } from "@/lib/types";
 import ContactInfoBox from "@/components/ContactInfoBox";
 import PrivacyAgreementBox from "@/components/PrivacyAgreementBox";
+import { optimizeImageFile } from "@/components/OptimizedImageInput";
 import type { EstimateProductOption } from "@/lib/estimates/products-for-picker";
 
 type Props = {
@@ -46,9 +47,34 @@ export default function EstimateForm({
     );
   };
 
-  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const f = e.target.files?.[0];
-    setFileName(f ? f.name : "");
+  const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.currentTarget;
+    const f = input.files?.[0];
+    if (!f) {
+      setFileName("");
+      return;
+    }
+    // 이미지면 클라이언트 단에서 자동 리사이즈 + WEBP 재인코딩
+    if (f.type.startsWith("image/") && f.type !== "image/svg+xml") {
+      try {
+        const optimized = await optimizeImageFile(f, {
+          maxWidth: 1920,
+          maxHeight: 1920,
+          quality: 85,
+          format: "WEBP",
+        });
+        if (optimized !== f) {
+          const dt = new DataTransfer();
+          dt.items.add(optimized);
+          input.files = dt.files;
+        }
+        setFileName(optimized.name);
+        return;
+      } catch {
+        // 실패 시 원본 사용
+      }
+    }
+    setFileName(f.name);
   };
 
   // 오늘 이후 날짜만 선택 가능하도록 min 값 계산

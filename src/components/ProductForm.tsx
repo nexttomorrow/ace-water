@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useMemo, useState } from 'react'
 import RichTextEditor from '@/components/RichTextEditor'
+import OptimizedImageInput from '@/components/OptimizedImageInput'
 import LinkedCasesField, { type CaseOption } from '@/components/LinkedCasesField'
 import ColorsField from '@/components/ColorsField'
 import ComponentPickerModal, {
@@ -111,7 +112,7 @@ export default function ProductForm({
   const numD = Number(sizeD) || 0
   const numH = Number(sizeH) || 0
 
-  // ── 구성품 (부속품 검색 모달 기반) ──
+  // ── 구성품 (구성품 검색 모달 기반) ──
   const [components, setComponents] = useState<ProductComponent[]>(
     initial?.components && Array.isArray(initial.components)
       ? initial.components
@@ -130,7 +131,7 @@ export default function ProductForm({
     return Array.from(map, ([id, name]) => ({ id, name }))
   }, [linkableProducts])
 
-  /** id → 부속품 정보 lookup (선택된 구성품의 썸네일/카테고리/모델 표시용) */
+  /** id → 구성품 정보 lookup (선택된 구성품의 썸네일/카테고리/모델 표시용) */
   const linkableById = useMemo(() => {
     const m = new Map<number, LinkableProductOption>()
     for (const p of linkableProducts) m.set(p.id, p)
@@ -529,15 +530,15 @@ export default function ProductForm({
         </div>
       </section>
 
-      {/* 구성품 — 등록된 제품(부속품) 중에서만 검색·선택 */}
+      {/* 구성품 — 등록된 제품(구성품) 중에서만 검색·선택 */}
       <section className="rounded-lg border border-neutral-200 bg-white p-5">
         <div className="mb-3 flex items-baseline justify-between gap-3">
           <h2 className="text-[0.875rem] font-bold text-neutral-900">구성품</h2>
           <span className="text-[0.75rem] text-neutral-500">{components.length}개</span>
         </div>
         <p className="mb-4 text-[0.75rem] text-neutral-500">
-          등록된 제품(부속품) 중에서만 추가할 수 있어요. 상세 페이지에서 클릭하면 해당 제품
-          페이지로 이동합니다. 부속품이 없다면 먼저{' '}
+          등록된 제품(구성품) 중에서만 추가할 수 있어요. 상세 페이지에서 클릭하면 해당 제품
+          페이지로 이동합니다. 구성품이 없다면 먼저{' '}
           <Link href="/mng/products/new" className="text-blue-600 hover:underline">
             제품 등록
           </Link>{' '}
@@ -636,7 +637,7 @@ export default function ProductForm({
           </ul>
         ) : (
           <p className="rounded-lg border border-dashed border-neutral-300 p-6 text-center text-[0.75rem] text-neutral-400">
-            아직 추가된 구성품이 없어요. 아래 버튼을 눌러 부속품에서 검색·선택하세요.
+            아직 추가된 구성품이 없어요. 아래 버튼을 눌러 구성품에서 검색·선택하세요.
           </p>
         )}
 
@@ -649,7 +650,7 @@ export default function ProductForm({
             <circle cx="11" cy="11" r="7" />
             <path d="m20 20-3.5-3.5" />
           </svg>
-          부속품에서 검색·추가
+          구성품에서 검색·추가
         </button>
 
         <ComponentPickerModal
@@ -683,10 +684,11 @@ export default function ProductForm({
               />
             </div>
           )}
-          <input
+          <OptimizedImageInput
             name="main_image"
-            type="file"
-            accept="image/*"
+            maxWidth={1920}
+            maxHeight={1920}
+            quality={85}
             className="block w-full rounded border border-neutral-300 bg-white px-3 py-2 text-sm"
           />
           {imageUrl && (
@@ -742,11 +744,12 @@ export default function ProductForm({
               })}
             </div>
           )}
-          <input
+          <OptimizedImageInput
             name="additional_images"
-            type="file"
-            accept="image/*"
             multiple
+            maxWidth={1920}
+            maxHeight={1920}
+            quality={85}
             className="block w-full rounded border border-neutral-300 bg-white px-3 py-2 text-sm"
           />
         </div>

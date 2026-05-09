@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useMemo, useState } from 'react'
+import OptimizedImageInput from '@/components/OptimizedImageInput'
 import {
   CASE_ADDITIONAL_MAX,
   type GalleryItem,
@@ -342,10 +343,11 @@ export default function CaseForm({
             />
           </div>
         )}
-        <input
+        <OptimizedImageInput
           name="image"
-          type="file"
-          accept="image/*"
+          maxWidth={1920}
+          maxHeight={1920}
+          quality={85}
           className="block w-full rounded border border-neutral-300 bg-white px-3 py-2 text-sm"
         />
         {imageUrl && (
@@ -421,11 +423,12 @@ export default function CaseForm({
             </div>
           )}
 
-          <input
+          <OptimizedImageInput
             name="additional_images"
-            type="file"
-            accept="image/*"
             multiple
+            maxWidth={1920}
+            maxHeight={1920}
+            quality={85}
             onChange={onAddFiles}
             className="block w-full rounded border border-neutral-300 bg-white px-3 py-2 text-sm"
           />

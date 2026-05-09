@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { createHeroSlide } from '../../actions'
+import OptimizedImageInput from '@/components/OptimizedImageInput'
 import { HERO_SLIDES_MAX } from '@/lib/types'
 
 export default async function NewHeroSlidePage({
@@ -68,15 +69,16 @@ export default async function NewHeroSlidePage({
         </label>
         <label className="flex flex-col text-sm">
           이미지
-          <input
+          <OptimizedImageInput
             name="image"
-            type="file"
-            accept="image/*"
             required
+            maxWidth={2400}
+            maxHeight={1400}
+            quality={85}
             className="mt-1 rounded border border-neutral-300 bg-white px-3 py-2"
           />
           <span className="mt-1 text-[0.75rem] text-neutral-500">
-            가로형 이미지 권장 (1920×1080 이상)
+            가로형 이미지 권장 (1920×1080 이상). 업로드 시 자동으로 최적화됩니다.
           </span>
         </label>
 

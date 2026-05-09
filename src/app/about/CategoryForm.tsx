@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
 import Select from '@/components/ui/Select'
+import OptimizedImageInput from '@/components/OptimizedImageInput'
 import type { Category } from '@/lib/types'
 
 type Props = {
@@ -154,10 +155,11 @@ export default function CategoryForm({
             )}
           </div>
         )}
-        <input
+        <OptimizedImageInput
           name="image"
-          type="file"
-          accept="image/*"
+          maxWidth={1024}
+          maxHeight={1024}
+          quality={85}
           className="mt-1 rounded border border-neutral-300 bg-white px-3 py-2"
         />
       </label>
@@ -232,10 +234,11 @@ export default function CategoryForm({
               )}
             </div>
           )}
-          <input
+          <OptimizedImageInput
             name="banner_image"
-            type="file"
-            accept="image/*"
+            maxWidth={2400}
+            maxHeight={1000}
+            quality={85}
             className="mt-1 rounded border border-neutral-300 bg-white px-3 py-2"
           />
         </label>

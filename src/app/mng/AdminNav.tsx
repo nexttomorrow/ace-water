@@ -7,8 +7,7 @@ const tabs = [
   { label: "대시보드", href: "/mng" },
   { label: "월별 리포트", href: "/mng/reports" },
   { label: "메인 슬라이드", href: "/mng/hero" },
-  { label: "카테고리", href: "/mng/categories" },
-  { label: "서브페이지 배너", href: "/mng/subpages" },
+  { label: "카테고리 관리", href: "/mng/categories" },
   { label: "제품 관리", href: "/mng/products" },
   { label: "필터 관리", href: "/mng/filters" },
   { label: "태그 관리", href: "/mng/tags" },
@@ -16,6 +15,7 @@ const tabs = [
   { label: "견적문의", href: "/mng/estimates" },
   { label: "공지사항", href: "/mng/notices" },
   { label: "게시판", href: "/mng/board" },
+  { label: "이미지 최적화", href: "/mng/storage-optimize" },
 ];
 
 export default function AdminNav() {

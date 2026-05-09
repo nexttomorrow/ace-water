@@ -11,6 +11,7 @@ import { TableHeader } from '@tiptap/extension-table-header'
 import { TableCell } from '@tiptap/extension-table-cell'
 import { useRef, useState } from 'react'
 import { uploadPostImage } from '@/app/board/actions'
+import { optimizeImageFile } from '@/components/OptimizedImageInput'
 
 type Props = {
   name: string
@@ -57,8 +58,16 @@ export default function RichTextEditor({ name, defaultValue = '', placeholder }:
     e.target.value = ''
     if (!file) return
 
+    // 업로드 전 클라이언트 측 자동 리사이즈 + WEBP 재인코딩 (화질 유지, 용량↓)
+    const optimized = await optimizeImageFile(file, {
+      maxWidth: 1600,
+      maxHeight: 1600,
+      quality: 85,
+      format: 'WEBP',
+    })
+
     const fd = new FormData()
-    fd.append('image', file)
+    fd.append('image', optimized)
     const result = await uploadPostImage(fd)
     if (result.error) {
       alert(result.error)

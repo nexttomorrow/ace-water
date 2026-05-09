@@ -16,6 +16,7 @@ type Props = {
   childrenByParent: Record<number, Category[]>
   orphans: Category[]
   imageBaseUrl: string // process.env.NEXT_PUBLIC_SUPABASE_URL/storage/.../categories/
+  bannerBaseUrl: string // process.env.NEXT_PUBLIC_SUPABASE_URL/storage/.../category-banners/
 }
 
 export default function CategoryListClient({
@@ -23,6 +24,7 @@ export default function CategoryListClient({
   childrenByParent: childrenProp,
   orphans,
   imageBaseUrl,
+  bannerBaseUrl,
 }: Props) {
   // 서버에서 새로 받아온 데이터로 동기화 (드래그 후 revalidate 결과)
   const [tops, setTops] = useState(topsProp)
@@ -32,6 +34,7 @@ export default function CategoryListClient({
   useEffect(() => setChildrenMap(childrenProp), [childrenProp])
 
   const publicUrl = (path: string) => `${imageBaseUrl}${path}`
+  const bannerUrl = (path: string) => `${bannerBaseUrl}${path}`
 
   return (
     <>
@@ -49,7 +52,7 @@ export default function CategoryListClient({
             const kids = childrenMap[top.id] ?? []
             return (
               <section className="overflow-hidden rounded-xl border border-neutral-200 bg-white">
-                <ParentHeader category={top} />
+                <ParentHeader category={top} bannerUrl={bannerUrl} />
                 {kids.length === 0 ? (
                   <p className="px-5 py-6 text-center text-[0.875rem] text-neutral-400">
                     하위 카테고리 없음
@@ -62,6 +65,7 @@ export default function CategoryListClient({
                       setChildrenMap((m) => ({ ...m, [top.id]: next }))
                     }
                     publicUrl={publicUrl}
+                    parentHasBanner={!!top.banner_image_path}
                   />
                 )}
               </section>
@@ -170,11 +174,13 @@ function DraggableChildren({
   items,
   setItems,
   publicUrl,
+  parentHasBanner,
 }: {
   parentId: number
   items: Category[]
   setItems: (next: Category[]) => void
   publicUrl: (path: string) => string
+  parentHasBanner: boolean
 }) {
   const router = useRouter()
   const [, startTransition] = useTransition()
@@ -266,6 +272,15 @@ function DraggableChildren({
                 >
                   {c.display_type}
                 </span>
+                {c.banner_image_path ? (
+                  <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[0.75rem] font-medium text-emerald-700">
+                    배너
+                  </span>
+                ) : parentHasBanner ? (
+                  <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[0.75rem] font-medium text-blue-700">
+                    배너 상속
+                  </span>
+                ) : null}
               </div>
               <p className="truncate text-[0.75rem] text-neutral-500">
                 sort {c.sort_order} · {c.href || '(href 없음)'}
@@ -281,18 +296,43 @@ function DraggableChildren({
 
 // ---------- 공통 부품 ----------
 
-function ParentHeader({ category }: { category: Category }) {
+function ParentHeader({
+  category,
+  bannerUrl,
+}: {
+  category: Category
+  bannerUrl: (path: string) => string
+}) {
   return (
     <div className="flex items-center justify-between gap-3 border-b border-neutral-200 bg-neutral-50 px-5 py-3">
-      <div className="flex items-center gap-3">
+      <div className="flex min-w-0 flex-1 items-center gap-3">
         <DragHandle />
         <span
-          className={`inline-block h-2 w-2 rounded-full ${
+          className={`inline-block h-2 w-2 shrink-0 rounded-full ${
             category.is_active ? 'bg-green-500' : 'bg-neutral-300'
           }`}
         />
-        <h2 className="text-[1rem] font-bold">{category.name}</h2>
-        <span className="text-[0.75rem] text-neutral-500">
+        {category.banner_image_path ? (
+          <div className="relative h-9 w-16 shrink-0 overflow-hidden rounded ring-1 ring-neutral-200">
+            <Image
+              src={bannerUrl(category.banner_image_path)}
+              alt=""
+              fill
+              unoptimized
+              sizes="64px"
+              className="object-cover"
+            />
+          </div>
+        ) : (
+          <span
+            className="inline-flex h-9 w-16 shrink-0 items-center justify-center rounded bg-neutral-100 text-[0.625rem] font-medium text-neutral-400 ring-1 ring-neutral-200"
+            title="배너 미설정"
+          >
+            no banner
+          </span>
+        )}
+        <h2 className="truncate text-[1rem] font-bold">{category.name}</h2>
+        <span className="shrink-0 text-[0.75rem] text-neutral-500">
           sort {category.sort_order}
         </span>
       </div>

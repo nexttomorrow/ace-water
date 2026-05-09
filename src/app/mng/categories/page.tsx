@@ -26,6 +26,7 @@ export default async function AdminCategoriesPage() {
   }
 
   const imageBaseUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/categories/`
+  const bannerBaseUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/category-banners/`
 
   return (
     <div className="mx-auto max-w-[1440px] px-6 py-12">
@@ -33,8 +34,7 @@ export default async function AdminCategoriesPage() {
         <div>
           <h1 className="text-2xl font-bold">카테고리 관리</h1>
           <p className="mt-1 text-[0.875rem] text-neutral-500">
-            메인 헤더 GNB 의 메가메뉴를 구성합니다. 상위 카테고리는 메뉴 아이템으로,
-            하위 카테고리는 메가메뉴 안의 타일/링크로 노출됩니다. 좌측의{' '}
+            메인 헤더 GNB 의 메가메뉴 + 각 서브페이지 상단 배너를 한 곳에서 관리합니다. 좌측의{' '}
             <span aria-hidden>⠿</span> 핸들이나 행을 드래그해서 순서를 바꿀 수 있어요.
           </p>
         </div>
@@ -51,6 +51,7 @@ export default async function AdminCategoriesPage() {
         childrenByParent={childrenByParent}
         orphans={orphans}
         imageBaseUrl={imageBaseUrl}
+        bannerBaseUrl={bannerBaseUrl}
       />
     </div>
   )

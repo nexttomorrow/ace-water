@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { updateHeroSlide } from '../../../actions'
+import OptimizedImageInput from '@/components/OptimizedImageInput'
 import type { HeroSlide } from '@/lib/types'
 
 export default async function EditHeroSlidePage({
@@ -77,10 +78,11 @@ export default async function EditHeroSlidePage({
         </label>
         <label className="flex flex-col text-sm">
           이미지 교체 (선택)
-          <input
+          <OptimizedImageInput
             name="image"
-            type="file"
-            accept="image/*"
+            maxWidth={2400}
+            maxHeight={1400}
+            quality={85}
             className="mt-1 rounded border border-neutral-300 bg-white px-3 py-2"
           />
         </label>

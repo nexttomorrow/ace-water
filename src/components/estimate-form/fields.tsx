@@ -1,5 +1,7 @@
 'use client'
 
+import { optimizeImageFile } from '@/components/OptimizedImageInput'
+
 /**
  * 견적 폼들이 공유하는 입력 부품.
  * 모양/스타일을 한 곳에서 관리하면 4~5개 폼 톤앤매너가 자동으로 통일됨.
@@ -242,6 +244,39 @@ export function FileField({
   fileName?: string
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
 }) {
+  // 이미지 첨부면 자동 리사이즈 + WEBP 재인코딩 후, input.files 를 갱신해서 폼 제출에 반영.
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.currentTarget
+    const files = Array.from(input.files ?? [])
+    if (files.length === 0) {
+      onChange?.(e)
+      return
+    }
+    try {
+      const optimized: File[] = []
+      for (const f of files) {
+        if (f.type.startsWith('image/') && f.type !== 'image/svg+xml') {
+          optimized.push(
+            await optimizeImageFile(f, {
+              maxWidth: 1920,
+              maxHeight: 1920,
+              quality: 85,
+              format: 'WEBP',
+            })
+          )
+        } else {
+          optimized.push(f)
+        }
+      }
+      const dt = new DataTransfer()
+      for (const f of optimized) dt.items.add(f)
+      input.files = dt.files
+    } catch {
+      // 실패 시 원본 그대로 사용
+    }
+    onChange?.(e)
+  }
+
   return (
     <div>
       {label && <Label label={label} required={required} />}
@@ -260,7 +295,7 @@ export function FileField({
           name={name}
           required={required}
           accept={accept}
-          onChange={onChange}
+          onChange={handleChange}
           className="sr-only"
         />
       </label>
