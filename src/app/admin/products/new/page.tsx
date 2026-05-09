@@ -1,7 +1,10 @@
-import { createClient } from '@/lib/supabase/server'
 import ProductForm from '@/components/ProductForm'
 import { createProduct } from '../actions'
-import { fetchProductCategories } from '@/lib/products'
+import {
+  fetchProductCategories,
+  fetchLinkableProductsForPicker,
+} from '@/lib/products'
+import { fetchAllFilters } from '@/lib/product-filters'
 
 export default async function NewProductPage({
   searchParams,
@@ -9,23 +12,12 @@ export default async function NewProductPage({
   searchParams: Promise<{ error?: string }>
 }) {
   const sp = await searchParams
-  const supabase = await createClient()
 
-  const [categories, { data: linkable }] = await Promise.all([
+  const [categories, linkableProducts, allFilters] = await Promise.all([
     fetchProductCategories(),
-    supabase
-      .from('products')
-      .select('id, name, model_name')
-      .eq('is_active', true)
-      .order('sort_order', { ascending: true })
-      .order('id', { ascending: true }),
+    fetchLinkableProductsForPicker(),
+    fetchAllFilters(),
   ])
-
-  const linkableProducts = (linkable ?? []) as {
-    id: number
-    name: string
-    model_name: string | null
-  }[]
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-12">
@@ -37,6 +29,7 @@ export default async function NewProductPage({
         action={createProduct}
         categories={categories}
         linkableProducts={linkableProducts}
+        allFilters={allFilters}
         errorMessage={sp.error}
         submitLabel="등록"
         cancelHref="/admin/products"

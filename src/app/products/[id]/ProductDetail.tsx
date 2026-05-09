@@ -24,7 +24,6 @@ type Props = {
   images: string[]
   componentTags: ComponentTag[]
   specSheetUrl: string | null
-  colorChartUrl: string | null
   linkedCases: LinkedCase[]
 }
 
@@ -36,7 +35,6 @@ export default function ProductDetail({
   images,
   componentTags,
   specSheetUrl,
-  colorChartUrl,
   linkedCases,
 }: Props) {
   const [activeIdx, setActiveIdx] = useState(0)
@@ -221,7 +219,7 @@ export default function ProductDetail({
 
             <div className="mt-7 space-y-5 border-t border-neutral-200 pt-6">
               <SpecRow label="시공타입" text={product.install_type} />
-              <SpecRow label="사이즈" text={product.size_text} />
+              <SpecRow label="사이즈" text={formatSize(product)} />
               <SpecRow label="소재" text={product.material} />
               {componentTags.length > 0 && (
                 <div>
@@ -254,18 +252,34 @@ export default function ProductDetail({
                 </div>
               )}
               <SpecRow label="별도설비 (추가 가능)" text={product.extras_text} />
+
+              {/* 색상 옵션 */}
+              {product.colors && product.colors.length > 0 && (
+                <div>
+                  <p className="text-[13px] font-bold text-neutral-900">색상</p>
+                  <ColorSwatches colors={product.colors} />
+                </div>
+              )}
             </div>
 
-            {/* Action buttons */}
+            {/* Action buttons — 모델명을 견적·도면 문의 폼에 자동 prefill */}
             <div className="mt-7 grid grid-cols-2 gap-2">
               <Link
-                href="/contact"
+                href={`/design-estimate?model=${encodeURIComponent(
+                  product.model_name
+                    ? `${product.model_name} ${product.name}`
+                    : product.name
+                )}`}
                 className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 px-4 py-3 text-[13px] font-bold text-white shadow-[0_18px_36px_-18px_rgba(37,99,235,0.5)] hover:shadow-[0_22px_40px_-18px_rgba(37,99,235,0.6)]"
               >
                 견적문의
               </Link>
               <Link
-                href="/contact"
+                href={`/design-estimate?model=${encodeURIComponent(
+                  product.model_name
+                    ? `${product.model_name} ${product.name}`
+                    : product.name
+                )}&drawing=1`}
                 className="inline-flex items-center justify-center rounded-full border border-neutral-200 bg-white px-4 py-3 text-[13px] font-bold text-neutral-900 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
               >
                 도면문의
@@ -283,19 +297,16 @@ export default function ProductDetail({
               >
                 시방서 다운
               </a>
-              <a
-                href={colorChartUrl ?? '#'}
-                target={colorChartUrl ? '_blank' : undefined}
-                rel="noreferrer"
-                aria-disabled={!colorChartUrl}
-                className={`inline-flex items-center justify-center rounded-full border px-4 py-3 text-[13px] font-bold transition ${
-                  colorChartUrl
-                    ? 'border-neutral-200 bg-white text-neutral-900 hover:border-neutral-900 hover:bg-neutral-900 hover:text-white'
-                    : 'pointer-events-none border-neutral-200 bg-neutral-50 text-neutral-400'
-                }`}
+              <Link
+                href={
+                  product.category_id
+                    ? `/products?category=${product.category_id}`
+                    : '/products'
+                }
+                className="inline-flex items-center justify-center rounded-full border border-neutral-200 bg-white px-4 py-3 text-[13px] font-bold text-neutral-900 transition hover:border-neutral-900 hover:bg-neutral-900 hover:text-white"
               >
-                색상표
-              </a>
+                목록으로
+              </Link>
             </div>
           </div>
         </aside>
@@ -331,6 +342,69 @@ export default function ProductDetail({
       </div>
     </>
   )
+}
+
+function ColorSwatches({ colors }: { colors: { name: string; hex: string }[] }) {
+  const [activeIdx, setActiveIdx] = useState(0)
+  const active = colors[activeIdx] ?? colors[0]
+  return (
+    <div className="mt-2">
+      <p className="text-[13px] font-medium text-neutral-700">{active?.name}</p>
+      <div className="mt-2 flex flex-wrap gap-2">
+        {colors.map((c, i) => {
+          const isActive = i === activeIdx
+          return (
+            <button
+              key={i}
+              type="button"
+              onClick={() => setActiveIdx(i)}
+              onMouseEnter={() => setActiveIdx(i)}
+              aria-label={c.name}
+              title={c.name}
+              className={`relative h-9 w-9 overflow-hidden rounded-full ring-2 transition ${
+                isActive
+                  ? 'ring-neutral-900 ring-offset-2'
+                  : 'ring-neutral-200 hover:ring-neutral-400'
+              }`}
+            >
+              <span className="block h-full w-full" style={{ background: c.hex }} />
+            </button>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+/**
+ * W × D × H (mm) + 넓이/부피 자동 표기 + size_text(보조 메모) 합쳐서 반환.
+ * 셋 다 비어있고 size_text 도 없으면 null → SpecRow/SpecListRow 가 자동으로 행을 숨김.
+ */
+function formatSize(product: Product): string | null {
+  const w = product.size_w ?? 0
+  const d = product.size_d ?? 0
+  const h = product.size_h ?? 0
+  const fmt = (n: number) =>
+    n.toLocaleString('ko-KR', { maximumFractionDigits: 4 })
+
+  const lines: string[] = []
+  if (w || d || h) {
+    lines.push(
+      `W ${w ? fmt(w) : '?'} × D ${d ? fmt(d) : '?'} × H ${h ? fmt(h) : '?'} mm`
+    )
+    if (w && d) {
+      const areaM2 = (w * d) / 1_000_000
+      lines.push(`넓이 ${fmt(areaM2)} m²`)
+    }
+    if (w && d && h) {
+      const volL = (w * d * h) / 1_000_000
+      lines.push(`부피 ${fmt(volL)} L`)
+    }
+  }
+  if (product.size_text && product.size_text.trim()) {
+    lines.push(product.size_text)
+  }
+  return lines.length > 0 ? lines.join('\n') : null
 }
 
 function SpecRow({ label, text }: { label: string; text: string | null }) {
@@ -413,7 +487,7 @@ function DetailTabContent({
           <SpecListRow label="모델명" text={product.model_name} />
           <SpecListRow label="제품명" text={product.name} />
           <SpecListRow label="시공타입" text={product.install_type} />
-          <SpecListRow label="사이즈" text={product.size_text} />
+          <SpecListRow label="사이즈" text={formatSize(product)} />
           <SpecListRow label="소재" text={product.material} />
           {componentTags.length > 0 && (
             <div className="grid grid-cols-12 gap-3 px-4 py-4">
@@ -445,6 +519,30 @@ function DetailTabContent({
             </div>
           )}
           <SpecListRow label="별도설비 (추가항목)" text={product.extras_text} />
+          {product.colors && product.colors.length > 0 && (
+            <div className="grid grid-cols-12 gap-3 px-4 py-4">
+              <dt className="col-span-12 text-[14px] font-bold text-neutral-900 md:col-span-3">
+                색상
+              </dt>
+              <dd className="col-span-12 md:col-span-9">
+                <div className="flex flex-wrap gap-2">
+                  {product.colors.map((c, i) => (
+                    <span
+                      key={i}
+                      className="inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-2.5 py-1 text-[12px] text-neutral-700"
+                      title={c.name}
+                    >
+                      <span
+                        className="block h-4 w-4 rounded-full ring-1 ring-neutral-300"
+                        style={{ background: c.hex }}
+                      />
+                      {c.name}
+                    </span>
+                  ))}
+                </div>
+              </dd>
+            </div>
+          )}
         </dl>
       </section>
 

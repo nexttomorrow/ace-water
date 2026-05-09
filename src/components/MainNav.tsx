@@ -110,7 +110,8 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
             </ul>
           )}
 
-          {isAdmin && (
+          {/* 카테고리 등록 단축 버튼 — 일단 숨김 (필요 시 isAdmin && false → isAdmin 으로 복구) */}
+          {isAdmin && false && (
             <Link
               href="/admin/categories/new"
               onMouseEnter={() => setActiveId(null)}

@@ -214,7 +214,8 @@ export default async function Home() {
     <>
       <div className="relative">
         <HeroSlider slides={sliderItems} />
-        {isAdmin && (
+        {/* 슬라이드 관리 단축 버튼 — 일단 숨김 (필요 시 isAdmin && false → isAdmin 으로 복구) */}
+        {isAdmin && false && (
           <Link
             href="/admin/hero"
             className="absolute right-6 top-6 z-30 inline-flex items-center gap-1.5 rounded-full bg-white/90 px-4 py-2 text-[12px] font-semibold text-neutral-900 shadow-lg backdrop-blur transition hover:bg-white"

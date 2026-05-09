@@ -12,17 +12,33 @@ import {
   FileField,
   CheckboxField,
   FieldRow,
-  FieldGrid2,
   NoteList,
 } from '@/components/estimate-form/fields'
+import ModelItemsField from '@/components/estimate-form/ModelItemsField'
 import { ESTIMATE_DELIVERY_METHODS } from '@/lib/types'
+import type { EstimateProductOption } from '@/lib/estimates/products-for-picker'
 
 type Props = {
   action: (formData: FormData) => Promise<void>
   errorMessage?: string
+  /** 제품 상세 페이지에서 ?model= 으로 prefill */
+  initialModelName?: string
+  /** 도면문의 진입 시 도면 요청 체크박스 자동 ON */
+  initialDrawingChecked?: boolean
+  /** 모델명 모달용 — 등록된 활성 제품 */
+  productOptions?: EstimateProductOption[]
+  /** 모델명 모달용 — 제품 카테고리 */
+  productCategories?: { id: number; name: string }[]
 }
 
-export default function DesignEstimateForm({ action, errorMessage }: Props) {
+export default function DesignEstimateForm({
+  action,
+  errorMessage,
+  initialModelName,
+  initialDrawingChecked,
+  productOptions,
+  productCategories,
+}: Props) {
   const [deliveryMethod, setDeliveryMethod] = useState('')
   const [fileName, setFileName] = useState('')
 
@@ -114,10 +130,22 @@ export default function DesignEstimateForm({ action, errorMessage }: Props) {
 
       {/* ③ 제품정보 */}
       <Section english="Product" title="제품정보">
-        <FieldGrid2>
-          <TextField name="model_name" label="모델명" required placeholder="ex.aw-100" />
-          <TextField name="quantity" label="수량" required placeholder="ex.2대" />
-        </FieldGrid2>
+        <div className="mb-3 flex items-baseline justify-between">
+          <label className="flex items-baseline gap-1 text-[13px] font-medium text-neutral-800">
+            <span className="text-red-600">*</span>모델명 · 수량
+          </label>
+          <span className="text-[11px] text-neutral-500">
+            여러 모델을 한 번에 문의하실 수 있어요
+          </span>
+        </div>
+        <ModelItemsField
+          modelFieldName="model_name"
+          quantityFieldName="quantity"
+          required
+          initialModel={initialModelName}
+          options={productOptions ?? []}
+          categories={productCategories ?? []}
+        />
 
         <NoteList
           items={[
@@ -132,6 +160,7 @@ export default function DesignEstimateForm({ action, errorMessage }: Props) {
             name="drawing_request"
             label="도면 요청"
             description="도면 사본이 필요하신 경우 체크해주세요. (별도 회신)"
+            defaultChecked={initialDrawingChecked}
           />
         </div>
       </Section>

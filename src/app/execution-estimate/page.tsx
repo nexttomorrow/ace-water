@@ -1,16 +1,21 @@
 import SubPageBanner from '@/components/SubPageBanner'
 import EstimateForm from './EstimateForm'
 import { submitEstimate } from './actions'
+import { fetchEstimateProductPicker } from '@/lib/estimates/products-for-picker'
 
 export const revalidate = 0
 
 export default async function ExecutionEstimatePage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; submitted?: string }>
+  searchParams: Promise<{ error?: string; submitted?: string; model?: string }>
 }) {
   const sp = await searchParams
   const submitted = sp.submitted === '1'
+
+  const { categories, options } = submitted
+    ? { categories: [], options: [] }
+    : await fetchEstimateProductPicker()
 
   return (
     <>
@@ -24,7 +29,13 @@ export default async function ExecutionEstimatePage({
         {submitted ? (
           <SubmittedNotice />
         ) : (
-          <EstimateForm action={submitEstimate} errorMessage={sp.error} />
+          <EstimateForm
+            action={submitEstimate}
+            errorMessage={sp.error}
+            initialModelName={sp.model ?? ''}
+            productOptions={options}
+            productCategories={categories}
+          />
         )}
       </div>
     </>

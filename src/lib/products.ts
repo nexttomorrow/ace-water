@@ -1,6 +1,15 @@
 import type { Category, ProductOption } from '@/lib/types'
 import { createClient } from '@/lib/supabase/server'
 
+export type LinkableProductOption = {
+  id: number
+  name: string
+  modelName: string | null
+  categoryId: number | null
+  categoryName: string | null
+  imageUrl: string | null
+}
+
 /**
  * "제품안내" 최상위 카테고리 이름.
  * categories 테이블에서 name 으로 매칭하여 그 아래 자식들을 시공사례 카테고리로 사용.
@@ -102,5 +111,62 @@ export async function fetchProductOptions(): Promise<ProductOption[]> {
     href: `/products/${p.id}`,
     name: p.model_name ? `${p.model_name} ${p.name}` : p.name,
     group: p.category_id ? nameByCatId.get(p.category_id) ?? null : null,
+  }))
+}
+
+/**
+ * 제품 등록 폼의 "구성품" 검색 모달용 데이터.
+ * 자기 자신은 제외 가능 (excludeId).
+ */
+export async function fetchLinkableProductsForPicker(
+  excludeId?: number | null
+): Promise<LinkableProductOption[]> {
+  const supabase = await createClient()
+
+  let q = supabase
+    .from('products')
+    .select('id, name, model_name, category_id, main_image_path, sort_order')
+    .eq('is_active', true)
+    .order('sort_order', { ascending: true })
+    .order('id', { ascending: true })
+  if (excludeId != null) q = q.neq('id', excludeId)
+
+  const { data: products } = await q
+
+  const rows = (products ?? []) as Array<{
+    id: number
+    name: string
+    model_name: string | null
+    category_id: number | null
+    main_image_path: string | null
+  }>
+  if (rows.length === 0) return []
+
+  const catIds = Array.from(
+    new Set(rows.map((p) => p.category_id).filter((v): v is number => v != null))
+  )
+  let nameByCatId = new Map<number, string>()
+  if (catIds.length > 0) {
+    const { data: cats } = await supabase
+      .from('categories')
+      .select('id, name')
+      .in('id', catIds)
+    nameByCatId = new Map(
+      ((cats ?? []) as Array<{ id: number; name: string }>).map((c) => [c.id, c.name])
+    )
+  }
+
+  const productImageUrl = (path: string | null) =>
+    path
+      ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/products/${path}`
+      : null
+
+  return rows.map((p) => ({
+    id: p.id,
+    name: p.name,
+    modelName: p.model_name,
+    categoryId: p.category_id,
+    categoryName: p.category_id ? nameByCatId.get(p.category_id) ?? null : null,
+    imageUrl: productImageUrl(p.main_image_path),
   }))
 }

@@ -59,13 +59,25 @@ function getErrorMessage(e: unknown, fallback: string): string {
   return fallback
 }
 
-const VALID_PRODUCT_TAGS = ['new', 'best', 'recommended', 'featured']
+const VALID_PRODUCT_TAGS = ['new', 'best', 'recommended', 'featured', 'pet', 'accessible']
+
+function parsePositiveNumber(raw: FormDataEntryValue | null): number | null {
+  if (raw == null) return null
+  const s = String(raw).trim()
+  if (!s) return null
+  const n = Number(s)
+  if (!Number.isFinite(n) || n <= 0) return null
+  return n
+}
 
 function parseProductFields(formData: FormData) {
   const name = String(formData.get('name') ?? '').trim()
   const modelName = String(formData.get('model_name') ?? '').trim()
   const installType = String(formData.get('install_type') ?? '').trim()
   const sizeText = String(formData.get('size_text') ?? '').trim()
+  const sizeW = parsePositiveNumber(formData.get('size_w'))
+  const sizeD = parsePositiveNumber(formData.get('size_d'))
+  const sizeH = parsePositiveNumber(formData.get('size_h'))
   const material = String(formData.get('material') ?? '').trim()
   const extrasText = String(formData.get('extras_text') ?? '').trim()
   const description = sanitize(String(formData.get('description') ?? '').trim())
@@ -92,11 +104,56 @@ function parseProductFields(formData: FormData) {
     .filter((v) => VALID_PRODUCT_TAGS.includes(v))
   const tags = Array.from(new Set(rawTags))
 
+  // colors: 색상 섹션이 렌더된 경우에만 갱신 (color_name[] / color_hex[] 같은 인덱스로 짝짓기)
+  const colorsPresent = formData.get('colors_present') === '1'
+  const colorNames = formData.getAll('color_name').map((v) => String(v).trim())
+  const colorHexes = formData.getAll('color_hex').map((v) => String(v).trim())
+  const colors = colorNames
+    .map((name, i) => ({ name, hex: colorHexes[i] ?? '' }))
+    .filter((c) => c.name && c.hex)
+
+  // 카테고리별 필터값:
+  //   filter_keys[] 에 등장한 key 들을 화이트리스트로 사용,
+  //   각 key 별로 filter[<key>][] 의 모든 값을 모은다.
+  const filtersPresent = formData.get('filters_present') === '1'
+  const filterKeys = Array.from(
+    new Set(
+      formData
+        .getAll('filter_keys')
+        .map((v) => String(v).trim())
+        .filter(Boolean)
+    )
+  )
+  const filterValues: Record<string, string[]> = {}
+  for (const key of filterKeys) {
+    const vals = formData
+      .getAll(`filter[${key}]`)
+      .map((v) => String(v).trim())
+      .filter(Boolean)
+    if (vals.length > 0) filterValues[key] = Array.from(new Set(vals))
+  }
+
+  // 색상 필터 자동 동기화: 색상 섹션이 있으면 filter_values.color 를 colors 에서 자동 생성.
+  // (어드민에서 색상 필터 옵션을 따로 관리할 필요 없음 — 글로벌 'color' 필터로 사용)
+  if (colorsPresent) {
+    const colorVals = colors
+      .map((c) => c.name.trim())
+      .filter(Boolean)
+    if (colorVals.length > 0) {
+      filterValues.color = Array.from(new Set(colorVals))
+    } else {
+      delete filterValues.color
+    }
+  }
+
   return {
     name,
     model_name: modelName || null,
     install_type: installType || null,
     size_text: sizeText || null,
+    size_w: sizeW,
+    size_d: sizeD,
+    size_h: sizeH,
     material: material || null,
     components,
     extras_text: extrasText || null,
@@ -104,8 +161,12 @@ function parseProductFields(formData: FormData) {
     category_id: categoryRaw ? Number(categoryRaw) : null,
     sort_order: sortOrder,
     is_active: isActive,
-    // 폼에 태그 섹션이 렌더된 경우에만 갱신 — 안 그러면 키를 빼서 기존 값 유지
+    // 각 섹션이 폼에 렌더된 경우에만 갱신 — 안 그러면 키를 빼서 기존 값 유지
     ...(tagsPresent ? { tags } : {}),
+    ...(colorsPresent ? { colors } : {}),
+    // filtersPresent OR colorsPresent 둘 중 하나라도 있으면 filter_values 갱신
+    // (색상 자동 동기화가 색상 단독 변경에서도 반영되도록)
+    ...(filtersPresent || colorsPresent ? { filter_values: filterValues } : {}),
   }
 }
 

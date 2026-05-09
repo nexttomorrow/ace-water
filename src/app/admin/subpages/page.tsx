@@ -170,7 +170,7 @@ function BannerRow({
         )}
       </div>
 
-      <div className="flex shrink-0 flex-col items-end gap-2">
+      <div className="flex shrink-0 items-center gap-2">
         {hasRealHref && (
           <Link
             href={cat.href!}

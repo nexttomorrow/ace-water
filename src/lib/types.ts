@@ -37,13 +37,27 @@ export type ProductComponent = {
   target_id: number | null
 }
 
+export type ProductColor = {
+  /** 색상명 (예: "코발트 바이올렛") */
+  name: string
+  /** CSS color (예: "#5B548E", "white", "rgb(...)") */
+  hex: string
+}
+
 export type Product = {
   id: number
   category_id: number | null
   name: string
   model_name: string | null
   install_type: string | null
+  /** 보조 사이즈 메모 (여러 줄 자유 입력 — 예: "음수대 W… / 차양 W…") */
   size_text: string | null
+  /** 가로 (mm) */
+  size_w: number | null
+  /** 깊이 (mm) */
+  size_d: number | null
+  /** 높이 (mm) */
+  size_h: number | null
   material: string | null
   components: ProductComponent[]
   extras_text: string | null
@@ -52,8 +66,33 @@ export type Product = {
   description: string
   spec_sheet_path: string | null
   color_chart_path: string | null
+  colors: ProductColor[]
   tags: string[]
+  /** key → 선택된 옵션 값들의 배열 (필터값) */
+  filter_values: Record<string, string[]>
   is_active: boolean
+  sort_order: number
+  created_at: string
+  updated_at: string
+}
+
+// ───────────── 제품 필터 (카테고리별) ─────────────
+
+export type ProductFilterOption = {
+  value: string
+  label: string
+  /** 색상 필터의 옵션에만 노출되는 hex (자동 합성) */
+  hex?: string
+}
+
+export type ProductFilter = {
+  id: number
+  /** null = 모든 카테고리에 공통 적용되는 글로벌 필터 */
+  category_id: number | null
+  key: string
+  label: string
+  options: ProductFilterOption[]
+  is_visible: boolean
   sort_order: number
   created_at: string
   updated_at: string
@@ -91,6 +130,20 @@ export const PRODUCT_TAGS = [
     short: '대표제품',
     desc: '브랜드 대표·주력 제품. 카탈로그 상단/관련 영역에 우선 노출됩니다.',
     tone: 'neutral',
+  },
+  {
+    value: 'pet',
+    label: '반려견용',
+    short: '반려견용',
+    desc: '반려견 전용 / 반려견 친화 제품. 카드에 반려견용 배지가 표시됩니다.',
+    tone: 'amber',
+  },
+  {
+    value: 'accessible',
+    label: '장애인용',
+    short: '장애인용',
+    desc: '장애인 편의 시설용 제품. 카드에 장애인용 배지가 표시됩니다.',
+    tone: 'blue',
   },
 ] as const
 

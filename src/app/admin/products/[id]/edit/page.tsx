@@ -2,7 +2,11 @@ import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import ProductForm from '@/components/ProductForm'
 import { updateProduct } from '../../actions'
-import { fetchProductCategories } from '@/lib/products'
+import {
+  fetchProductCategories,
+  fetchLinkableProductsForPicker,
+} from '@/lib/products'
+import { fetchAllFilters } from '@/lib/product-filters'
 import type { Product, GalleryItem } from '@/lib/types'
 
 const fileUrl = (path: string) =>
@@ -34,27 +38,17 @@ export default async function EditProductPage({
   const product = item as Product
   const productHref = `/products/${itemId}`
 
-  const [categories, { data: linkable }, { data: allCasesData }] = await Promise.all([
-    fetchProductCategories(),
-    supabase
-      .from('products')
-      .select('id, name, model_name')
-      .eq('is_active', true)
-      .neq('id', itemId)
-      .order('sort_order', { ascending: true })
-      .order('id', { ascending: true }),
-    // 시공사례 멀티셀렉트 후보 — 전체
-    supabase
-      .from('gallery_items')
-      .select('id, title, image_path, site_name, model_name, product_hrefs, created_at')
-      .order('created_at', { ascending: false }),
-  ])
-
-  const linkableProducts = (linkable ?? []) as {
-    id: number
-    name: string
-    model_name: string | null
-  }[]
+  const [categories, linkableProducts, { data: allCasesData }, allFilters] =
+    await Promise.all([
+      fetchProductCategories(),
+      fetchLinkableProductsForPicker(itemId),
+      // 시공사례 멀티셀렉트 후보 — 전체
+      supabase
+        .from('gallery_items')
+        .select('id, title, image_path, site_name, model_name, product_hrefs, created_at')
+        .order('created_at', { ascending: false }),
+      fetchAllFilters(),
+    ])
 
   const allCases = (allCasesData ?? []) as Pick<
     GalleryItem,
@@ -100,6 +94,7 @@ export default async function EditProductPage({
         action={action}
         categories={categories}
         linkableProducts={linkableProducts}
+        allFilters={allFilters}
         initial={product}
         errorMessage={sp.error}
         submitLabel="저장"

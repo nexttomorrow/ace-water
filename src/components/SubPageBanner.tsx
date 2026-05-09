@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { applyProductCategoryHrefs } from '@/lib/products'
+import StickySubmenuTabs from './StickySubmenuTabs'
 import type { Category } from '@/lib/types'
 
 type Props = {
@@ -70,7 +71,7 @@ export default async function SubPageBanner({
             <p className="mt-2 text-[14px] text-neutral-600 md:text-[15px]">{subtitle}</p>
           )}
           {siblings.length > 0 && (
-            <SubmenuTabs items={siblings} activeHref={href} tone="dark" className="mt-6" />
+            <StickySubmenuTabs items={siblings} activeHref={href} tone="dark" className="mt-6" />
           )}
         </div>
       </section>
@@ -102,7 +103,7 @@ export default async function SubPageBanner({
             </p>
           )}
           {siblings.length > 0 && (
-            <SubmenuTabs items={siblings} activeHref={href} tone="light" className="mt-6" />
+            <StickySubmenuTabs items={siblings} activeHref={href} tone="light" className="mt-6" />
           )}
         </div>
       </div>
@@ -148,48 +149,3 @@ function Breadcrumb({
   )
 }
 
-function SubmenuTabs({
-  items,
-  activeHref,
-  tone,
-  className,
-}: {
-  items: Category[]
-  activeHref: string
-  tone: 'light' | 'dark'
-  className?: string
-}) {
-  const isActive = (href: string | null) =>
-    !!href && (href === activeHref || activeHref.startsWith(href + '/'))
-
-  const inactiveCls =
-    tone === 'light'
-      ? 'text-white/70 hover:text-white'
-      : 'text-neutral-500 hover:text-neutral-900'
-  const activeCls = tone === 'light' ? 'text-white' : 'text-neutral-900'
-  const indicatorCls = tone === 'light' ? 'bg-white' : 'bg-neutral-900'
-
-  return (
-    <div className={'flex flex-wrap items-center gap-1 ' + (className ?? '')}>
-      {items.map((c) => {
-        const active = isActive(c.href)
-        return (
-          <Link
-            key={c.id}
-            href={c.href || '#'}
-            className={`relative whitespace-nowrap px-4 py-2 text-[13px] font-medium transition md:text-[14px] ${
-              active ? activeCls : inactiveCls
-            }`}
-          >
-            {c.name}
-            {active && (
-              <span
-                className={`absolute inset-x-3 -bottom-px h-[2px] ${indicatorCls}`}
-              />
-            )}
-          </Link>
-        )
-      })}
-    </div>
-  )
-}

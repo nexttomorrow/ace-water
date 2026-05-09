@@ -31,6 +31,24 @@ export default async function EditSubpageBannerPage({
     ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/category-banners/${cat.banner_image_path}`
     : null
 
+  // 부모 카테고리 배너 — 자체 배너가 없을 때 자동 상속됨
+  let parentBannerImageUrl: string | null = null
+  let parentName: string | null = null
+  if (cat.parent_id) {
+    const { data: parent } = await supabase
+      .from('categories')
+      .select('name, banner_image_path')
+      .eq('id', cat.parent_id)
+      .maybeSingle()
+    if (parent) {
+      parentName = parent.name
+      if (parent.banner_image_path) {
+        parentBannerImageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/category-banners/${parent.banner_image_path}`
+      }
+    }
+  }
+  const isTopLevel = cat.parent_id == null
+
   return (
     <div className="mx-auto max-w-2xl px-6 py-12">
       <div className="mb-1 text-[12px] text-neutral-500">
@@ -49,11 +67,46 @@ export default async function EditSubpageBannerPage({
         <p className="mb-4 rounded bg-red-50 px-3 py-2 text-sm text-red-700">{sp.error}</p>
       )}
 
+      {isTopLevel ? (
+        <p className="mb-5 rounded-md bg-blue-50 px-3 py-2 text-[12px] leading-[1.7] text-blue-800 ring-1 ring-blue-100">
+          💡 <strong>대분류</strong>의 배너 이미지는, 배너가 없는{' '}
+          <strong>하위 카테고리</strong>들이 그대로 상속받아 사용합니다. 하위에서 자체 배너를
+          따로 등록하면 그 카테고리에서는 자체 배너가 우선 적용돼요.
+        </p>
+      ) : !cat.banner_image_path && parentBannerImageUrl ? (
+        <div className="mb-5 rounded-md bg-amber-50 p-3 text-[12px] text-amber-900 ring-1 ring-amber-100">
+          <p className="font-semibold">
+            현재 상위 카테고리 “{parentName}” 의 배너를 자동 상속 중입니다.
+          </p>
+          <div className="mt-2 flex items-start gap-3">
+            <div className="aspect-[16/5] w-40 shrink-0 overflow-hidden rounded border border-amber-200">
+              <Image
+                src={parentBannerImageUrl}
+                alt=""
+                width={320}
+                height={100}
+                className="h-full w-full object-cover"
+                unoptimized
+              />
+            </div>
+            <p className="text-[11.5px] leading-[1.6] text-amber-800">
+              자체 배너를 등록하면 이 상속분을 덮어쓰게 됩니다.
+            </p>
+          </div>
+        </div>
+      ) : !cat.banner_image_path ? (
+        <p className="mb-5 rounded-md bg-amber-50 px-3 py-2 text-[12px] leading-[1.7] text-amber-900 ring-1 ring-amber-100">
+          💡 비우면 <strong>상위 카테고리의 배너</strong>를 자동 상속합니다.
+          {parentName ? ` (현재 상위 “${parentName}” 의 배너도 비어 있어요)` : ''}
+        </p>
+      ) : null}
+
       <form action={action} className="flex flex-col gap-5">
         <label className="flex flex-col text-sm">
           <span className="font-medium">배너 이미지</span>
           <span className="mt-1 text-[11px] text-neutral-500">
             권장 1920×600. 비우면 텍스트 헤더로 대체됩니다.
+            {!isTopLevel && ' 비울 경우 상위 카테고리 배너를 자동 상속합니다.'}
           </span>
           {bannerImageUrl && (
             <div className="my-3 flex items-center gap-3">

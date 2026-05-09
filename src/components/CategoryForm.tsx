@@ -1,5 +1,8 @@
+'use client'
+
 import Link from 'next/link'
 import Image from 'next/image'
+import { useState } from 'react'
 import type { Category } from '@/lib/types'
 
 type Props = {
@@ -42,6 +45,12 @@ export default function CategoryForm({
     banner_subtitle: initial?.banner_subtitle ?? '',
   }
 
+  // 최상위(대분류) 여부 — parent_id 가 비어 있으면 메가메뉴용 tile 이미지·표시 방식이 의미가 없음
+  const [parentId, setParentId] = useState<string>(
+    v.parent_id != null ? String(v.parent_id) : ''
+  )
+  const isTopLevel = parentId === '' || parentId === '0'
+
   return (
     <form action={action} className="flex flex-col gap-4">
       {errorMessage && (
@@ -63,7 +72,8 @@ export default function CategoryForm({
         <span className="font-medium">상위 카테고리</span>
         <select
           name="parent_id"
-          defaultValue={v.parent_id ?? ''}
+          value={parentId}
+          onChange={(e) => setParentId(e.target.value)}
           className="mt-1 rounded border border-neutral-300 bg-white px-3 py-2"
         >
           <option value="">(없음 — 메인 메뉴 아이템)</option>
@@ -183,6 +193,18 @@ export default function CategoryForm({
         <p className="mb-3 text-[11px] text-neutral-500">
           이 카테고리의 href 페이지 상단에 노출되는 큰 배너입니다. 권장 1920×600.
         </p>
+        {isTopLevel ? (
+          <p className="mb-3 rounded-md bg-blue-50 px-3 py-2 text-[11.5px] leading-[1.6] text-blue-800 ring-1 ring-blue-100">
+            💡 <strong>대분류</strong>에 등록한 배너 이미지는, 배너가 비어있는{' '}
+            <strong>하위 카테고리</strong>들이 그대로 상속받아 사용합니다. 하위에서 자체
+            배너를 따로 등록하면 그 카테고리에서는 자체 배너가 우선 적용돼요.
+          </p>
+        ) : (
+          <p className="mb-3 rounded-md bg-amber-50 px-3 py-2 text-[11.5px] leading-[1.6] text-amber-800 ring-1 ring-amber-100">
+            💡 비워두면 <strong>상위 카테고리의 배너</strong>를 자동 상속합니다. 자체 배너를
+            등록하면 그 배너가 상속분을 덮어씁니다.
+          </p>
+        )}
 
         <label className="flex flex-col text-sm">
           <span className="font-medium">배너 이미지</span>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import type { ProductColor } from '@/lib/types'
 
 type Props = {
   id: number
@@ -18,6 +19,7 @@ type Props = {
   modelName: string
   quantity: string
   extraLabels: string[]
+  productColorRows: { line: string; colors: ProductColor[] }[]
   note: string | null
   attachmentName: string | null
 }
@@ -50,6 +52,7 @@ export default function PrintView(props: Props) {
     modelName,
     quantity,
     extraLabels,
+    productColorRows,
     note,
     attachmentName,
   } = props
@@ -204,6 +207,38 @@ export default function PrintView(props: Props) {
               <tbody>
                 <Row label="모델명" value={modelName} mono />
                 <Row label="수량" value={quantity} />
+                {productColorRows.length > 0 && (
+                  <tr className="border-b border-neutral-200 last:border-0">
+                    <th className="w-[100px] bg-neutral-50 px-2.5 py-1.5 text-left align-top text-[10.5px] font-semibold text-neutral-700">
+                      색상
+                    </th>
+                    <td className="px-2.5 py-1.5 text-[11.5px] text-neutral-900">
+                      <div className="space-y-1">
+                        {productColorRows.map((row, i) => (
+                          <div key={i} className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                            <span className="font-mono text-[10.5px] text-neutral-500">
+                              {row.line}
+                            </span>
+                            <span className="text-neutral-300">·</span>
+                            {row.colors.map((c, j) => (
+                              <span
+                                key={j}
+                                className="inline-flex items-center gap-1 text-[11px] text-neutral-700"
+                                title={c.name}
+                              >
+                                <span
+                                  className="block h-3 w-3 rounded-full ring-1 ring-neutral-300"
+                                  style={{ background: c.hex }}
+                                />
+                                {c.name}
+                              </span>
+                            ))}
+                          </div>
+                        ))}
+                      </div>
+                    </td>
+                  </tr>
+                )}
                 {extraLabels.length > 0 && (
                   <Row label="추가요청" value={extraLabels.join(', ')} />
                 )}

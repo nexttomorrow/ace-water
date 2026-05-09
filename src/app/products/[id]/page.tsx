@@ -93,7 +93,6 @@ export default async function ProductDetailPage({
   const additionalImages = (product.additional_images ?? []).map(fileUrl)
   const allImages = [mainImage, ...additionalImages]
   const specSheetUrl = product.spec_sheet_path ? fileUrl(product.spec_sheet_path) : null
-  const colorChartUrl = product.color_chart_path ? fileUrl(product.color_chart_path) : null
 
   return (
     <article className="mx-auto max-w-[1440px] px-6 py-8 md:py-12">
@@ -121,7 +120,6 @@ export default async function ProductDetailPage({
         images={allImages}
         componentTags={componentTags}
         specSheetUrl={specSheetUrl}
-        colorChartUrl={colorChartUrl}
         linkedCases={linkedCases}
       />
     </article>
