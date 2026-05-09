@@ -49,7 +49,7 @@ export default async function NoticesListPage({
 
       <div className="mx-auto max-w-[1440px] px-6 py-12">
         <div className="mb-5 flex items-center justify-between">
-        <p className="text-[13px] text-neutral-500">
+        <p className="text-[0.875rem] text-neutral-500">
           총 <span className="font-semibold text-neutral-900">{total}</span>개의 공지
         </p>
         {isAdmin && (
@@ -85,7 +85,7 @@ export default async function NoticesListPage({
                     className="flex items-center justify-between px-4 py-3 hover:bg-neutral-50"
                   >
                     <span className="truncate">
-                      <span className="mr-2 inline-flex items-center rounded bg-neutral-900 px-1.5 py-0.5 text-[10px] font-bold text-white">
+                      <span className="mr-2 inline-flex items-center rounded bg-neutral-900 px-1.5 py-0.5 text-[0.75rem] font-bold text-white">
                         공지
                       </span>
                       {p.title}

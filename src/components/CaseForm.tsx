@@ -147,10 +147,10 @@ export default function CaseForm({
             </option>
           ))}
         </select>
-        <span className="mt-1 text-[11px] text-neutral-500">
+        <span className="mt-1 text-[0.75rem] text-neutral-500">
           <strong>&ldquo;제품안내&rdquo;</strong> 메뉴의 하위 카테고리가 자동으로 노출됩니다.{' '}
           <Link
-            href="/admin/categories"
+            href="/mng/categories"
             className="text-blue-600 hover:underline"
           >
             카테고리 관리
@@ -205,12 +205,12 @@ export default function CaseForm({
       {/* 연결 제품 (multi-select + 검색) */}
       <div className="rounded-lg border border-neutral-200 bg-neutral-50/50 p-4">
         <div className="flex items-baseline justify-between gap-3">
-          <p className="text-[13px] font-semibold text-neutral-700">연결 제품 (선택)</p>
-          <p className="text-[12px] font-mono tabular-nums text-neutral-500">
+          <p className="text-[0.875rem] font-semibold text-neutral-700">연결 제품 (선택)</p>
+          <p className="text-[0.75rem] font-mono tabular-nums text-neutral-500">
             {selectedProductHrefs.length}개 선택됨
           </p>
         </div>
-        <p className="mt-0.5 text-[11px] text-neutral-500">
+        <p className="mt-0.5 text-[0.75rem] text-neutral-500">
           상세 페이지 사이드바에 &quot;제품 보기&quot; 버튼으로 노출됩니다. 제품 마스터 데이터가
           준비되면 여기에 자동으로 노출돼요.
         </p>
@@ -223,7 +223,7 @@ export default function CaseForm({
               return (
                 <span
                   key={href}
-                  className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 py-1 pl-3 pr-1 text-[12px] font-medium text-blue-700 ring-1 ring-blue-200"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 py-1 pl-3 pr-1 text-[0.75rem] font-medium text-blue-700 ring-1 ring-blue-200"
                 >
                   {p ? p.name : href}
                   <button
@@ -261,27 +261,27 @@ export default function CaseForm({
             value={productSearch}
             onChange={(e) => setProductSearch(e.target.value)}
             placeholder="제품명·경로로 검색"
-            className="w-full rounded border border-neutral-300 bg-white py-2 pl-9 pr-3 text-[13px] focus:border-neutral-500 focus:outline-none"
+            className="w-full rounded border border-neutral-300 bg-white py-2 pl-9 pr-3 text-[0.875rem] focus:border-neutral-500 focus:outline-none"
           />
         </div>
 
         {/* 후보 리스트 */}
         <div className="mt-3 max-h-72 overflow-y-auto rounded border border-neutral-200 bg-white">
           {products.length === 0 ? (
-            <div className="px-4 py-8 text-center text-[12px] text-neutral-500">
+            <div className="px-4 py-8 text-center text-[0.75rem] text-neutral-500">
               <p>아직 등록된 제품이 없습니다.</p>
               <p className="mt-1.5 text-neutral-400">
                 제품 마스터 데이터가 등록되면 여기에 노출됩니다.
               </p>
             </div>
           ) : groupedFiltered.length === 0 ? (
-            <p className="px-4 py-8 text-center text-[12px] text-neutral-500">
+            <p className="px-4 py-8 text-center text-[0.75rem] text-neutral-500">
               검색 결과가 없습니다.
             </p>
           ) : (
             groupedFiltered.map(([groupName, items]) => (
               <div key={groupName} className="border-b border-neutral-100 last:border-none">
-                <p className="sticky top-0 z-10 bg-neutral-50 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-500">
+                <p className="sticky top-0 z-10 bg-neutral-50 px-3 py-1.5 text-[0.75rem] font-semibold uppercase tracking-[0.2em] text-neutral-500">
                   {groupName}
                 </p>
                 <ul>
@@ -290,7 +290,7 @@ export default function CaseForm({
                     return (
                       <li key={p.href}>
                         <label
-                          className={`flex cursor-pointer items-center gap-3 px-3 py-2.5 text-[13px] transition hover:bg-blue-50/50 ${
+                          className={`flex cursor-pointer items-center gap-3 px-3 py-2.5 text-[0.875rem] transition hover:bg-blue-50/50 ${
                             checked ? 'bg-blue-50/40' : ''
                           }`}
                         >
@@ -304,7 +304,7 @@ export default function CaseForm({
                             <span className="block truncate font-medium text-neutral-900">
                               {p.name}
                             </span>
-                            <span className="block truncate font-mono text-[11px] text-neutral-500">
+                            <span className="block truncate font-mono text-[0.75rem] text-neutral-500">
                               {p.href}
                             </span>
                           </span>
@@ -326,8 +326,8 @@ export default function CaseForm({
 
       {/* 메인 이미지 */}
       <div className="rounded-lg border border-neutral-200 bg-neutral-50/50 p-4">
-        <p className="text-[13px] font-semibold text-neutral-700">대표 이미지 *</p>
-        <p className="mt-0.5 text-[11px] text-neutral-500">
+        <p className="text-[0.875rem] font-semibold text-neutral-700">대표 이미지 *</p>
+        <p className="mt-0.5 text-[0.75rem] text-neutral-500">
           시공사례 리스트와 상세 페이지 메인에 노출됩니다.
         </p>
         {imageUrl && (
@@ -349,100 +349,106 @@ export default function CaseForm({
           className="block w-full rounded border border-neutral-300 bg-white px-3 py-2 text-sm"
         />
         {imageUrl && (
-          <p className="mt-1 text-[11px] text-neutral-500">
+          <p className="mt-1 text-[0.75rem] text-neutral-500">
             새 파일을 선택하면 위 이미지가 교체됩니다.
           </p>
         )}
       </div>
 
-      {/* 추가 이미지 — 최대 CASE_ADDITIONAL_MAX 장 */}
-      <div className="rounded-lg border border-neutral-200 bg-neutral-50/50 p-4">
-        <div className="flex items-baseline justify-between gap-3">
-          <p className="text-[13px] font-semibold text-neutral-700">
-            추가 이미지 (선택)
-          </p>
-          <p
-            className={`text-[12px] font-mono tabular-nums ${
-              overLimit ? 'font-semibold text-red-600' : 'text-neutral-500'
-            }`}
-          >
-            {totalAfterSubmit} / {CASE_ADDITIONAL_MAX}
-          </p>
-        </div>
-        <p className="mt-0.5 text-[11px] text-neutral-500">
-          상세 페이지 썸네일 갤러리에 노출됩니다. 한 번에 여러 장 업로드할 수 있어요. 최대{' '}
-          {CASE_ADDITIONAL_MAX}장까지 가능합니다.
-        </p>
-
-        {initialAdditional.length > 0 && (
-          <div className="my-3 grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6">
-            {initialAdditional.map((img) => {
-              const isRemoved = removedPaths.includes(img.path)
-              return (
-                <label
-                  key={img.path}
-                  className="group relative block cursor-pointer overflow-hidden rounded border border-neutral-200"
-                >
-                  <Image
-                    src={img.url}
-                    alt=""
-                    width={120}
-                    height={120}
-                    className={`h-24 w-full object-cover transition ${
-                      isRemoved ? 'opacity-30 grayscale' : ''
-                    }`}
-                    unoptimized
-                  />
-                  <input
-                    type="checkbox"
-                    name="remove_additional"
-                    value={img.path}
-                    checked={isRemoved}
-                    onChange={(e) => toggleRemove(img.path, e.target.checked)}
-                    className="sr-only"
-                  />
-                  <span
-                    className={`absolute inset-x-1 bottom-1 rounded px-1.5 py-1 text-center text-[10px] font-semibold transition ${
-                      isRemoved
-                        ? 'bg-red-600 text-white'
-                        : 'bg-white/95 text-neutral-700 group-hover:bg-red-50 group-hover:text-red-700'
-                    }`}
-                  >
-                    {isRemoved ? '제거 예정 (취소)' : '제거'}
-                  </span>
-                </label>
-              )
-            })}
+      {/*
+        추가 이미지 섹션은 일단 숨김 (정책상 1장만 사용).
+        DB 의 기존 additional_images 데이터는 그대로 보존.
+        다시 활성화하려면 false → true 로 변경.
+      */}
+      {false && (
+        <div className="rounded-lg border border-neutral-200 bg-neutral-50/50 p-4">
+          <div className="flex items-baseline justify-between gap-3">
+            <p className="text-[0.875rem] font-semibold text-neutral-700">
+              추가 이미지 (선택)
+            </p>
+            <p
+              className={`text-[0.75rem] font-mono tabular-nums ${
+                overLimit ? 'font-semibold text-red-600' : 'text-neutral-500'
+              }`}
+            >
+              {totalAfterSubmit} / {CASE_ADDITIONAL_MAX}
+            </p>
           </div>
-        )}
-
-        <input
-          name="additional_images"
-          type="file"
-          accept="image/*"
-          multiple
-          onChange={onAddFiles}
-          className="block w-full rounded border border-neutral-300 bg-white px-3 py-2 text-sm"
-        />
-
-        {overLimit && (
-          <p className="mt-2 rounded bg-red-50 px-2.5 py-1.5 text-[12px] text-red-700">
-            최대 {CASE_ADDITIONAL_MAX}장까지 가능합니다. 기존 이미지를 제거하거나 선택을 줄여주세요.
+          <p className="mt-0.5 text-[0.75rem] text-neutral-500">
+            상세 페이지 썸네일 갤러리에 노출됩니다. 한 번에 여러 장 업로드할 수 있어요. 최대{' '}
+            {CASE_ADDITIONAL_MAX}장까지 가능합니다.
           </p>
-        )}
-      </div>
+
+          {initialAdditional.length > 0 && (
+            <div className="my-3 grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6">
+              {initialAdditional.map((img) => {
+                const isRemoved = removedPaths.includes(img.path)
+                return (
+                  <label
+                    key={img.path}
+                    className="group relative block cursor-pointer overflow-hidden rounded border border-neutral-200"
+                  >
+                    <Image
+                      src={img.url}
+                      alt=""
+                      width={120}
+                      height={120}
+                      className={`h-24 w-full object-cover transition ${
+                        isRemoved ? 'opacity-30 grayscale' : ''
+                      }`}
+                      unoptimized
+                    />
+                    <input
+                      type="checkbox"
+                      name="remove_additional"
+                      value={img.path}
+                      checked={isRemoved}
+                      onChange={(e) => toggleRemove(img.path, e.target.checked)}
+                      className="sr-only"
+                    />
+                    <span
+                      className={`absolute inset-x-1 bottom-1 rounded px-1.5 py-1 text-center text-[0.75rem] font-semibold transition ${
+                        isRemoved
+                          ? 'bg-red-600 text-white'
+                          : 'bg-white/95 text-neutral-700 group-hover:bg-red-50 group-hover:text-red-700'
+                      }`}
+                    >
+                      {isRemoved ? '제거 예정 (취소)' : '제거'}
+                    </span>
+                  </label>
+                )
+              })}
+            </div>
+          )}
+
+          <input
+            name="additional_images"
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={onAddFiles}
+            className="block w-full rounded border border-neutral-300 bg-white px-3 py-2 text-sm"
+          />
+
+          {overLimit && (
+            <p className="mt-2 rounded bg-red-50 px-2.5 py-1.5 text-[0.75rem] text-red-700">
+              최대 {CASE_ADDITIONAL_MAX}장까지 가능합니다. 기존 이미지를 제거하거나 선택을 줄여주세요.
+            </p>
+          )}
+        </div>
+      )}
 
       <div className="mt-2 flex gap-2">
         <button
           type="submit"
           disabled={overLimit}
-          className="rounded-full bg-black px-5 py-2 text-[13px] font-medium text-white hover:bg-neutral-800 disabled:cursor-not-allowed disabled:bg-neutral-300"
+          className="rounded-full bg-black px-5 py-2 text-[0.875rem] font-medium text-white hover:bg-neutral-800 disabled:cursor-not-allowed disabled:bg-neutral-300"
         >
           {submitLabel}
         </button>
         <Link
           href={cancelHref}
-          className="rounded-full border border-neutral-300 px-5 py-2 text-[13px] hover:bg-neutral-100"
+          className="rounded-full border border-neutral-300 px-5 py-2 text-[0.875rem] hover:bg-neutral-100"
         >
           취소
         </Link>

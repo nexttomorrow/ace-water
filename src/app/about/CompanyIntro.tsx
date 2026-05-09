@@ -61,7 +61,7 @@ function Hero() {
 
       <div className="relative mx-auto max-w-[1200px] px-6 pb-28 pt-24 md:pb-40 md:pt-32">
         <p
-          className={`text-[12px] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
+          className={`text-[0.75rem] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
             shown ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'
           }`}
         >
@@ -69,7 +69,7 @@ function Hero() {
         </p>
 
         <h1
-          className={`mt-6 text-[40px] font-extrabold leading-[1.15] tracking-tight md:text-[72px] transition-all duration-1000 delay-150 ${
+          className={`mt-6 text-[2.5rem] font-extrabold leading-[1.15] tracking-tight md:text-[4.5rem] transition-all duration-1000 delay-150 ${
             shown ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
           }`}
         >
@@ -81,7 +81,7 @@ function Hero() {
         </h1>
 
         <p
-          className={`mt-8 max-w-[640px] text-[15px] leading-[1.9] text-neutral-600 md:text-[17px] transition-all duration-1000 delay-300 ${
+          className={`mt-8 max-w-[640px] text-[1rem] leading-[1.9] text-neutral-600 md:text-[1.125rem] transition-all duration-1000 delay-300 ${
             shown ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
           }`}
         >
@@ -90,7 +90,7 @@ function Hero() {
         </p>
 
         <div
-          className={`mt-16 flex items-center gap-3 text-[12px] text-neutral-400 transition-opacity duration-1000 delay-700 ${
+          className={`mt-16 flex items-center gap-3 text-[0.75rem] text-neutral-400 transition-opacity duration-1000 delay-700 ${
             shown ? 'opacity-100' : 'opacity-0'
           }`}
         >
@@ -112,14 +112,14 @@ function BrandStatement() {
         <div className="grid gap-12 md:grid-cols-12">
           <div className="md:col-span-4">
             <p
-              className={`text-[14px] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
+              className={`text-[0.875rem] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
                 shown ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
               }`}
             >
               Our Brand
             </p>
             <h2
-              className={`text-[28px] font-bold leading-[1.3] md:text-[34px] transition-all duration-1000 delay-100 ${
+              className={`text-[1.75rem] font-bold leading-[1.3] md:text-[2.125rem] transition-all duration-1000 delay-100 ${
                 shown ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
               }`}
             >
@@ -131,7 +131,7 @@ function BrandStatement() {
 
           <div className="md:col-span-7 md:col-start-6">
             <div
-              className={`space-y-6 text-[15px] leading-[1.95] text-neutral-700 md:text-[16px] transition-all duration-1000 delay-200 ${
+              className={`space-y-6 text-[1rem] leading-[1.95] text-neutral-700 md:text-[1rem] transition-all duration-1000 delay-200 ${
                 shown ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
               }`}
             >
@@ -169,14 +169,14 @@ function CeoMessage() {
         <div className="grid gap-12 md:grid-cols-12">
           <div className="md:col-span-5">
             <p
-              className={`text-[14px] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
+              className={`text-[0.875rem] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
                 shown ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
               }`}
             >
               CEO Message
             </p>
             <h2
-              className={`text-[28px] font-bold leading-[1.3] md:text-[34px] transition-all duration-1000 delay-100 ${
+              className={`text-[1.75rem] font-bold leading-[1.3] md:text-[2.125rem] transition-all duration-1000 delay-100 ${
                 shown ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
               }`}
             >
@@ -191,15 +191,15 @@ function CeoMessage() {
                 shown ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
               }`}
             >
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-cyan-400 text-[20px] font-bold text-white shadow-md">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-cyan-400 text-[1.25rem] font-bold text-white shadow-md">
                 구
               </div>
               <div>
-                <p className="text-[12px] uppercase tracking-[0.2em] text-neutral-500">
+                <p className="text-[0.75rem] uppercase tracking-[0.2em] text-neutral-500">
                   CEO
                 </p>
-                <p className="mt-0.5 text-[16px] font-bold tracking-tight">구 종 철</p>
-                <p className="text-[12px] text-neutral-500">
+                <p className="mt-0.5 text-[1rem] font-bold tracking-tight">구 종 철</p>
+                <p className="text-[0.75rem] text-neutral-500">
                   에이스엔지니어링 대표이사
                 </p>
               </div>
@@ -208,7 +208,7 @@ function CeoMessage() {
 
           <div className="md:col-span-6 md:col-start-7">
             <div
-              className={`space-y-5 text-[15px] leading-[1.95] text-neutral-700 md:text-[16px] transition-all duration-1000 delay-200 ${
+              className={`space-y-5 text-[1rem] leading-[1.95] text-neutral-700 md:text-[1rem] transition-all duration-1000 delay-200 ${
                 shown ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
               }`}
             >
@@ -227,7 +227,7 @@ function CeoMessage() {
                 편리하며, 더 아름다운 공공의 일상을 위해 에이스워터가 가장 앞에서 함께
                 하겠습니다.
               </p>
-              <p className="pt-2 text-[14px] text-neutral-500">감사합니다.</p>
+              <p className="pt-2 text-[0.875rem] text-neutral-500">감사합니다.</p>
             </div>
           </div>
         </div>
@@ -252,14 +252,14 @@ function ByTheNumbers() {
       <div className="mx-auto max-w-[1200px] px-6 py-24 md:py-32">
         <header className="mb-12">
           <p
-            className={`text-[14px] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
+            className={`text-[0.875rem] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
               shown ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
             }`}
           >
             By the Numbers
           </p>
           <h2
-            className={`text-[28px] font-bold leading-[1.3] md:text-[34px] transition-all duration-1000 delay-100 ${
+            className={`text-[1.75rem] font-bold leading-[1.3] md:text-[2.125rem] transition-all duration-1000 delay-100 ${
               shown ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
             }`}
           >
@@ -276,18 +276,18 @@ function ByTheNumbers() {
               }`}
               style={{ transitionDelay: shown ? `${200 + i * 100}ms` : '0ms' }}
             >
-              <p className="text-[11px] uppercase tracking-[0.3em] text-neutral-400 transition group-hover:text-blue-700">
+              <p className="text-[0.75rem] uppercase tracking-[0.3em] text-neutral-400 transition group-hover:text-blue-700">
                 {s.sub}
               </p>
               <p className="mt-3 flex items-baseline gap-1">
-                <span className="text-[44px] font-extrabold leading-none tracking-tight text-neutral-900 md:text-[56px]">
+                <span className="text-[2.75rem] font-extrabold leading-none tracking-tight text-neutral-900 md:text-[3.5rem]">
                   {s.value}
                 </span>
-                <span className="text-[24px] font-bold text-blue-600 md:text-[28px]">
+                <span className="text-[1.5rem] font-bold text-blue-600 md:text-[1.75rem]">
                   {s.suffix}
                 </span>
               </p>
-              <p className="mt-4 text-[14px] font-medium text-neutral-600">{s.label}</p>
+              <p className="mt-4 text-[0.875rem] font-medium text-neutral-600">{s.label}</p>
             </div>
           ))}
         </div>
@@ -314,21 +314,21 @@ function BusinessAreas() {
       <div className="mx-auto max-w-[1200px] px-6 py-24 md:py-32">
         <header className="mb-12 max-w-[640px]">
           <p
-            className={`text-[14px] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
+            className={`text-[0.875rem] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
               shown ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
             }`}
           >
             What We Do
           </p>
           <h2
-            className={`text-[28px] font-bold leading-[1.3] md:text-[34px] transition-all duration-1000 delay-100 ${
+            className={`text-[1.75rem] font-bold leading-[1.3] md:text-[2.125rem] transition-all duration-1000 delay-100 ${
               shown ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
             }`}
           >
             6개 핵심 영역, 하나의 일관된 디자인 언어
           </h2>
           <p
-            className={`mt-4 text-[15px] leading-[1.85] text-neutral-600 transition-all duration-1000 delay-200 ${
+            className={`mt-4 text-[1rem] leading-[1.85] text-neutral-600 transition-all duration-1000 delay-200 ${
               shown ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
             }`}
           >
@@ -346,12 +346,12 @@ function BusinessAreas() {
               }`}
               style={{ transitionDelay: shown ? `${200 + i * 80}ms` : '0ms' }}
             >
-              <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-neutral-400 transition group-hover:text-blue-600">
+              <p className="text-[0.75rem] font-semibold uppercase tracking-[0.25em] text-neutral-400 transition group-hover:text-blue-600">
                 {a.en}
               </p>
-              <h3 className="mt-3 text-[20px] font-bold tracking-tight">{a.name}</h3>
-              <p className="mt-3 text-[13.5px] leading-[1.7] text-neutral-600">{a.desc}</p>
-              <span className="mt-6 inline-flex items-center gap-1.5 text-[12px] font-semibold text-neutral-400 transition group-hover:text-blue-600">
+              <h3 className="mt-3 text-[1.25rem] font-bold tracking-tight">{a.name}</h3>
+              <p className="mt-3 text-[0.875rem] leading-[1.7] text-neutral-600">{a.desc}</p>
+              <span className="mt-6 inline-flex items-center gap-1.5 text-[0.75rem] font-semibold text-neutral-400 transition group-hover:text-blue-600">
                 <span className="transition-all duration-300 group-hover:tracking-wider">
                   자세히 보기
                 </span>
@@ -385,14 +385,14 @@ function Certifications() {
       <div className="mx-auto max-w-[1200px] px-6 py-24 md:py-32">
         <header className="mb-12">
           <p
-            className={`text-[14px] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
+            className={`text-[0.875rem] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
               shown ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
             }`}
           >
             Certifications
           </p>
           <h2
-            className={`text-[28px] font-bold leading-[1.3] md:text-[34px] transition-all duration-1000 delay-100 ${
+            className={`text-[1.75rem] font-bold leading-[1.3] md:text-[2.125rem] transition-all duration-1000 delay-100 ${
               shown ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
             }`}
           >
@@ -425,7 +425,7 @@ function Certifications() {
                   <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                   <path d="M14 2v6h6M9 13l2 2 4-4" />
                 </svg>
-                <span className="mt-3 text-[11px] font-medium tracking-wide group-hover:text-blue-700">
+                <span className="mt-3 text-[0.75rem] font-medium tracking-wide group-hover:text-blue-700">
                   Cert {String(i + 1).padStart(2, '0')}
                 </span>
               </div>

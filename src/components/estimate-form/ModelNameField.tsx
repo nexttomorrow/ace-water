@@ -54,7 +54,7 @@ export default function ModelNameField({
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-neutral-200 bg-white px-3.5 text-[12px] font-medium text-neutral-700 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-neutral-200 bg-white px-3.5 text-[0.75rem] font-medium text-neutral-700 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
           aria-label="제품 검색"
         >
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -64,7 +64,7 @@ export default function ModelNameField({
           제품 검색
         </button>
       </div>
-      <p className="mt-1 text-[11px] text-neutral-500">
+      <p className="mt-1 text-[0.75rem] text-neutral-500">
         직접 입력하거나, 등록된 제품을 검색해서 추가할 수 있습니다.
       </p>
 

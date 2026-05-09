@@ -37,15 +37,15 @@ export default function PortfolioPage() {
                 className="object-cover transition duration-500 group-hover:scale-105"
                 unoptimized
               />
-              <span className="absolute left-3 top-3 rounded-full bg-black/70 px-2.5 py-0.5 text-[11px] font-semibold text-white backdrop-blur">
+              <span className="absolute left-3 top-3 rounded-full bg-black/70 px-2.5 py-0.5 text-[0.75rem] font-semibold text-white backdrop-blur">
                 {item.region}
               </span>
             </div>
             <div className="mt-4">
-              <h3 className="text-[16px] font-bold text-neutral-900 group-hover:underline">
+              <h3 className="text-[1rem] font-bold text-neutral-900 group-hover:underline">
                 {item.title}
               </h3>
-              <p className="mt-1 text-[13px] text-neutral-600">{item.desc}</p>
+              <p className="mt-1 text-[0.875rem] text-neutral-600">{item.desc}</p>
             </div>
           </a>
         ))}

@@ -14,13 +14,13 @@ export default function SubmittedNotice({
           <path d="M5 12l5 5L20 7" />
         </svg>
       </div>
-      <p className="mt-6 text-[11px] font-semibold uppercase tracking-[0.4em] text-blue-700">
+      <p className="mt-6 text-[0.75rem] font-semibold uppercase tracking-[0.4em] text-blue-700">
         Submitted
       </p>
-      <h2 className="mt-3 text-[28px] font-extrabold leading-[1.3] tracking-tight md:text-[32px]">
+      <h2 className="mt-3 text-[1.75rem] font-extrabold leading-[1.3] tracking-tight md:text-[2rem]">
         문의가 정상적으로 접수되었습니다.
       </h2>
-      <p className="mx-auto mt-4 max-w-[480px] text-[14px] leading-[1.85] text-neutral-600">
+      <p className="mx-auto mt-4 max-w-[480px] text-[0.875rem] leading-[1.85] text-neutral-600">
         담당자가 확인 후 영업일 기준 1~2일 내에 회신드리겠습니다. 급하신 경우{' '}
         <a href="tel:0319442903" className="font-semibold text-blue-700 hover:underline">
           031-944-2903
@@ -29,7 +29,7 @@ export default function SubmittedNotice({
       </p>
       <a
         href={retryHref}
-        className="mt-8 inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-5 py-2.5 text-[13px] font-medium text-neutral-700 transition hover:border-neutral-300 hover:bg-neutral-50"
+        className="mt-8 inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-5 py-2.5 text-[0.875rem] font-medium text-neutral-700 transition hover:border-neutral-300 hover:bg-neutral-50"
       >
         새 문의 작성
       </a>

@@ -6,9 +6,10 @@
  */
 
 import AddressSearchInput from '@/components/AddressSearchInput'
+import Select from '@/components/ui/Select'
 
 export const inputCls =
-  'w-full rounded-lg border border-neutral-300 bg-white px-3.5 py-2.5 text-[14px] text-neutral-900 placeholder:text-neutral-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100'
+  'w-full rounded-lg border border-neutral-300 bg-white px-3.5 py-2.5 text-[0.875rem] text-neutral-900 placeholder:text-neutral-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100'
 
 export function Section({
   english,
@@ -24,14 +25,14 @@ export function Section({
   return (
     <section>
       <header className="mb-5 border-b border-neutral-200 pb-3">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.35em] text-blue-700">
+        <p className="text-[0.75rem] font-semibold uppercase tracking-[0.35em] text-blue-700">
           {english}
         </p>
-        <h2 className="mt-1.5 text-[18px] font-bold tracking-tight md:text-[20px]">
+        <h2 className="mt-1.5 text-[1.125rem] font-bold tracking-tight md:text-[1.25rem]">
           {title}
         </h2>
         {description && (
-          <p className="mt-2 text-[12px] text-neutral-500">{description}</p>
+          <p className="mt-2 text-[0.75rem] text-neutral-500">{description}</p>
         )}
       </header>
       {children}
@@ -55,7 +56,7 @@ function Label({
   required?: boolean
 }) {
   return (
-    <label className="mb-1.5 flex items-baseline gap-1 text-[13px] font-medium text-neutral-800">
+    <label className="mb-1.5 flex items-baseline gap-1 text-[0.875rem] font-medium text-neutral-800">
       {required && <span className="text-red-600">*</span>}
       {label}
     </label>
@@ -120,31 +121,28 @@ export function SelectField({
   defaultValue,
   onChange,
   className,
+  placeholder = '선택',
 }: {
   name: string
   label: string
   required?: boolean
   options: readonly { value: string; label: string }[]
   defaultValue?: string
-  onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void
+  /** value 만 콜백으로 받도록 단순화 (기존 e.target.value 대체) */
+  onChange?: (value: string) => void
   className?: string
+  placeholder?: string
 }) {
   return (
     <FieldWrap label={label} required={required} className={className}>
-      <select
+      <Select
         name={name}
         required={required}
         defaultValue={defaultValue ?? ''}
         onChange={onChange}
-        className={inputCls}
-      >
-        <option value="">선택</option>
-        {options.map((o) => (
-          <option key={o.value} value={o.value}>
-            {o.label}
-          </option>
-        ))}
-      </select>
+        placeholder={placeholder}
+        options={options.map((o) => ({ value: o.value, label: o.label }))}
+      />
     </FieldWrap>
   )
 }
@@ -250,10 +248,10 @@ export function FileField({
       <label className="block">
         <span className="sr-only">파일 첨부</span>
         <div className="flex items-stretch gap-2">
-          <div className="flex flex-1 items-center rounded-lg border border-neutral-300 bg-white px-3 text-[13px] text-neutral-500">
+          <div className="flex flex-1 items-center rounded-lg border border-neutral-300 bg-white px-3 text-[0.875rem] text-neutral-500">
             {fileName || '도면 등 참고용 파일을 선택해주세요'}
           </div>
-          <span className="cursor-pointer rounded-lg bg-neutral-900 px-5 py-2.5 text-[13px] font-medium text-white transition hover:bg-neutral-700">
+          <span className="cursor-pointer rounded-lg bg-neutral-900 px-5 py-2.5 text-[0.875rem] font-medium text-white transition hover:bg-neutral-700">
             파일 선택
           </span>
         </div>
@@ -266,7 +264,7 @@ export function FileField({
           className="sr-only"
         />
       </label>
-      {description && <div className="mt-2 text-[12px] leading-[1.7]">{description}</div>}
+      {description && <div className="mt-2 text-[0.75rem] leading-[1.7]">{description}</div>}
     </div>
   )
 }
@@ -294,9 +292,9 @@ export function CheckboxField({
         className="mt-1 h-4 w-4 cursor-pointer accent-blue-600"
       />
       <span className="min-w-0 flex-1">
-        <span className="block text-[14px] font-semibold text-neutral-900">{label}</span>
+        <span className="block text-[0.875rem] font-semibold text-neutral-900">{label}</span>
         {description && (
-          <span className="mt-1 block text-[12px] leading-[1.7] text-neutral-500">
+          <span className="mt-1 block text-[0.75rem] leading-[1.7] text-neutral-500">
             {description}
           </span>
         )}
@@ -307,7 +305,7 @@ export function CheckboxField({
 
 export function NoteList({ items }: { items: string[] }) {
   return (
-    <ul className="mt-4 space-y-1.5 text-[12px] leading-[1.7] text-red-600">
+    <ul className="mt-4 space-y-1.5 text-[0.75rem] leading-[1.7] text-red-600">
       {items.map((t, i) => (
         <li key={i}>* {t}</li>
       ))}

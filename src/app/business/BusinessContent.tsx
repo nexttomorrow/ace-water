@@ -65,21 +65,21 @@ function Areas() {
       <div className="mx-auto max-w-[1200px] px-6">
         <div className="text-center">
           <p
-            className={`text-[14px] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
+            className={`text-[0.875rem] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
               shown ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0"
             }`}
           >
             Partnership Areas
           </p>
           <h2
-            className={`text-[28px] font-bold leading-[1.3] md:text-[36px] transition-all duration-1000 delay-100 ${
+            className={`text-[1.75rem] font-bold leading-[1.3] md:text-[2.25rem] transition-all duration-1000 delay-100 ${
               shown ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
             }`}
           >
             함께할 수 있는 비즈니스
           </h2>
           <p
-            className={`mt-4 text-[14px] leading-relaxed text-neutral-600 md:text-[15px] transition-all duration-1000 delay-200 ${
+            className={`mt-4 text-[0.875rem] leading-relaxed text-neutral-600 md:text-[1rem] transition-all duration-1000 delay-200 ${
               shown ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
             }`}
           >
@@ -102,17 +102,17 @@ function Areas() {
                 className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-blue-50 opacity-0 transition group-hover:opacity-100"
               />
               <div className="relative">
-                <h3 className="text-[20px] font-bold leading-tight">
+                <h3 className="text-[1.25rem] font-bold leading-tight">
                   {it.title}
                 </h3>
-                <p className="mt-3 text-[14px] leading-relaxed text-neutral-600">
+                <p className="mt-3 text-[0.875rem] leading-relaxed text-neutral-600">
                   {it.desc}
                 </p>
                 <div className="mt-5 flex flex-wrap gap-1.5">
                   {it.tags.map((t) => (
                     <span
                       key={t}
-                      className="rounded-full border border-neutral-200 bg-neutral-50 px-2.5 py-0.5 text-[11px] font-medium text-neutral-600"
+                      className="rounded-full border border-neutral-200 bg-neutral-50 px-2.5 py-0.5 text-[0.75rem] font-medium text-neutral-600"
                     >
                       {t}
                     </span>
@@ -146,14 +146,14 @@ function WhyUs() {
         <div className="grid grid-cols-1 items-center gap-12 md:grid-cols-2">
           <div>
             <p
-              className={`text-[14px] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
+              className={`text-[0.875rem] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
                 shown ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0"
               }`}
             >
               Why ACEWATER
             </p>
             <h2
-              className={`mt-3 text-[28px] font-bold leading-[1.3] md:text-[36px] transition-all duration-1000 delay-100 ${
+              className={`mt-3 text-[1.75rem] font-bold leading-[1.3] md:text-[2.25rem] transition-all duration-1000 delay-100 ${
                 shown ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
               }`}
             >
@@ -162,7 +162,7 @@ function WhyUs() {
               증명된 신뢰
             </h2>
             <p
-              className={`mt-5 text-[14px] leading-relaxed text-neutral-600 md:text-[15px] transition-all duration-1000 delay-200 ${
+              className={`mt-5 text-[0.875rem] leading-relaxed text-neutral-600 md:text-[1rem] transition-all duration-1000 delay-200 ${
                 shown ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
               }`}
             >
@@ -185,10 +185,10 @@ function WhyUs() {
                   transitionDelay: shown ? `${300 + i * 120}ms` : "0ms",
                 }}
               >
-                <p className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-[36px] font-extrabold leading-none tracking-tight text-transparent">
+                <p className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-[2.25rem] font-extrabold leading-none tracking-tight text-transparent">
                   {r.stat}
                 </p>
-                <p className="mt-2 text-[13px] font-medium text-neutral-700">
+                <p className="mt-2 text-[0.875rem] font-medium text-neutral-700">
                   {r.label}
                 </p>
               </div>
@@ -231,14 +231,14 @@ function Process() {
       <div className="mx-auto max-w-[1200px] px-6">
         <div className="text-center">
           <p
-            className={`text-[14px] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
+            className={`text-[0.875rem] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
               shown ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0"
             }`}
           >
             How It Works
           </p>
           <h2
-            className={`text-[28px] font-bold leading-[1.3] md:text-[36px] transition-all duration-1000 delay-100 ${
+            className={`text-[1.75rem] font-bold leading-[1.3] md:text-[2.25rem] transition-all duration-1000 delay-100 ${
               shown ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
             }`}
           >
@@ -255,11 +255,11 @@ function Process() {
               }`}
               style={{ transitionDelay: shown ? `${200 + i * 120}ms` : "0ms" }}
             >
-              <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-[36px] font-extrabold leading-none tracking-tight text-transparent">
+              <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-[2.25rem] font-extrabold leading-none tracking-tight text-transparent">
                 {s.num}
               </span>
-              <h3 className="mt-3 text-[18px] font-bold">{s.title}</h3>
-              <p className="mt-2 text-[13px] leading-relaxed text-neutral-600">
+              <h3 className="mt-3 text-[1.125rem] font-bold">{s.title}</h3>
+              <p className="mt-2 text-[0.875rem] leading-relaxed text-neutral-600">
                 {s.desc}
               </p>
               {i < steps.length - 1 && (
@@ -309,13 +309,13 @@ function ContactCta() {
 
           <div className="relative grid grid-cols-1 items-center gap-8 md:grid-cols-3">
             <div className="md:col-span-2">
-              <p className="text-[12px] font-semibold uppercase tracking-[0.4em] text-white/80">
+              <p className="text-[0.75rem] font-semibold uppercase tracking-[0.4em] text-white/80">
                 Let&apos;s Talk
               </p>
-              <h3 className="mt-3 text-[24px] font-bold leading-[1.3] text-white md:text-[32px]">
+              <h3 className="mt-3 text-[1.5rem] font-bold leading-[1.3] text-white md:text-[2rem]">
                 지금 바로 비즈니스 문의를 시작해보세요
               </h3>
-              <p className="mt-3 text-[14px] leading-relaxed text-white/85 md:text-[15px]">
+              <p className="mt-3 text-[0.875rem] leading-relaxed text-white/85 md:text-[1rem]">
                 회사명·담당자·관심 영역만 알려주시면 영업팀이 빠르게
                 회신드립니다. 비밀유지가 필요한 안건은 별도로 NDA 진행이
                 가능합니다.
@@ -325,7 +325,7 @@ function ContactCta() {
             <div className="flex flex-col gap-2.5 md:items-end">
               <a
                 href="tel:031-944-2903"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-[14px] font-bold text-blue-700 shadow-lg transition hover:scale-[1.02]"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-[0.875rem] font-bold text-blue-700 shadow-lg transition hover:scale-[1.02]"
               >
                 <svg
                   width="16"
@@ -341,7 +341,7 @@ function ContactCta() {
               </a>
               <a
                 href="mailto:acewater@acewater.net"
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/40 bg-white/10 px-6 py-3 text-[14px] font-semibold text-white backdrop-blur-sm transition hover:bg-white/20"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/40 bg-white/10 px-6 py-3 text-[0.875rem] font-semibold text-white backdrop-blur-sm transition hover:bg-white/20"
               >
                 <svg
                   width="16"

@@ -49,7 +49,7 @@ export default async function BoardListPage({
 
       <div className="mx-auto max-w-[1440px] px-6 py-12">
         <div className="mb-5 flex items-center justify-between">
-        <p className="text-[13px] text-neutral-500">
+        <p className="text-[0.875rem] text-neutral-500">
           총 <span className="font-semibold text-neutral-900">{total}</span>개의 게시글
         </p>
         {isAdmin && (

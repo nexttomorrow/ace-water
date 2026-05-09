@@ -28,7 +28,7 @@ export default function ColorsField({ initial }: Props) {
   return (
     <div>
       {rows.length === 0 ? (
-        <p className="rounded-lg border border-dashed border-neutral-200 bg-neutral-50/50 p-4 text-center text-[12px] text-neutral-500">
+        <p className="rounded-lg border border-dashed border-neutral-200 bg-neutral-50/50 p-4 text-center text-[0.75rem] text-neutral-500">
           등록된 색상이 없습니다. 아래 <strong>+ 색상 추가</strong> 버튼으로 등록하세요.
         </p>
       ) : (
@@ -60,7 +60,7 @@ export default function ColorsField({ initial }: Props) {
                 placeholder="색상명 (예: 코발트 바이올렛)"
                 value={row.name}
                 onChange={(e) => update(i, { name: e.target.value })}
-                className="flex-1 rounded border border-neutral-300 bg-white px-3 py-2 text-[13px] focus:border-blue-500 focus:outline-none"
+                className="flex-1 rounded border border-neutral-300 bg-white px-3 py-2 text-[0.875rem] focus:border-blue-500 focus:outline-none"
               />
 
               {/* hex 직접 입력 */}
@@ -69,7 +69,7 @@ export default function ColorsField({ initial }: Props) {
                 placeholder="#RRGGBB"
                 value={row.hex}
                 onChange={(e) => update(i, { hex: e.target.value })}
-                className="w-28 rounded border border-neutral-300 bg-white px-3 py-2 font-mono text-[12px] focus:border-blue-500 focus:outline-none"
+                className="w-28 rounded border border-neutral-300 bg-white px-3 py-2 font-mono text-[0.75rem] focus:border-blue-500 focus:outline-none"
               />
 
               <button
@@ -90,7 +90,7 @@ export default function ColorsField({ initial }: Props) {
       <button
         type="button"
         onClick={add}
-        className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-dashed border-neutral-300 bg-white px-4 py-2 text-[12px] font-medium text-neutral-600 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
+        className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-dashed border-neutral-300 bg-white px-4 py-2 text-[0.75rem] font-medium text-neutral-600 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
       >
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
           <path d="M12 5v14M5 12h14" />

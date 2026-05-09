@@ -93,11 +93,12 @@ export default function ModelItemsField({
         {rows.map((row, i) => (
           <div
             key={i}
-            className="grid grid-cols-1 items-start gap-2 rounded-lg border border-neutral-200 bg-white p-3 md:grid-cols-[1fr_auto_140px_auto]"
+            className="rounded-lg border border-neutral-200 bg-white p-3"
           >
-            {/* 모델명 + 검색 */}
-            <div className="flex items-stretch gap-2 md:contents">
-              <div className="flex flex-1 items-stretch gap-2">
+            {/* 모바일: 2 줄로 자연스럽게 wrap. 데스크탑(md+): 한 줄 가로 꽉 차게. */}
+            <div className="flex flex-wrap items-stretch gap-2 md:flex-nowrap">
+              {/* 모델명 + 검색 — 데스크탑에서 flex-1 로 가로 꽉 채움 */}
+              <div className="flex w-full min-w-0 items-stretch gap-2 md:flex-1">
                 <input
                   type="text"
                   value={row.model}
@@ -110,7 +111,7 @@ export default function ModelItemsField({
                   type="button"
                   onClick={() => setSearchOpenIdx(i)}
                   aria-label="제품 검색"
-                  className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-neutral-200 bg-white px-3 text-[12px] font-medium text-neutral-700 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
+                  className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-neutral-200 bg-white px-3.5 text-[0.75rem] font-medium text-neutral-700 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
                 >
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <circle cx="11" cy="11" r="7" />
@@ -119,31 +120,30 @@ export default function ModelItemsField({
                   검색
                 </button>
               </div>
-              {/* md 미만에서 수량 + 제거 한 줄로 */}
-              <div className="hidden md:contents">
-                {/* placeholder for grid alignment */}
+
+              {/* 수량 + 제거 — 모바일은 한 줄에 함께, 데스크탑은 우측 고정 폭 */}
+              <div className="flex w-full items-stretch gap-2 md:w-auto">
+                <input
+                  type="text"
+                  value={row.quantity}
+                  onChange={(e) => updateRow(i, { quantity: e.target.value })}
+                  placeholder={i === 0 ? 'ex.2대' : '수량'}
+                  required={required && i === 0}
+                  className={`${inputCls} md:w-[140px]`}
+                />
+                <button
+                  type="button"
+                  onClick={() => removeRow(i)}
+                  disabled={rows.length <= 1}
+                  aria-label={`${i + 1}번째 항목 제거`}
+                  className="inline-flex h-10 w-10 shrink-0 items-center justify-center self-stretch rounded-lg border border-neutral-200 bg-white text-neutral-400 transition hover:border-red-300 hover:bg-red-50 hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-neutral-200 disabled:hover:bg-white disabled:hover:text-neutral-400"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                  </svg>
+                </button>
               </div>
             </div>
-
-            <input
-              type="text"
-              value={row.quantity}
-              onChange={(e) => updateRow(i, { quantity: e.target.value })}
-              placeholder={i === 0 ? 'ex.2대' : '수량'}
-              required={required && i === 0}
-              className={inputCls}
-            />
-            <button
-              type="button"
-              onClick={() => removeRow(i)}
-              disabled={rows.length <= 1}
-              aria-label={`${i + 1}번째 항목 제거`}
-              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-neutral-200 bg-white text-neutral-400 transition hover:border-red-300 hover:bg-red-50 hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-neutral-200 disabled:hover:bg-white disabled:hover:text-neutral-400"
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-              </svg>
-            </button>
           </div>
         ))}
       </div>
@@ -151,7 +151,7 @@ export default function ModelItemsField({
       <button
         type="button"
         onClick={addRow}
-        className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-dashed border-neutral-300 bg-white px-4 py-2 text-[12px] font-medium text-neutral-600 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
+        className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-dashed border-neutral-300 bg-white px-4 py-2 text-[0.75rem] font-medium text-neutral-600 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
       >
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
           <path d="M12 5v14M5 12h14" />

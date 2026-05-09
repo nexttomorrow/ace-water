@@ -217,8 +217,8 @@ export default async function Home() {
         {/* 슬라이드 관리 단축 버튼 — 일단 숨김 (필요 시 isAdmin && false → isAdmin 으로 복구) */}
         {isAdmin && false && (
           <Link
-            href="/admin/hero"
-            className="absolute right-6 top-6 z-30 inline-flex items-center gap-1.5 rounded-full bg-white/90 px-4 py-2 text-[12px] font-semibold text-neutral-900 shadow-lg backdrop-blur transition hover:bg-white"
+            href="/mng/hero"
+            className="absolute right-6 top-6 z-30 inline-flex items-center gap-1.5 rounded-full bg-white/90 px-4 py-2 text-[0.75rem] font-semibold text-neutral-900 shadow-lg backdrop-blur transition hover:bg-white"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 20h9" />
@@ -266,11 +266,11 @@ export default async function Home() {
 
           {/* 양쪽 다 비어있을 때 — 어드민에게 안내 */}
           {bestSellerProducts.length === 0 && newProductItems.length === 0 && isAdmin && (
-            <div className="rounded-xl border border-dashed border-blue-200 bg-blue-50/50 p-8 text-center text-[13px] text-blue-900">
+            <div className="rounded-xl border border-dashed border-blue-200 bg-blue-50/50 p-8 text-center text-[0.875rem] text-blue-900">
               <p className="font-semibold">제품 태그 안내</p>
               <p className="mt-1.5 leading-6">
-                <Link href="/admin/products" className="underline hover:no-underline">
-                  /admin/products
+                <Link href="/mng/products" className="underline hover:no-underline">
+                  /mng/products
                 </Link>
                 에서 제품을 등록하고 <strong>BEST</strong> 또는 <strong>NEW</strong>{' '}
                 태그를 추가하면 이 영역에 자동으로 노출됩니다.
@@ -304,11 +304,11 @@ export default async function Home() {
                 <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/40 to-black/70" />
                 <div className="relative z-10 flex h-full flex-col items-center justify-end px-4 pb-10 text-center text-white">
                   <div className="mb-3 text-white/90">{s.icon}</div>
-                  <h3 className="mb-3 text-[16px] font-bold leading-tight md:text-[18px]">
+                  <h3 className="mb-3 text-[1rem] font-bold leading-tight md:text-[1.125rem]">
                     {s.title}
                   </h3>
                   <div className="mx-auto mb-3 h-[1px] w-6 bg-white/60" />
-                  <p className="whitespace-pre-line text-[12px] leading-relaxed text-white/85">
+                  <p className="whitespace-pre-line text-[0.75rem] leading-relaxed text-white/85">
                     {s.desc}
                   </p>
                 </div>

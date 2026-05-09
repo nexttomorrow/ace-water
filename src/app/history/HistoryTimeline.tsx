@@ -180,7 +180,7 @@ function Hero() {
 
       <div className="relative mx-auto max-w-[1200px] px-6 pb-24 pt-24 md:pb-32 md:pt-32">
         <p
-          className={`text-[12px] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
+          className={`text-[0.75rem] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
             shown ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'
           }`}
         >
@@ -188,7 +188,7 @@ function Hero() {
         </p>
 
         <h1
-          className={`mt-6 text-[40px] font-extrabold leading-[1.15] tracking-tight md:text-[68px] transition-all duration-1000 delay-150 ${
+          className={`mt-6 text-[2.5rem] font-extrabold leading-[1.15] tracking-tight md:text-[4.25rem] transition-all duration-1000 delay-150 ${
             shown ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
           }`}
         >
@@ -200,7 +200,7 @@ function Hero() {
         </h1>
 
         <p
-          className={`mt-8 max-w-[620px] text-[15px] leading-[1.9] text-neutral-600 md:text-[17px] transition-all duration-1000 delay-300 ${
+          className={`mt-8 max-w-[620px] text-[1rem] leading-[1.9] text-neutral-600 md:text-[1.125rem] transition-all duration-1000 delay-300 ${
             shown ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
           }`}
         >
@@ -210,7 +210,7 @@ function Hero() {
 
         {/* 미니 스탯 */}
         <div
-          className={`mt-12 flex flex-wrap gap-x-12 gap-y-4 text-[13px] transition-all duration-1000 delay-500 ${
+          className={`mt-12 flex flex-wrap gap-x-12 gap-y-4 text-[0.875rem] transition-all duration-1000 delay-500 ${
             shown ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
           }`}
         >
@@ -226,10 +226,10 @@ function Hero() {
 function MiniStat({ value, label }: { value: string; label: string }) {
   return (
     <div className="flex items-baseline gap-2">
-      <span className="text-[24px] font-extrabold tracking-tight text-neutral-900">
+      <span className="text-[1.5rem] font-extrabold tracking-tight text-neutral-900">
         {value}
       </span>
-      <span className="text-[12px] uppercase tracking-[0.25em] text-neutral-400">
+      <span className="text-[0.75rem] uppercase tracking-[0.25em] text-neutral-400">
         {label}
       </span>
     </div>
@@ -245,13 +245,13 @@ function Timeline() {
     <section className="border-t border-neutral-100">
       <div className="mx-auto max-w-[1100px] px-6 py-24 md:py-32">
         <header className="mb-16">
-          <p className="text-[14px] font-semibold uppercase tracking-[0.4em] text-blue-700">
+          <p className="text-[0.875rem] font-semibold uppercase tracking-[0.4em] text-blue-700">
             Timeline
           </p>
-          <h2 className="text-[28px] font-bold leading-[1.3] md:text-[34px]">
+          <h2 className="text-[1.75rem] font-bold leading-[1.3] md:text-[2.125rem]">
             우리가 걸어온 길
           </h2>
-          <p className="mt-3 max-w-[620px] text-[14px] leading-[1.85] text-neutral-500 md:text-[15px]">
+          <p className="mt-3 max-w-[620px] text-[0.875rem] leading-[1.85] text-neutral-500 md:text-[1rem]">
             새로운 순서로 정렬되어 있습니다. 각 해의 마일스톤을 시간 순으로 따라가 보세요.
           </p>
         </header>
@@ -296,7 +296,7 @@ function YearRow({ row, index }: { row: TimelineYear; index: number }) {
       {/* 좌측 연도 + 점 */}
       <div className="relative">
         <div
-          className={`text-[28px] font-extrabold leading-none tracking-tight md:text-[44px] transition-all duration-700 ${
+          className={`text-[1.75rem] font-extrabold leading-none tracking-tight md:text-[2.75rem] transition-all duration-700 ${
             shown ? 'translate-x-0 opacity-100' : '-translate-x-3 opacity-0'
           } ${isOrigin ? 'bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent' : 'text-neutral-900'}`}
         >
@@ -325,12 +325,12 @@ function YearRow({ row, index }: { row: TimelineYear; index: number }) {
               style={{ transitionDelay: shown ? `${200 + i * 100}ms` : '0ms' }}
             >
               <div className="flex flex-wrap items-center gap-3">
-                <span className="text-[15px] font-medium leading-relaxed text-neutral-800 md:text-[16px]">
+                <span className="text-[1rem] font-medium leading-relaxed text-neutral-800 md:text-[1rem]">
                   {e.text}
                 </span>
                 {tag && (
                   <span
-                    className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ring-1 transition ${TAG_COLOR[tag]}`}
+                    className={`shrink-0 rounded-full px-2 py-0.5 text-[0.75rem] font-semibold uppercase tracking-wider ring-1 transition ${TAG_COLOR[tag]}`}
                   >
                     {TAG_LABEL[tag]}
                   </span>
@@ -354,14 +354,14 @@ function Closing() {
     <section ref={ref} className="border-t border-neutral-100 bg-neutral-50">
       <div className="mx-auto max-w-[900px] px-6 py-24 text-center md:py-32">
         <p
-          className={`text-[14px] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
+          className={`text-[0.875rem] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
             shown ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
           }`}
         >
           Next Chapter
         </p>
         <h3
-          className={`mt-3 text-[26px] font-bold leading-[1.4] md:text-[34px] transition-all duration-1000 delay-100 ${
+          className={`mt-3 text-[1.625rem] font-bold leading-[1.4] md:text-[2.125rem] transition-all duration-1000 delay-100 ${
             shown ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
           }`}
         >
@@ -372,7 +372,7 @@ function Closing() {
           </span>
         </h3>
         <p
-          className={`mx-auto mt-6 max-w-[640px] text-[14px] leading-[1.85] text-neutral-600 md:text-[15px] transition-all duration-1000 delay-200 ${
+          className={`mx-auto mt-6 max-w-[640px] text-[0.875rem] leading-[1.85] text-neutral-600 md:text-[1rem] transition-all duration-1000 delay-200 ${
             shown ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
           }`}
         >

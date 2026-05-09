@@ -126,7 +126,7 @@ export async function submitEstimate(formData: FormData) {
   await notifyEstimateInquiry(inserted as EstimateInquiry)
 
   // 6) revalidate + 완료 페이지
-  revalidatePath('/admin/estimates')
+  revalidatePath('/mng/estimates')
   redirect('/execution-estimate?submitted=1')
 }
 

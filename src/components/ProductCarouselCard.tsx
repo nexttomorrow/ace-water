@@ -127,7 +127,7 @@ export default function ProductCarouselCard({
           {/* 좌상단 태그 배지 */}
           {tag && (
             <span
-              className={`pointer-events-none absolute left-3 top-3 z-10 rounded-full px-2.5 py-0.5 text-[10px] font-bold tracking-wider ${
+              className={`pointer-events-none absolute left-3 top-3 z-10 rounded-full px-2.5 py-0.5 text-[0.75rem] font-bold tracking-wider ${
                 BADGE_TONE[tag.tone] ?? BADGE_TONE.neutral
               }`}
             >
@@ -162,11 +162,11 @@ export default function ProductCarouselCard({
 
         {/* 텍스트 영역 (카드 컨테이너 내부) */}
         <div className="mt-5">
-          <p className="text-[15px] font-bold leading-[1.4] tracking-tight text-neutral-900 line-clamp-2">
+          <p className="text-[1rem] font-bold leading-[1.4] tracking-tight text-neutral-900 line-clamp-2">
             {item.name}
           </p>
           {item.modelName && (
-            <p className="mt-1.5 font-mono text-[11.5px] tracking-tight text-neutral-500">
+            <p className="mt-1.5 font-mono text-[0.75rem] tracking-tight text-neutral-500">
               {item.modelName}
             </p>
           )}
@@ -174,7 +174,7 @@ export default function ProductCarouselCard({
           {/* 색상 — Samsung 스타일: 색상명 위 + 스와치 아래 */}
           {item.colors && item.colors.length > 0 && (
             <div className="mt-4">
-              <p className="text-[12px] font-medium text-neutral-700">
+              <p className="text-[0.75rem] font-medium text-neutral-700">
                 {activeColor?.name}
               </p>
               <div className="mt-2 flex items-center gap-1.5">
@@ -212,20 +212,20 @@ export default function ProductCarouselCard({
           {/* 구성품 — 각 이름 노출 */}
           {visibleComponents.length > 0 && (
             <div className="mt-4">
-              <p className="text-[12px] font-semibold uppercase tracking-[0.15em] text-neutral-400">
+              <p className="text-[0.75rem] font-semibold uppercase tracking-[0.15em] text-neutral-400">
                 구성품
               </p>
               <ul className="mt-1.5 flex flex-wrap gap-1">
                 {visibleComponents.map((n, i) => (
                   <li
                     key={i}
-                    className="inline-flex items-center rounded-full border border-neutral-200 bg-white px-2 py-0.5 text-[11px] text-neutral-700"
+                    className="inline-flex items-center rounded-full border border-neutral-200 bg-white px-2 py-0.5 text-[0.75rem] text-neutral-700"
                   >
                     {n}
                   </li>
                 ))}
                 {hiddenComponentsCount > 0 && (
-                  <li className="inline-flex items-center text-[11px] text-neutral-500">
+                  <li className="inline-flex items-center text-[0.75rem] text-neutral-500">
                     외 {hiddenComponentsCount}종
                   </li>
                 )}
@@ -238,7 +238,7 @@ export default function ProductCarouselCard({
       {/* 견적문의 버튼 — 모델명 + 제품명을 prefill */}
       <Link
         href={`/design-estimate?model=${encodeURIComponent(estimateModel)}`}
-        className="mt-5 block w-full rounded-full bg-neutral-900 py-3 text-center text-[13px] font-bold text-white transition hover:bg-neutral-700"
+        className="mt-5 block w-full rounded-full bg-neutral-900 py-3 text-center text-[0.875rem] font-bold text-white transition hover:bg-neutral-700"
       >
         견적문의
       </Link>

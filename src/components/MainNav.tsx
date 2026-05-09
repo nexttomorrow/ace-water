@@ -70,9 +70,9 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
         }
       `}</style>
 
-      <div className="mx-auto flex h-[68px] max-w-[1440px] items-center justify-between px-6">
+      <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between px-6 md:h-[72px]">
         <Link href="/" className="shrink-0" onMouseEnter={() => setActiveId(null)}>
-          <span className="text-[22px] font-extrabold tracking-tight text-black">ACEWATER</span>
+          <span className="text-[1.375rem] font-extrabold tracking-tight text-black">ACEWATER</span>
         </Link>
 
         <nav className="ml-6 hidden flex-1 items-center min-[1022px]:flex">
@@ -113,9 +113,9 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
           {/* 카테고리 등록 단축 버튼 — 일단 숨김 (필요 시 isAdmin && false → isAdmin 으로 복구) */}
           {isAdmin && false && (
             <Link
-              href="/admin/categories/new"
+              href="/mng/categories/new"
               onMouseEnter={() => setActiveId(null)}
-              className="ml-auto inline-flex shrink-0 items-center gap-1.5 rounded-full bg-white px-4 py-2 text-[12px] font-semibold text-neutral-900 shadow-lg ring-1 ring-neutral-200 transition hover:bg-neutral-50"
+              className="ml-auto inline-flex shrink-0 items-center gap-1.5 rounded-full bg-white px-4 py-2 text-[0.75rem] font-semibold text-neutral-900 shadow-lg ring-1 ring-neutral-200 transition hover:bg-neutral-50"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 5v14" />
@@ -186,7 +186,7 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
 
       {/* MOBILE PANEL */}
       {isMobileMenuOpen && (
-        <div className="absolute left-0 right-0 top-full z-40 flex max-h-[calc(100vh-68px)] flex-col overflow-y-auto border-t border-neutral-200 bg-white shadow-2xl min-[1022px]:hidden animate-slide-down">
+        <div className="absolute left-0 right-0 top-full z-40 flex max-h-[calc(100vh-var(--site-header-h,100px))] flex-col overflow-y-auto border-t border-neutral-200 bg-white shadow-2xl min-[1022px]:hidden animate-slide-down">
           <ul className="flex flex-col px-6 py-4">
             {categories.length === 0 && (
               <div className="py-4 text-[0.875rem] text-neutral-400">
@@ -259,7 +259,7 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
                 </div>
                 {isAdmin && (
                   <Link
-                    href="/admin"
+                    href="/mng"
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="inline-flex w-fit items-center gap-1 rounded-full bg-neutral-900 px-4 py-2 text-[0.875rem] font-semibold text-white"
                   >
@@ -295,7 +295,7 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
             {displayed.texts.length > 0 && (
               <div className="border-b border-neutral-200">
                 <div className="mx-auto max-w-[1440px] px-6">
-                  <div className="flex h-12 items-center gap-1 overflow-x-auto">
+                  <div className="flex min-h-[48px] flex-wrap items-center gap-x-1 gap-y-0 py-1">
                     {displayed.texts.map((t) => (
                       <Link
                         key={t.id}
@@ -338,7 +338,7 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
                                   unoptimized
                                 />
                               ) : (
-                                <div className="text-[10px] text-neutral-400">no image</div>
+                                <div className="text-[0.75rem] text-neutral-400">no image</div>
                               )}
                             </div>
                             <p className="mt-3 text-[0.875rem] font-medium text-neutral-800 group-hover:text-black">
@@ -365,7 +365,7 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
                           <li key={l.id}>
                             <Link
                               href={l.href || '#'}
-                              className="text-[14px] text-neutral-800 hover:text-black hover:underline"
+                              className="text-[0.875rem] text-neutral-800 hover:text-black hover:underline"
                             >
                               {l.name}
                             </Link>

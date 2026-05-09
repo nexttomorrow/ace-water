@@ -30,10 +30,10 @@ export default function QnaAccordion({
               aria-expanded={isOpen}
               className="flex w-full items-start gap-4 px-5 py-5 text-left transition hover:bg-neutral-50"
             >
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-neutral-900 text-[12px] font-extrabold text-white">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-neutral-900 text-[0.75rem] font-extrabold text-white">
                 Q
               </span>
-              <span className="flex-1 pt-0.5 text-[15px] font-semibold leading-6 text-neutral-900">
+              <span className="flex-1 pt-0.5 text-[1rem] font-semibold leading-6 text-neutral-900">
                 {item.question}
               </span>
               <svg
@@ -60,7 +60,7 @@ export default function QnaAccordion({
             >
               <div className="overflow-hidden">
                 <div className="flex items-start gap-4 border-t border-neutral-100 bg-neutral-50/60 px-5 py-5">
-                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-600 text-[12px] font-extrabold text-white">
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-600 text-[0.75rem] font-extrabold text-white">
                     A
                   </span>
                   <div
@@ -70,7 +70,7 @@ export default function QnaAccordion({
                   {isAdmin && (
                     <Link
                       href={`/qna/${item.id}/edit`}
-                      className="shrink-0 rounded border border-neutral-300 bg-white px-3 py-1.5 text-[12px] text-neutral-700 hover:bg-neutral-100"
+                      className="shrink-0 rounded border border-neutral-300 bg-white px-3 py-1.5 text-[0.75rem] text-neutral-700 hover:bg-neutral-100"
                     >
                       수정
                     </Link>

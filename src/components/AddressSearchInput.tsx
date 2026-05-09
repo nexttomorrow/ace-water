@@ -101,7 +101,7 @@ export default function AddressSearchInput({
           type="button"
           onClick={open}
           disabled={!scriptReady}
-          className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-neutral-900 px-4 text-[13px] font-medium text-white transition hover:bg-neutral-700 disabled:cursor-wait disabled:bg-neutral-400"
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-neutral-900 px-4 text-[0.875rem] font-medium text-white transition hover:bg-neutral-700 disabled:cursor-wait disabled:bg-neutral-400"
         >
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <circle cx="11" cy="11" r="7" />

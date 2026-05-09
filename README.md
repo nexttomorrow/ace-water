@@ -72,9 +72,9 @@ http://localhost:3000
 | `/board/[id]` | 누구나 | 게시글 상세 |
 | `/board/new` | 로그인 유저 | 글쓰기 |
 | `/board/[id]/edit` | 작성자 or 어드민 | 글 수정 |
-| `/admin` | 어드민 | 대시보드 |
-| `/admin/gallery` | 어드민 | 갤러리 CRUD |
-| `/admin/board` | 어드민 | 게시판 관리 (모든 글 삭제 가능) |
+| `/mng` | 어드민 | 대시보드 |
+| `/mng/gallery` | 어드민 | 갤러리 CRUD |
+| `/mng/board` | 어드민 | 게시판 관리 (모든 글 삭제 가능) |
 
 ## 보안 메모
 

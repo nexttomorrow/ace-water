@@ -38,7 +38,7 @@ export default async function QnaPage() {
 
       <div className="mx-auto max-w-[1440px] px-6 py-12">
         <div className="mb-5 flex items-center justify-between">
-        <p className="text-[13px] text-neutral-500">
+        <p className="text-[0.875rem] text-neutral-500">
           총 <span className="font-semibold text-neutral-900">{items.length}</span>개의 Q&amp;A
         </p>
         {isAdmin && (
@@ -64,7 +64,7 @@ export default async function QnaPage() {
             <circle cx="12" cy="12" r="10" />
             <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01" />
           </svg>
-          <p className="text-[14px]">등록된 Q&amp;A가 없습니다.</p>
+          <p className="text-[0.875rem]">등록된 Q&amp;A가 없습니다.</p>
         </div>
       ) : (
         <QnaAccordion items={items} isAdmin={isAdmin} />

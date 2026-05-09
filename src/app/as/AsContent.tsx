@@ -84,21 +84,21 @@ function Promise() {
       <div className="mx-auto max-w-[1200px] px-6">
         <div className="text-center">
           <p
-            className={`text-[14px] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
+            className={`text-[0.875rem] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
               shown ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'
             }`}
           >
             Our Promise
           </p>
           <h2
-            className={`mt-3 text-[28px] font-bold leading-[1.3] md:text-[36px] transition-all duration-1000 delay-100 ${
+            className={`mt-3 text-[1.75rem] font-bold leading-[1.3] md:text-[2.25rem] transition-all duration-1000 delay-100 ${
               shown ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
             }`}
           >
             제품 너머의 신뢰까지 함께합니다
           </h2>
           <p
-            className={`mt-4 text-[14px] leading-relaxed text-neutral-600 md:text-[15px] transition-all duration-1000 delay-200 ${
+            className={`mt-4 text-[0.875rem] leading-relaxed text-neutral-600 md:text-[1rem] transition-all duration-1000 delay-200 ${
               shown ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
             }`}
           >
@@ -118,8 +118,8 @@ function Promise() {
               <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-600 transition group-hover:bg-blue-600 group-hover:text-white">
                 {it.icon}
               </div>
-              <h3 className="mt-5 text-[16px] font-bold">{it.title}</h3>
-              <p className="mt-2 text-[13px] leading-relaxed text-neutral-600">{it.desc}</p>
+              <h3 className="mt-5 text-[1rem] font-bold">{it.title}</h3>
+              <p className="mt-2 text-[0.875rem] leading-relaxed text-neutral-600">{it.desc}</p>
             </div>
           ))}
         </div>
@@ -159,14 +159,14 @@ function Process() {
       <div className="mx-auto max-w-[1200px] px-6">
         <div className="text-center">
           <p
-            className={`text-[14px] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
+            className={`text-[0.875rem] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
               shown ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'
             }`}
           >
             Process
           </p>
           <h2
-            className={`text-[28px] font-bold leading-[1.3] md:text-[36px] transition-all duration-1000 delay-100 ${
+            className={`text-[1.75rem] font-bold leading-[1.3] md:text-[2.25rem] transition-all duration-1000 delay-100 ${
               shown ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
             }`}
           >
@@ -183,11 +183,11 @@ function Process() {
               }`}
               style={{ transitionDelay: shown ? `${200 + i * 120}ms` : '0ms' }}
             >
-              <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-[36px] font-extrabold leading-none tracking-tight text-transparent">
+              <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-[2.25rem] font-extrabold leading-none tracking-tight text-transparent">
                 {s.num}
               </span>
-              <h3 className="mt-3 text-[18px] font-bold">{s.title}</h3>
-              <p className="mt-2 text-[13px] leading-relaxed text-neutral-600">{s.desc}</p>
+              <h3 className="mt-3 text-[1.125rem] font-bold">{s.title}</h3>
+              <p className="mt-2 text-[0.875rem] leading-relaxed text-neutral-600">{s.desc}</p>
               {i < steps.length - 1 && (
                 <span
                   aria-hidden
@@ -218,11 +218,11 @@ function Coverage() {
               shown ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
             }`}
           >
-            <p className="text-[14px] font-semibold uppercase tracking-[0.3em] text-blue-700">
+            <p className="text-[0.875rem] font-semibold uppercase tracking-[0.3em] text-blue-700">
               Service Hours
             </p>
-            <h3 className="mt-2 text-[22px] font-bold">서비스 시간</h3>
-            <dl className="mt-6 space-y-3 text-[14px]">
+            <h3 className="mt-2 text-[1.375rem] font-bold">서비스 시간</h3>
+            <dl className="mt-6 space-y-3 text-[0.875rem]">
               <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
                 <dt className="text-neutral-500">평일</dt>
                 <dd className="font-medium">09:00 — 18:00</dd>
@@ -236,7 +236,7 @@ function Coverage() {
                 <dd className="font-medium text-neutral-400">휴무</dd>
               </div>
             </dl>
-            <p className="mt-5 text-[12px] leading-relaxed text-neutral-500">
+            <p className="mt-5 text-[0.75rem] leading-relaxed text-neutral-500">
               긴급 상황은 별도 핫라인으로 24시간 접수받으며, 우선순위에 따라 처리됩니다.
             </p>
           </div>
@@ -246,11 +246,11 @@ function Coverage() {
               shown ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
             }`}
           >
-            <p className="text-[14px] font-semibold uppercase tracking-[0.3em] text-blue-700">
+            <p className="text-[0.875rem] font-semibold uppercase tracking-[0.3em] text-blue-700">
               Coverage
             </p>
-            <h3 className="mt-2 text-[22px] font-bold">서비스 가능 지역</h3>
-            <p className="mt-4 text-[14px] leading-relaxed text-neutral-700">
+            <h3 className="mt-2 text-[1.375rem] font-bold">서비스 가능 지역</h3>
+            <p className="mt-4 text-[0.875rem] leading-relaxed text-neutral-700">
               전국 어디든 시공한 제품에 대해 사후관리를 진행합니다. 도서 산간 지역의 경우 일정 협의가
               필요할 수 있어요.
             </p>
@@ -272,7 +272,7 @@ function Coverage() {
               ].map((r) => (
                 <span
                   key={r}
-                  className="rounded-full border border-neutral-200 bg-neutral-50 px-3 py-1 text-[12px] text-neutral-700"
+                  className="rounded-full border border-neutral-200 bg-neutral-50 px-3 py-1 text-[0.75rem] text-neutral-700"
                 >
                   {r}
                 </span>
@@ -301,13 +301,13 @@ function ContactCta() {
 
           <div className="relative grid grid-cols-1 items-center gap-8 md:grid-cols-3">
             <div className="md:col-span-2">
-              <p className="text-[12px] font-semibold uppercase tracking-[0.4em] text-white/80">
+              <p className="text-[0.75rem] font-semibold uppercase tracking-[0.4em] text-white/80">
                 Need Help?
               </p>
-              <h3 className="mt-3 text-[24px] font-bold leading-[1.3] text-white md:text-[32px]">
+              <h3 className="mt-3 text-[1.5rem] font-bold leading-[1.3] text-white md:text-[2rem]">
                 지금 바로 AS를 신청해보세요
               </h3>
-              <p className="mt-3 text-[14px] leading-relaxed text-white/85 md:text-[15px]">
+              <p className="mt-3 text-[0.875rem] leading-relaxed text-white/85 md:text-[1rem]">
                 담당 엔지니어가 빠르게 연락드립니다. 모델명·시공일자·증상을 알려주시면 더 정확한 진단이
                 가능해요.
               </p>
@@ -316,7 +316,7 @@ function ContactCta() {
             <div className="flex flex-col gap-2.5 md:items-end">
               <a
                 href="tel:031-944-2903"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-[14px] font-bold text-blue-700 shadow-lg transition hover:scale-[1.02]"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-[0.875rem] font-bold text-blue-700 shadow-lg transition hover:scale-[1.02]"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
                   <path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.86 19.86 0 0 1 2.08 4.18 2 2 0 0 1 4 2h3a2 2 0 0 1 2 1.72 13 13 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 13 13 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
@@ -325,7 +325,7 @@ function ContactCta() {
               </a>
               <a
                 href="mailto:acewater@acewater.net"
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/40 bg-white/10 px-6 py-3 text-[14px] font-semibold text-white backdrop-blur-sm transition hover:bg-white/20"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/40 bg-white/10 px-6 py-3 text-[0.875rem] font-semibold text-white backdrop-blur-sm transition hover:bg-white/20"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M4 4h16v16H4z" />
@@ -335,7 +335,7 @@ function ContactCta() {
               </a>
               <Link
                 href="/qna"
-                className="text-right text-[12px] text-white/80 underline-offset-4 hover:underline"
+                className="text-right text-[0.75rem] text-white/80 underline-offset-4 hover:underline"
               >
                 자주 묻는 질문 먼저 보기 →
               </Link>

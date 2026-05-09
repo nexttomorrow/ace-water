@@ -43,10 +43,12 @@ export default async function ProductDetailPage({
   }
 
   // 연결된 시공사례 — Supabase jsonb contains 가 환경에 따라 까다로워 JS 필터로 안전 처리
+  // 비공개(is_active=false) 사례는 제외
   const productHref = `/products/${itemId}`
   const { data: cases } = await supabase
     .from('gallery_items')
     .select('id, title, site_name, image_path, product_hrefs')
+    .eq('is_active', true)
     .order('created_at', { ascending: false })
 
   const linkedCases = ((cases ?? []) as Array<
@@ -99,7 +101,7 @@ export default async function ProductDetailPage({
       {/* breadcrumb */}
       <nav
         aria-label="Breadcrumb"
-        className="mb-6 flex flex-wrap items-center gap-1.5 text-[13px] text-neutral-500"
+        className="mb-6 flex flex-wrap items-center gap-1.5 text-[0.875rem] text-neutral-500"
       >
         <Link href="/" className="transition hover:text-neutral-900">
           HOME

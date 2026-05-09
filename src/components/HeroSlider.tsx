@@ -58,7 +58,7 @@ export default function HeroSlider({ slides }: { slides: HeroSliderItem[] }) {
             <div className="relative z-10 mx-auto flex h-full max-w-[1440px] flex-col justify-end px-6 pb-24 md:pb-28">
               {slide.eyebrow && (
                 <p
-                  className={`mb-3 text-[12px] font-semibold tracking-[0.25em] text-white/80 transition-all duration-700 ${
+                  className={`mb-3 text-[0.75rem] font-semibold tracking-[0.25em] text-white/80 transition-all duration-700 ${
                     activeIndex === i
                       ? 'translate-y-0 opacity-100 delay-200'
                       : 'translate-y-3 opacity-0'
@@ -68,7 +68,7 @@ export default function HeroSlider({ slides }: { slides: HeroSliderItem[] }) {
                 </p>
               )}
               <h2
-                className={`max-w-2xl text-[34px] font-extrabold leading-[1.2] text-white md:text-[48px] transition-all duration-700 ${
+                className={`max-w-2xl text-[2.125rem] font-extrabold leading-[1.2] text-white md:text-[3rem] transition-all duration-700 ${
                   activeIndex === i
                     ? 'translate-y-0 opacity-100 delay-300'
                     : 'translate-y-4 opacity-0'
@@ -87,7 +87,7 @@ export default function HeroSlider({ slides }: { slides: HeroSliderItem[] }) {
           <div className="mx-auto flex max-w-[1440px] items-end justify-between px-6 pb-8">
             <div className="pointer-events-auto flex items-center gap-5 text-white">
               <div className="flex items-baseline gap-2 font-mono text-[0.875rem] tracking-widest">
-                <span className="text-[18px] font-bold">
+                <span className="text-[1.125rem] font-bold">
                   {String(activeIndex + 1).padStart(2, '0')}
                 </span>
                 <span className="text-white/40">/</span>

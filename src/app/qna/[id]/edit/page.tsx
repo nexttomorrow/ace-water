@@ -48,8 +48,8 @@ export default async function EditQnaPage({
 
       <form action={updateAction} className="flex flex-col gap-5">
         <div>
-          <label className="mb-1.5 flex items-center gap-2 text-[13px] font-semibold text-neutral-800">
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-neutral-900 text-[10px] font-extrabold text-white">
+          <label className="mb-1.5 flex items-center gap-2 text-[0.875rem] font-semibold text-neutral-800">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-neutral-900 text-[0.75rem] font-extrabold text-white">
               Q
             </span>
             질문
@@ -58,13 +58,13 @@ export default async function EditQnaPage({
             name="question"
             required
             defaultValue={qna.question}
-            className="w-full rounded border border-neutral-300 bg-white px-3 py-2.5 text-[15px] outline-none transition focus:border-neutral-900"
+            className="w-full rounded border border-neutral-300 bg-white px-3 py-2.5 text-[1rem] outline-none transition focus:border-neutral-900"
           />
         </div>
 
         <div>
-          <label className="mb-1.5 flex items-center gap-2 text-[13px] font-semibold text-neutral-800">
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-[10px] font-extrabold text-white">
+          <label className="mb-1.5 flex items-center gap-2 text-[0.875rem] font-semibold text-neutral-800">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-[0.75rem] font-extrabold text-white">
               A
             </span>
             답변

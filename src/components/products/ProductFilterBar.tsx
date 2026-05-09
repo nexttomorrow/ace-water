@@ -106,7 +106,7 @@ export default function ProductFilterBar({
     <div ref={wrapperRef} className="border-b border-neutral-200 pb-5">
       {/* 필터 카운트 + 정렬(추후) */}
       <div className="mb-3 flex items-center justify-between">
-        <p className="text-[14px] text-neutral-700">
+        <p className="text-[0.875rem] text-neutral-700">
           <span className="font-bold text-neutral-900">필터</span>
           <span className="mx-3 text-neutral-300">|</span>
           <span className="text-neutral-500">{totalCount}개 결과</span>
@@ -115,7 +115,7 @@ export default function ProductFilterBar({
           <button
             type="button"
             onClick={clearAll}
-            className="rounded-full border border-neutral-300 px-3.5 py-1.5 text-[12px] font-medium text-neutral-700 transition hover:border-neutral-900 hover:bg-neutral-900 hover:text-white"
+            className="rounded-full border border-neutral-300 px-3.5 py-1.5 text-[0.75rem] font-medium text-neutral-700 transition hover:border-neutral-900 hover:bg-neutral-900 hover:text-white"
           >
             전체 해제
           </button>
@@ -133,7 +133,7 @@ export default function ProductFilterBar({
               <button
                 type="button"
                 onClick={() => setOpenKey(isOpen ? null : f.key)}
-                className={`inline-flex items-center gap-1.5 rounded-full border px-4 py-1.5 text-[13px] font-medium transition ${
+                className={`inline-flex items-center gap-1.5 rounded-full border px-4 py-1.5 text-[0.875rem] font-medium transition ${
                   showActive
                     ? 'border-neutral-900 bg-neutral-900 text-white'
                     : 'border-neutral-300 bg-white text-neutral-700 hover:border-neutral-500'
@@ -142,7 +142,7 @@ export default function ProductFilterBar({
                 <span>{f.label}</span>
                 {showActive && (
                   <span
-                    className={`inline-flex h-4 min-w-[16px] items-center justify-center rounded-full px-1 text-[10px] font-bold ${
+                    className={`inline-flex h-4 min-w-[16px] items-center justify-center rounded-full px-1 text-[0.75rem] font-bold ${
                       showActive ? 'bg-white text-neutral-900' : 'bg-neutral-100 text-neutral-700'
                     }`}
                   >
@@ -176,7 +176,7 @@ export default function ProductFilterBar({
                       return (
                         <li key={o.value}>
                           <label
-                            className={`flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-[13px] transition ${
+                            className={`flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-[0.875rem] transition ${
                               checked
                                 ? 'bg-blue-50 text-blue-900'
                                 : 'text-neutral-700 hover:bg-neutral-50'
@@ -216,7 +216,7 @@ export default function ProductFilterBar({
               key={`${filter.key}:${option.value}`}
               type="button"
               onClick={() => toggleOption(filter.key, option.value)}
-              className="inline-flex items-center gap-1.5 rounded-full bg-neutral-100 px-3 py-1 text-[12px] font-medium text-neutral-800 transition hover:bg-neutral-200"
+              className="inline-flex items-center gap-1.5 rounded-full bg-neutral-100 px-3 py-1 text-[0.75rem] font-medium text-neutral-800 transition hover:bg-neutral-200"
             >
               <span className="text-neutral-500">{filter.label}</span>
               <span className="text-neutral-400">·</span>

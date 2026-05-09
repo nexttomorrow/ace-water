@@ -52,7 +52,7 @@ export default async function ResourcesListPage({
 
       <div className="mx-auto max-w-[1440px] px-6 py-12">
         <div className="mb-5 flex items-center justify-between">
-        <p className="text-[13px] text-neutral-500">
+        <p className="text-[0.875rem] text-neutral-500">
           총 <span className="font-semibold text-neutral-900">{total}</span>개의 자료
         </p>
         {isAdmin && (
@@ -78,13 +78,13 @@ export default async function ResourcesListPage({
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
             <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
           </svg>
-          <p className="text-[14px]">등록된 자료가 없습니다.</p>
+          <p className="text-[0.875rem]">등록된 자료가 없습니다.</p>
         </div>
       ) : (
         <>
           <div className="overflow-hidden rounded-lg border border-neutral-200 bg-white">
             {/* Table header (desktop) */}
-            <div className="hidden grid-cols-12 gap-4 border-b border-neutral-200 bg-neutral-50 px-5 py-3 text-[12px] font-semibold text-neutral-600 md:grid">
+            <div className="hidden grid-cols-12 gap-4 border-b border-neutral-200 bg-neutral-50 px-5 py-3 text-[0.75rem] font-semibold text-neutral-600 md:grid">
               <div className="col-span-1 text-center">번호</div>
               <div className="col-span-6">제목</div>
               <div className="col-span-2 text-center">파일</div>
@@ -98,7 +98,7 @@ export default async function ResourcesListPage({
                 const color = getFileColor(r.file_name)
                 return (
                   <li key={r.id} className="group transition hover:bg-neutral-50">
-                    <div className="grid grid-cols-12 items-center gap-4 px-5 py-4 text-[13px]">
+                    <div className="grid grid-cols-12 items-center gap-4 px-5 py-4 text-[0.875rem]">
                       <div className="col-span-12 hidden text-center text-neutral-400 md:col-span-1 md:block">
                         {num}
                       </div>
@@ -106,28 +106,28 @@ export default async function ResourcesListPage({
                         href={`/resources/${r.id}`}
                         className="col-span-12 flex min-w-0 items-center gap-3 md:col-span-6"
                       >
-                        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-md ${color.bg} ${color.text} text-[10px] font-bold`}>
+                        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-md ${color.bg} ${color.text} text-[0.75rem] font-bold`}>
                           {color.label}
                         </div>
                         <div className="min-w-0 flex-1">
-                          <p className="truncate text-[14px] font-semibold text-neutral-900 group-hover:underline">
+                          <p className="truncate text-[0.875rem] font-semibold text-neutral-900 group-hover:underline">
                             {r.title}
                           </p>
-                          <p className="mt-0.5 truncate text-[12px] text-neutral-500">
+                          <p className="mt-0.5 truncate text-[0.75rem] text-neutral-500">
                             {r.file_name}
                           </p>
                         </div>
                       </Link>
-                      <div className="col-span-12 hidden text-center text-[12px] text-neutral-500 md:col-span-2 md:block">
+                      <div className="col-span-12 hidden text-center text-[0.75rem] text-neutral-500 md:col-span-2 md:block">
                         {formatBytes(r.file_size)}
                       </div>
-                      <div className="col-span-12 hidden text-center text-[12px] text-neutral-500 md:col-span-2 md:block">
+                      <div className="col-span-12 hidden text-center text-[0.75rem] text-neutral-500 md:col-span-2 md:block">
                         {new Date(r.created_at).toLocaleDateString('ko-KR')}
                       </div>
                       <div className="col-span-12 flex items-center justify-end md:col-span-1 md:justify-center">
                         <a
                           href={`/resources/${r.id}/download`}
-                          className="inline-flex items-center gap-1.5 rounded-full border border-neutral-300 bg-white px-3 py-1.5 text-[12px] font-medium text-neutral-700 transition hover:border-neutral-900 hover:bg-neutral-900 hover:text-white"
+                          className="inline-flex items-center gap-1.5 rounded-full border border-neutral-300 bg-white px-3 py-1.5 text-[0.75rem] font-medium text-neutral-700 transition hover:border-neutral-900 hover:bg-neutral-900 hover:text-white"
                           aria-label="다운로드"
                         >
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

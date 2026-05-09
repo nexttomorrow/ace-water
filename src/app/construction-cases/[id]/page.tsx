@@ -44,32 +44,70 @@ export default async function CaseDetailPage({
   const additionalImages = (item.additional_images ?? []).map(itemUrl)
   const allImages = [mainImage, ...additionalImages]
 
-  // 연결 제품 — href 로부터 이름 lookup
+  // 연결 제품 — href 로부터 이름 lookup (categories + products 둘 다 조회)
   const productHrefs = item.product_hrefs ?? []
   let productLinks: { href: string; name: string }[] = []
   if (productHrefs.length > 0) {
-    const { data: prodData } = await supabase
+    const nameByHref = new Map<string, string>()
+
+    // categories 의 href 매칭 (예: /wash-stand)
+    const { data: catRows } = await supabase
       .from('categories')
       .select('name, href')
       .in('href', productHrefs)
-    const nameByHref = new Map<string, string>(
-      (prodData ?? []).map((p: { name: string; href: string | null }) => [
-        p.href ?? '',
-        p.name,
-      ])
-    )
+    for (const c of (catRows ?? []) as { name: string; href: string | null }[]) {
+      if (c.href) nameByHref.set(c.href, c.name)
+    }
+
+    // /products/{id} 형식 → products 테이블에서 이름 조회
+    const productIds = productHrefs
+      .map((h) => {
+        const m = /^\/products\/(\d+)$/.exec(h)
+        return m ? Number(m[1]) : null
+      })
+      .filter((v): v is number => v != null)
+    if (productIds.length > 0) {
+      const { data: prodRows } = await supabase
+        .from('products')
+        .select('id, name, model_name')
+        .in('id', productIds)
+      for (const p of (prodRows ?? []) as {
+        id: number
+        name: string
+        model_name: string | null
+      }[]) {
+        const label = p.model_name ? `${p.model_name} ${p.name}` : p.name
+        nameByHref.set(`/products/${p.id}`, label)
+      }
+    }
+
     productLinks = productHrefs.map((href) => ({
       href,
       name: nameByHref.get(href) ?? href,
     }))
   }
 
+  // 이전/다음 사례 — 같은 카테고리 내 (없으면 전체) created_at desc 정렬 기준 인접
+  // 비공개(is_active=false) 사례는 prev/next 에서 제외 (직접 URL 진입은 허용)
+  const siblingsQuery = supabase
+    .from('gallery_items')
+    .select('id')
+    .eq('is_active', true)
+    .order('created_at', { ascending: false })
+  const { data: siblingsData } = item.category_id
+    ? await siblingsQuery.eq('category_id', item.category_id)
+    : await siblingsQuery
+  const siblings = (siblingsData ?? []) as { id: number }[]
+  const myIdx = siblings.findIndex((s) => s.id === itemId)
+  const prevId = myIdx > 0 ? siblings[myIdx - 1].id : null
+  const nextId = myIdx >= 0 && myIdx < siblings.length - 1 ? siblings[myIdx + 1].id : null
+
   return (
     <article className="mx-auto max-w-[1440px] px-6 py-10 md:py-14">
       {/* breadcrumb */}
       <nav
         aria-label="Breadcrumb"
-        className="mb-8 flex flex-wrap items-center gap-1.5 text-[13px] text-neutral-500"
+        className="mb-8 flex flex-wrap items-center gap-1.5 text-[0.875rem] text-neutral-500"
       >
         <Link href="/" className="transition hover:text-neutral-900">
           HOME
@@ -100,6 +138,8 @@ export default async function CaseDetailPage({
         productLinks={productLinks}
         images={allImages}
         categoryName={category?.name ?? null}
+        prevHref={prevId ? `/construction-cases/${prevId}` : null}
+        nextHref={nextId ? `/construction-cases/${nextId}` : null}
       />
     </article>
   )

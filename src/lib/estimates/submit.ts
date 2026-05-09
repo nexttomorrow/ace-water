@@ -187,7 +187,7 @@ export async function submitEstimate(
   await notifyEstimateInquiry(inserted as EstimateInquiry)
 
   // 6) revalidate + redirect
-  revalidatePath('/admin/estimates')
+  revalidatePath('/mng/estimates')
   redirect(config.successUrl)
 }
 

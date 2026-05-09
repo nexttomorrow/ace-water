@@ -19,21 +19,27 @@ export default async function LoginPage({
       )}
 
       <form action={login} className="flex flex-col gap-3">
-        <input type="hidden" name="redirect" value={sp.redirect ?? '/admin'} />
+        <input type="hidden" name="redirect" value={sp.redirect ?? '/mng'} />
         <label className="flex flex-col text-sm">
-          이메일
+          아이디 또는 이메일
           <input
             name="email"
-            type="email"
+            type="text"
+            autoComplete="username"
             required
+            placeholder="admin / master / 또는 이메일"
             className="mt-1 rounded border border-neutral-300 px-3 py-2"
           />
+          <span className="mt-1 text-[0.75rem] text-neutral-500">
+            아이디만 입력하면 내부 도메인(@acewater.local)으로 자동 매핑됩니다.
+          </span>
         </label>
         <label className="flex flex-col text-sm">
           비밀번호
           <input
             name="password"
             type="password"
+            autoComplete="current-password"
             required
             minLength={6}
             className="mt-1 rounded border border-neutral-300 px-3 py-2"

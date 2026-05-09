@@ -86,14 +86,20 @@ export default function DesignEstimateForm({
 
       {/* ② 납품방법 */}
       <Section english="Delivery" title="납품방법">
-        <FieldRow>
+        <div className="grid grid-cols-1 gap-x-5 gap-y-4 md:grid-cols-2">
           <SelectField
             name="delivery_method"
             label="납품방법"
             required
             options={ESTIMATE_DELIVERY_METHODS}
             defaultValue=""
-            onChange={(e) => setDeliveryMethod(e.target.value)}
+            onChange={(value) => setDeliveryMethod(value)}
+          />
+          <DateField
+            name="due_date"
+            label="납기 요청일(예상)"
+            required
+            min={minDate}
           />
           <AddressField
             name="site_address"
@@ -102,16 +108,6 @@ export default function DesignEstimateForm({
             withDetailField
             className="md:col-span-2"
           />
-        </FieldRow>
-        <div className="mt-4">
-          <FieldRow>
-            <DateField
-              name="due_date"
-              label="납기 요청일(예상)"
-              required
-              min={minDate}
-            />
-          </FieldRow>
         </div>
 
         <NoteList
@@ -122,7 +118,7 @@ export default function DesignEstimateForm({
         />
 
         {isInstall && (
-          <p className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-[12px] font-medium text-amber-800 ring-1 ring-amber-100">
+          <p className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-[0.75rem] font-medium text-amber-800 ring-1 ring-amber-100">
             ⚠️ 설치도를 선택하셨습니다. 현장에 지게차 인입이 가능한지 미리 확인 부탁드립니다.
           </p>
         )}
@@ -131,10 +127,10 @@ export default function DesignEstimateForm({
       {/* ③ 제품정보 */}
       <Section english="Product" title="제품정보">
         <div className="mb-3 flex items-baseline justify-between">
-          <label className="flex items-baseline gap-1 text-[13px] font-medium text-neutral-800">
+          <label className="flex items-baseline gap-1 text-[0.875rem] font-medium text-neutral-800">
             <span className="text-red-600">*</span>모델명 · 수량
           </label>
-          <span className="text-[11px] text-neutral-500">
+          <span className="text-[0.75rem] text-neutral-500">
             여러 모델을 한 번에 문의하실 수 있어요
           </span>
         </div>
@@ -155,7 +151,7 @@ export default function DesignEstimateForm({
         />
 
         <div className="mt-5">
-          <p className="mb-2 text-[13px] font-medium text-neutral-700">도면 요청</p>
+          <p className="mb-2 text-[0.875rem] font-medium text-neutral-700">도면 요청</p>
           <CheckboxField
             name="drawing_request"
             label="도면 요청"

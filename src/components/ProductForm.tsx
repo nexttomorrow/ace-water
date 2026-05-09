@@ -8,7 +8,8 @@ import LinkedCasesField, { type CaseOption } from '@/components/LinkedCasesField
 import ColorsField from '@/components/ColorsField'
 import ComponentPickerModal, {
   type PickedComponent,
-} from '@/components/admin/ComponentPickerModal'
+} from '@/components/mng/ComponentPickerModal'
+import Select from '@/components/ui/Select'
 import {
   PRODUCT_TAGS,
   type Product,
@@ -215,7 +216,7 @@ export default function ProductForm({
 
       {/* 기본 정보 */}
       <section className="rounded-lg border border-neutral-200 bg-white p-5">
-        <h2 className="mb-4 text-[14px] font-bold text-neutral-900">기본 정보</h2>
+        <h2 className="mb-4 text-[0.875rem] font-bold text-neutral-900">기본 정보</h2>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <label className="flex flex-col text-sm">
@@ -241,35 +242,37 @@ export default function ProductForm({
             />
           </label>
 
-          <label className="flex flex-col text-sm md:col-span-2">
+          <div className="flex flex-col text-sm md:col-span-2">
             <span className="font-medium">카테고리</span>
-            <select
-              name="category_id"
-              value={categoryId}
-              onChange={(e) => setCategoryId(e.target.value)}
-              className="mt-1 rounded border border-neutral-300 bg-white px-3 py-2"
-            >
-              <option value="">(미분류)</option>
-              {categories.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-            <span className="mt-1 text-[11px] text-neutral-500">
+            <div className="mt-1">
+              <Select
+                name="category_id"
+                value={categoryId}
+                onChange={setCategoryId}
+                placeholder="(미분류)"
+                options={[
+                  { value: '', label: '(미분류)' },
+                  ...categories.map((c) => ({
+                    value: String(c.id),
+                    label: c.name,
+                  })),
+                ]}
+              />
+            </div>
+            <span className="mt-1 text-[0.75rem] text-neutral-500">
               <strong>&ldquo;제품안내&rdquo;</strong> 메뉴의 하위 카테고리.{' '}
-              <Link href="/admin/categories" className="text-blue-600 hover:underline">
+              <Link href="/mng/categories" className="text-blue-600 hover:underline">
                 카테고리 관리
               </Link>
             </span>
-          </label>
+          </div>
         </div>
       </section>
 
       {/* 태그 — 메인 노출/배지 제어 */}
       <section className="rounded-lg border border-neutral-200 bg-white p-5">
-        <h2 className="text-[14px] font-bold text-neutral-900">태그</h2>
-        <p className="mt-1 text-[12px] text-neutral-500">
+        <h2 className="text-[0.875rem] font-bold text-neutral-900">태그</h2>
+        <p className="mt-1 text-[0.75rem] text-neutral-500">
           여러 개 선택 가능. <strong>NEW</strong>는 메인 &ldquo;New Product&rdquo;,{' '}
           <strong>BEST</strong>는 &ldquo;Best Seller&rdquo; 섹션에 자동 노출됩니다.
         </p>
@@ -298,17 +301,17 @@ export default function ProductForm({
                 <span className="min-w-0 flex-1">
                   <span className="flex items-baseline gap-2">
                     <span
-                      className={`inline-flex shrink-0 items-center rounded px-1.5 py-0.5 text-[10px] font-bold tracking-wider ${
+                      className={`inline-flex shrink-0 items-center rounded px-1.5 py-0.5 text-[0.75rem] font-bold tracking-wider ${
                         TAG_BADGE_CLS[t.tone] ?? TAG_BADGE_CLS.neutral
                       }`}
                     >
                       {t.label}
                     </span>
-                    <span className="text-[13px] font-semibold text-neutral-900">
+                    <span className="text-[0.875rem] font-semibold text-neutral-900">
                       {t.short}
                     </span>
                   </span>
-                  <span className="mt-1 block text-[11.5px] leading-[1.6] text-neutral-500">
+                  <span className="mt-1 block text-[0.75rem] leading-[1.6] text-neutral-500">
                     {t.desc}
                   </span>
                 </span>
@@ -324,21 +327,21 @@ export default function ProductForm({
       {/* 카테고리 필터값 — /products 페이지의 필터에 노출 */}
       <section className="rounded-lg border border-neutral-200 bg-white p-5">
         <div className="flex items-baseline justify-between gap-3">
-          <h2 className="text-[14px] font-bold text-neutral-900">카테고리 필터</h2>
+          <h2 className="text-[0.875rem] font-bold text-neutral-900">카테고리 필터</h2>
           <Link
-            href="/admin/filters"
-            className="text-[12px] text-blue-600 hover:underline"
+            href="/mng/filters"
+            className="text-[0.75rem] text-blue-600 hover:underline"
           >
             필터 관리
           </Link>
         </div>
-        <p className="mt-1 text-[12px] text-neutral-500">
+        <p className="mt-1 text-[0.75rem] text-neutral-500">
           선택한 카테고리에 등록된 필터에 해당하는 옵션을 체크하세요. 체크한 옵션이 /products
           상단 필터에서 이 제품을 노출하는 기준이 됩니다.
         </p>
 
         {hasColorAutoFilter && (
-          <div className="mt-3 flex items-start gap-2 rounded-lg bg-blue-50 px-3 py-2 text-[12px] text-blue-800 ring-1 ring-blue-100">
+          <div className="mt-3 flex items-start gap-2 rounded-lg bg-blue-50 px-3 py-2 text-[0.75rem] text-blue-800 ring-1 ring-blue-100">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="mt-0.5 shrink-0">
               <circle cx="12" cy="12" r="10" />
               <path d="M12 8v4M12 16h.01" />
@@ -351,7 +354,7 @@ export default function ProductForm({
         )}
 
         {relevantFilters.length === 0 ? (
-          <p className="mt-4 rounded-lg border border-dashed border-neutral-300 p-4 text-center text-[12px] text-neutral-400">
+          <p className="mt-4 rounded-lg border border-dashed border-neutral-300 p-4 text-center text-[0.75rem] text-neutral-400">
             {categoryId
               ? '이 카테고리에 등록된 필터가 없어요.'
               : '카테고리를 선택하면 해당 카테고리의 필터가 노출됩니다. (글로벌 필터만 노출 중)'}
@@ -363,14 +366,14 @@ export default function ProductForm({
               return (
                 <div key={f.id}>
                   <div className="mb-2 flex items-baseline gap-2">
-                    <p className="text-[13px] font-semibold text-neutral-800">
+                    <p className="text-[0.875rem] font-semibold text-neutral-800">
                       {f.label}
                     </p>
-                    <span className="rounded-full bg-neutral-100 px-1.5 py-0.5 font-mono text-[10px] text-neutral-500">
+                    <span className="rounded-full bg-neutral-100 px-1.5 py-0.5 font-mono text-[0.75rem] text-neutral-500">
                       {f.key}
                     </span>
                     {f.category_id === null && (
-                      <span className="rounded bg-blue-50 px-1.5 py-0.5 text-[10px] font-medium text-blue-700">
+                      <span className="rounded bg-blue-50 px-1.5 py-0.5 text-[0.75rem] font-medium text-blue-700">
                         글로벌
                       </span>
                     )}
@@ -381,7 +384,7 @@ export default function ProductForm({
                       return (
                         <label
                           key={o.value}
-                          className={`inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1 text-[12px] transition ${
+                          className={`inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1 text-[0.75rem] transition ${
                             checked
                               ? 'border-blue-500 bg-blue-50 text-blue-900'
                               : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400'
@@ -412,8 +415,8 @@ export default function ProductForm({
 
       {/* 사양 */}
       <section className="rounded-lg border border-neutral-200 bg-white p-5">
-        <h2 className="mb-4 text-[14px] font-bold text-neutral-900">제품 사양</h2>
-        <p className="mb-4 text-[12px] text-neutral-500">
+        <h2 className="mb-4 text-[0.875rem] font-bold text-neutral-900">제품 사양</h2>
+        <p className="mb-4 text-[0.75rem] text-neutral-500">
           여러 줄 입력 가능. <span className="text-rose-500">*</span>로 시작하는 줄은 빨간색
           참고 메시지로 표시됩니다.
         </p>
@@ -426,13 +429,13 @@ export default function ProductForm({
               rows={2}
               defaultValue={v.install_type ?? ''}
               placeholder={'매립형(발주처 직접 시공형)\n*매립형 제품은 발주처 직접시공형 제품입니다.'}
-              className="mt-1 resize-y rounded border border-neutral-300 bg-white px-3 py-2 font-mono text-[13px]"
+              className="mt-1 resize-y rounded border border-neutral-300 bg-white px-3 py-2 font-mono text-[0.875rem]"
             />
           </label>
 
           <div className="flex flex-col text-sm">
             <span className="font-medium">사이즈 (가로 × 깊이 × 높이, mm)</span>
-            <p className="mt-0.5 text-[11px] text-neutral-500">
+            <p className="mt-0.5 text-[0.75rem] text-neutral-500">
               숫자만 입력하세요. 넓이·부피는 자동으로 계산되어 표시됩니다.
             </p>
             <div className="mt-1.5 grid grid-cols-3 gap-2">
@@ -462,10 +465,10 @@ export default function ProductForm({
             <DerivedSizeReadout w={numW} d={numD} h={numH} />
 
             <label className="mt-4 flex flex-col text-sm">
-              <span className="text-[12px] font-semibold text-neutral-700">
+              <span className="text-[0.75rem] font-semibold text-neutral-700">
                 사이즈 보조 메모 (선택)
               </span>
-              <span className="mt-0.5 text-[11px] text-neutral-500">
+              <span className="mt-0.5 text-[0.75rem] text-neutral-500">
                 위 W/D/H 외에 음수대·차양 등 부속 치수가 있을 때만 사용. <span className="text-rose-500">*</span>
                 로 시작하는 줄은 빨간 메시지로 노출됩니다.
               </span>
@@ -474,7 +477,7 @@ export default function ProductForm({
                 rows={2}
                 defaultValue={v.size_text ?? ''}
                 placeholder={'음수대 W1234 x D123 x H123mm\n차양 W1234 x D123 x H123mm'}
-                className="mt-1 resize-y rounded border border-neutral-300 bg-white px-3 py-2 font-mono text-[13px]"
+                className="mt-1 resize-y rounded border border-neutral-300 bg-white px-3 py-2 font-mono text-[0.875rem]"
               />
             </label>
           </div>
@@ -496,7 +499,7 @@ export default function ProductForm({
               rows={3}
               defaultValue={v.extras_text ?? ''}
               placeholder={'급퇴수밸브함 - 드레인(퇴수) 함 / 필수설치 권장\n원형트렌치(그레이팅)\n*급퇴수밸브함, 원형트렌치는 발주처 선매립 시공분입니다.'}
-              className="mt-1 resize-y rounded border border-neutral-300 bg-white px-3 py-2 font-mono text-[13px]"
+              className="mt-1 resize-y rounded border border-neutral-300 bg-white px-3 py-2 font-mono text-[0.875rem]"
             />
           </label>
         </div>
@@ -505,13 +508,13 @@ export default function ProductForm({
       {/* 구성품 — 등록된 제품(부속품) 중에서만 검색·선택 */}
       <section className="rounded-lg border border-neutral-200 bg-white p-5">
         <div className="mb-3 flex items-baseline justify-between gap-3">
-          <h2 className="text-[14px] font-bold text-neutral-900">구성품</h2>
-          <span className="text-[12px] text-neutral-500">{components.length}개</span>
+          <h2 className="text-[0.875rem] font-bold text-neutral-900">구성품</h2>
+          <span className="text-[0.75rem] text-neutral-500">{components.length}개</span>
         </div>
-        <p className="mb-4 text-[12px] text-neutral-500">
+        <p className="mb-4 text-[0.75rem] text-neutral-500">
           등록된 제품(부속품) 중에서만 추가할 수 있어요. 상세 페이지에서 클릭하면 해당 제품
           페이지로 이동합니다. 부속품이 없다면 먼저{' '}
-          <Link href="/admin/products/new" className="text-blue-600 hover:underline">
+          <Link href="/mng/products/new" className="text-blue-600 hover:underline">
             제품 등록
           </Link>{' '}
           하세요.
@@ -538,32 +541,32 @@ export default function ProductForm({
                       />
                     </div>
                   ) : (
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-md bg-white text-[10px] text-neutral-400 ring-1 ring-neutral-200">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-md bg-white text-[0.75rem] text-neutral-400 ring-1 ring-neutral-200">
                       no img
                     </div>
                   )}
                   <div className="min-w-0 flex-1">
                     {linked?.modelName && (
-                      <p className="truncate font-mono text-[11.5px] text-neutral-500">
+                      <p className="truncate font-mono text-[0.75rem] text-neutral-500">
                         {linked.modelName}
                       </p>
                     )}
-                    <p className="truncate text-[13px] font-semibold text-neutral-900">
+                    <p className="truncate text-[0.875rem] font-semibold text-neutral-900">
                       {linked?.name ?? c.name}
                     </p>
                     <div className="mt-0.5 flex flex-wrap items-center gap-1">
                       {linked?.categoryName && (
-                        <span className="inline-block rounded-full bg-white px-1.5 py-0.5 text-[10px] font-medium text-neutral-500 ring-1 ring-neutral-200">
+                        <span className="inline-block rounded-full bg-white px-1.5 py-0.5 text-[0.75rem] font-medium text-neutral-500 ring-1 ring-neutral-200">
                           {linked.categoryName}
                         </span>
                       )}
                       {!linked && c.target_id == null && (
-                        <span className="inline-block rounded-full bg-amber-50 px-1.5 py-0.5 text-[10px] font-medium text-amber-700 ring-1 ring-amber-200">
+                        <span className="inline-block rounded-full bg-amber-50 px-1.5 py-0.5 text-[0.75rem] font-medium text-amber-700 ring-1 ring-amber-200">
                           기존 자유입력 (이전 등록분)
                         </span>
                       )}
                       {c.target_id != null && !linked && (
-                        <span className="inline-block rounded-full bg-rose-50 px-1.5 py-0.5 text-[10px] font-medium text-rose-700 ring-1 ring-rose-200">
+                        <span className="inline-block rounded-full bg-rose-50 px-1.5 py-0.5 text-[0.75rem] font-medium text-rose-700 ring-1 ring-rose-200">
                           연결된 제품이 비활성/삭제됨
                         </span>
                       )}
@@ -591,7 +594,7 @@ export default function ProductForm({
             })}
           </ul>
         ) : (
-          <p className="rounded-lg border border-dashed border-neutral-300 p-6 text-center text-[12px] text-neutral-400">
+          <p className="rounded-lg border border-dashed border-neutral-300 p-6 text-center text-[0.75rem] text-neutral-400">
             아직 추가된 구성품이 없어요. 아래 버튼을 눌러 부속품에서 검색·선택하세요.
           </p>
         )}
@@ -599,7 +602,7 @@ export default function ProductForm({
         <button
           type="button"
           onClick={() => setPickerOpen(true)}
-          className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-dashed border-neutral-300 bg-white px-4 py-2 text-[13px] font-medium text-neutral-700 hover:border-neutral-900 hover:text-neutral-900"
+          className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-dashed border-neutral-300 bg-white px-4 py-2 text-[0.875rem] font-medium text-neutral-700 hover:border-neutral-900 hover:text-neutral-900"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="11" cy="11" r="7" />
@@ -620,13 +623,13 @@ export default function ProductForm({
 
       {/* 이미지 */}
       <section className="rounded-lg border border-neutral-200 bg-white p-5">
-        <h2 className="mb-4 text-[14px] font-bold text-neutral-900">이미지</h2>
+        <h2 className="mb-4 text-[0.875rem] font-bold text-neutral-900">이미지</h2>
 
         <div className="mb-5">
-          <p className="text-[13px] font-semibold text-neutral-700">
+          <p className="text-[0.875rem] font-semibold text-neutral-700">
             대표 이미지 <span className="text-rose-500">*</span>
           </p>
-          <p className="mt-0.5 text-[11px] text-neutral-500">상세 페이지 메인에 노출됩니다.</p>
+          <p className="mt-0.5 text-[0.75rem] text-neutral-500">상세 페이지 메인에 노출됩니다.</p>
           {imageUrl && (
             <div className="my-3 inline-block overflow-hidden rounded border border-neutral-200">
               <Image
@@ -646,15 +649,15 @@ export default function ProductForm({
             className="block w-full rounded border border-neutral-300 bg-white px-3 py-2 text-sm"
           />
           {imageUrl && (
-            <p className="mt-1 text-[11px] text-neutral-500">
+            <p className="mt-1 text-[0.75rem] text-neutral-500">
               새 파일을 선택하면 위 이미지가 교체됩니다.
             </p>
           )}
         </div>
 
         <div>
-          <p className="text-[13px] font-semibold text-neutral-700">추가 이미지 (선택, 다중 업로드)</p>
-          <p className="mt-0.5 text-[11px] text-neutral-500">
+          <p className="text-[0.875rem] font-semibold text-neutral-700">추가 이미지 (선택, 다중 업로드)</p>
+          <p className="mt-0.5 text-[0.75rem] text-neutral-500">
             상세 페이지 썸네일에 노출됩니다.
           </p>
           {initialAdditional.length > 0 && (
@@ -685,7 +688,7 @@ export default function ProductForm({
                       className="sr-only"
                     />
                     <span
-                      className={`absolute inset-x-1 bottom-1 rounded px-1.5 py-1 text-center text-[10px] font-semibold transition ${
+                      className={`absolute inset-x-1 bottom-1 rounded px-1.5 py-1 text-center text-[0.75rem] font-semibold transition ${
                         isRemoved
                           ? 'bg-red-600 text-white'
                           : 'bg-white/95 text-neutral-700 group-hover:bg-red-50 group-hover:text-red-700'
@@ -710,8 +713,8 @@ export default function ProductForm({
 
       {/* 색상 옵션 — 상세 페이지의 색상 영역에 노출됨 */}
       <section className="rounded-lg border border-neutral-200 bg-white p-5">
-        <h2 className="text-[14px] font-bold text-neutral-900">색상</h2>
-        <p className="mt-1 text-[12px] text-neutral-500">
+        <h2 className="text-[0.875rem] font-bold text-neutral-900">색상</h2>
+        <p className="mt-1 text-[0.75rem] text-neutral-500">
           제품에 등록할 색상을 추가하세요. 상세 페이지에서 색상명 + 스와치로 노출됩니다.
         </p>
         <div className="mt-4">
@@ -730,16 +733,16 @@ export default function ProductForm({
 
       {/* 다운로드 자료 */}
       <section className="rounded-lg border border-neutral-200 bg-white p-5">
-        <h2 className="mb-4 text-[14px] font-bold text-neutral-900">다운로드 자료</h2>
-        <p className="mb-4 text-[12px] text-neutral-500">
+        <h2 className="mb-4 text-[0.875rem] font-bold text-neutral-900">다운로드 자료</h2>
+        <p className="mb-4 text-[0.75rem] text-neutral-500">
           상세 페이지 우측 액션 버튼(시방서 다운, 색상표)에 연결됩니다.
         </p>
 
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
           <div>
-            <p className="text-[13px] font-semibold text-neutral-700">시방서 (PDF 등)</p>
+            <p className="text-[0.875rem] font-semibold text-neutral-700">시방서 (PDF 등)</p>
             {specSheetUrl && (
-              <p className="mt-1 text-[12px]">
+              <p className="mt-1 text-[0.75rem]">
                 <a
                   href={specSheetUrl}
                   target="_blank"
@@ -756,7 +759,7 @@ export default function ProductForm({
               className="mt-2 block w-full rounded border border-neutral-300 bg-white px-3 py-2 text-sm"
             />
             {specSheetUrl && (
-              <label className="mt-2 flex items-center gap-2 text-[12px] text-neutral-600">
+              <label className="mt-2 flex items-center gap-2 text-[0.75rem] text-neutral-600">
                 <input type="checkbox" name="remove_spec_sheet" />
                 현재 파일 제거
               </label>
@@ -764,9 +767,9 @@ export default function ProductForm({
           </div>
 
           <div>
-            <p className="text-[13px] font-semibold text-neutral-700">색상표</p>
+            <p className="text-[0.875rem] font-semibold text-neutral-700">색상표</p>
             {colorChartUrl && (
-              <p className="mt-1 text-[12px]">
+              <p className="mt-1 text-[0.75rem]">
                 <a
                   href={colorChartUrl}
                   target="_blank"
@@ -783,7 +786,7 @@ export default function ProductForm({
               className="mt-2 block w-full rounded border border-neutral-300 bg-white px-3 py-2 text-sm"
             />
             {colorChartUrl && (
-              <label className="mt-2 flex items-center gap-2 text-[12px] text-neutral-600">
+              <label className="mt-2 flex items-center gap-2 text-[0.75rem] text-neutral-600">
                 <input type="checkbox" name="remove_color_chart" />
                 현재 파일 제거
               </label>
@@ -794,8 +797,8 @@ export default function ProductForm({
 
       {/* 부가 설명 */}
       <section className="rounded-lg border border-neutral-200 bg-white p-5">
-        <h2 className="mb-2 text-[14px] font-bold text-neutral-900">상세 부가설명</h2>
-        <p className="mb-3 text-[12px] text-neutral-500">
+        <h2 className="mb-2 text-[0.875rem] font-bold text-neutral-900">상세 부가설명</h2>
+        <p className="mb-3 text-[0.75rem] text-neutral-500">
           상세 페이지의 &ldquo;상세정보&rdquo; 탭 하단에 표시됩니다. 이미지와 표 등 자유롭게 작성할 수
           있어요.
         </p>
@@ -808,7 +811,7 @@ export default function ProductForm({
 
       {/* 노출 옵션 */}
       <section className="rounded-lg border border-neutral-200 bg-white p-5">
-        <h2 className="mb-4 text-[14px] font-bold text-neutral-900">노출 옵션</h2>
+        <h2 className="mb-4 text-[0.875rem] font-bold text-neutral-900">노출 옵션</h2>
         <div className="grid grid-cols-2 gap-3">
           <label className="flex flex-col text-sm">
             <span className="font-medium">정렬 순서</span>
@@ -818,7 +821,7 @@ export default function ProductForm({
               defaultValue={v.sort_order}
               className="mt-1 rounded border border-neutral-300 bg-white px-3 py-2"
             />
-            <span className="mt-1 text-[11px] text-neutral-500">작을수록 앞</span>
+            <span className="mt-1 text-[0.75rem] text-neutral-500">작을수록 앞</span>
           </label>
           <label className="mt-1 flex items-center gap-2 text-sm">
             <input type="checkbox" name="is_active" defaultChecked={v.is_active} />
@@ -830,13 +833,13 @@ export default function ProductForm({
       <div className="flex gap-2">
         <button
           type="submit"
-          className="rounded-full bg-black px-6 py-2.5 text-[13px] font-medium text-white hover:bg-neutral-800"
+          className="rounded-full bg-black px-6 py-2.5 text-[0.875rem] font-medium text-white hover:bg-neutral-800"
         >
           {submitLabel}
         </button>
         <Link
           href={cancelHref}
-          className="rounded-full border border-neutral-300 px-6 py-2.5 text-[13px] hover:bg-neutral-100"
+          className="rounded-full border border-neutral-300 px-6 py-2.5 text-[0.875rem] hover:bg-neutral-100"
         >
           취소
         </Link>
@@ -860,7 +863,7 @@ function DimensionInput({
 }) {
   return (
     <label className="flex flex-col">
-      <span className="text-[11.5px] font-semibold text-neutral-600">{label}</span>
+      <span className="text-[0.75rem] font-semibold text-neutral-600">{label}</span>
       <div className="relative mt-1">
         <input
           type="number"
@@ -871,9 +874,9 @@ function DimensionInput({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className="w-full rounded border border-neutral-300 bg-white px-3 py-2 pr-10 font-mono text-[13px]"
+          className="w-full rounded border border-neutral-300 bg-white px-3 py-2 pr-10 font-mono text-[0.875rem]"
         />
-        <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-neutral-400">
+        <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[0.75rem] text-neutral-400">
           mm
         </span>
       </div>
@@ -927,10 +930,10 @@ function DerivedSizeReadout({
 function ReadoutCell({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded border border-neutral-200 bg-white px-3 py-2">
-      <p className="text-[10.5px] font-semibold uppercase tracking-wider text-neutral-400">
+      <p className="text-[0.75rem] font-semibold uppercase tracking-wider text-neutral-400">
         {label}
       </p>
-      <p className="mt-0.5 font-mono text-[12.5px] text-neutral-800">{value}</p>
+      <p className="mt-0.5 font-mono text-[0.875rem] text-neutral-800">{value}</p>
     </div>
   )
 }

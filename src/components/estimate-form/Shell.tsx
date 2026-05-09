@@ -27,12 +27,12 @@ export default function EstimateShell({
   return (
     <form action={action} className="flex flex-col gap-12">
       {errorMessage && (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-[13px] text-red-700">
+        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-[0.875rem] text-red-700">
           {errorMessage}
         </div>
       )}
 
-      <p className="-mb-6 text-right text-[12px] text-red-600">
+      <p className="-mb-6 text-right text-[0.75rem] text-red-600">
         <span aria-hidden>*</span>표시는 필수 기입란입니다.
       </p>
 
@@ -44,7 +44,7 @@ export default function EstimateShell({
         <ContactInfoBox />
       </div>
 
-      <p className="-mt-6 text-center text-[12px] text-neutral-500">
+      <p className="-mt-6 text-center text-[0.75rem] text-neutral-500">
         빠른 시일 내에 회신드리도록 하겠습니다.
       </p>
 
@@ -52,7 +52,7 @@ export default function EstimateShell({
       <div className="flex justify-center">
         <button
           type="submit"
-          className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 px-10 py-3.5 text-[14px] font-bold text-white shadow-[0_18px_36px_-18px_rgba(37,99,235,0.5)] transition hover:shadow-[0_22px_40px_-18px_rgba(37,99,235,0.6)]"
+          className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 px-10 py-3.5 text-[0.875rem] font-bold text-white shadow-[0_18px_36px_-18px_rgba(37,99,235,0.5)] transition hover:shadow-[0_22px_40px_-18px_rgba(37,99,235,0.6)]"
         >
           제출하기
           <svg

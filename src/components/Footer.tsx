@@ -26,7 +26,7 @@ export default async function Footer() {
     <footer className="mt-20 border-t border-neutral-200 bg-neutral-50 text-neutral-700">
       {/* Top quick links bar — 추후 사용 예정으로 임시 숨김 */}
       {/* <div className="border-b border-neutral-200">
-        <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-4 px-6 py-5 text-[14px]">
+        <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-4 px-6 py-5 text-[0.875rem]">
           <div className="flex flex-wrap items-center gap-5">
             <Link href="#" className="font-medium text-black hover:underline">
               고객센터
@@ -45,13 +45,13 @@ export default async function Footer() {
             </Link>
           </div>
           <div className="flex items-center gap-3 text-neutral-500">
-            <span className="text-[14px]">팔로우</span>
+            <span className="text-[0.875rem]">팔로우</span>
             {['F', 'X', 'Y', 'I'].map((c) => (
               <Link
                 key={c}
                 href="#"
                 aria-label={`SNS ${c}`}
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-neutral-300 text-[12px] font-semibold hover:border-black hover:text-black"
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-neutral-300 text-[0.75rem] font-semibold hover:border-black hover:text-black"
               >
                 {c}
               </Link>

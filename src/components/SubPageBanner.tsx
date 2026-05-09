@@ -64,11 +64,11 @@ export default async function SubPageBanner({
       <section className="border-b border-neutral-200 bg-neutral-50">
         <div className="mx-auto max-w-[1440px] px-6 py-12 md:py-16">
           <Breadcrumb parent={parent} current={title} tone="dark" />
-          <h1 className="mt-2 text-[28px] font-bold leading-tight md:text-[40px]">
+          <h1 className="mt-2 text-[1.75rem] font-bold leading-tight md:text-[2.5rem]">
             {title}
           </h1>
           {subtitle && (
-            <p className="mt-2 text-[14px] text-neutral-600 md:text-[15px]">{subtitle}</p>
+            <p className="mt-2 text-[0.875rem] text-neutral-600 md:text-[1rem]">{subtitle}</p>
           )}
           {siblings.length > 0 && (
             <StickySubmenuTabs items={siblings} activeHref={href} tone="dark" className="mt-6" />
@@ -96,9 +96,9 @@ export default async function SubPageBanner({
         <Breadcrumb parent={parent} current={title} tone="light" />
 
         <div className="mt-auto">
-          <h1 className="text-[28px] font-bold leading-tight md:text-[44px]">{title}</h1>
+          <h1 className="text-[1.75rem] font-bold leading-tight md:text-[2.75rem]">{title}</h1>
           {subtitle && (
-            <p className="mt-2 max-w-2xl text-[14px] text-white/85 md:text-[16px]">
+            <p className="mt-2 max-w-2xl text-[0.875rem] text-white/85 md:text-[1rem]">
               {subtitle}
             </p>
           )}
@@ -126,7 +126,7 @@ function Breadcrumb({
   return (
     <nav
       aria-label="Breadcrumb"
-      className={`flex flex-wrap items-center gap-1.5 text-[12px] ${baseCls}`}
+      className={`flex flex-wrap items-center gap-1.5 text-[0.75rem] ${baseCls}`}
     >
       <Link href="/" className="transition hover:opacity-80">
         HOME

@@ -70,7 +70,7 @@ function Hero() {
 
       <div className="relative mx-auto max-w-[1200px] px-6 pb-20 pt-24 md:pb-28 md:pt-32">
         <p
-          className={`text-[12px] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
+          className={`text-[0.75rem] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
             shown ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'
           }`}
         >
@@ -78,7 +78,7 @@ function Hero() {
         </p>
 
         <h1
-          className={`mt-6 text-[40px] font-extrabold leading-[1.15] tracking-tight md:text-[64px] transition-all duration-1000 delay-150 ${
+          className={`mt-6 text-[2.5rem] font-extrabold leading-[1.15] tracking-tight md:text-[4rem] transition-all duration-1000 delay-150 ${
             shown ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
           }`}
         >
@@ -90,7 +90,7 @@ function Hero() {
         </h1>
 
         <p
-          className={`mt-8 max-w-[640px] text-[15px] leading-[1.9] text-neutral-600 md:text-[17px] transition-all duration-1000 delay-300 ${
+          className={`mt-8 max-w-[640px] text-[1rem] leading-[1.9] text-neutral-600 md:text-[1.125rem] transition-all duration-1000 delay-300 ${
             shown ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
           }`}
         >
@@ -116,7 +116,7 @@ function Hero() {
             <path d="M12 22s7-7 7-13a7 7 0 1 0-14 0c0 6 7 13 7 13z" />
             <circle cx="12" cy="9" r="2.5" />
           </svg>
-          <span className="text-[14px] font-medium tracking-tight text-neutral-800 md:text-[15px]">
+          <span className="text-[0.875rem] font-medium tracking-tight text-neutral-800 md:text-[1rem]">
             {ADDRESS_SHORT}
           </span>
         </div>
@@ -150,7 +150,7 @@ function MapSection() {
           </div>
 
           {/* 좌상단 라벨 */}
-          <div className="pointer-events-none absolute left-4 top-4 inline-flex items-center gap-2 rounded-full bg-white/95 px-3 py-1.5 text-[12px] font-medium text-neutral-700 shadow-sm ring-1 ring-neutral-200 backdrop-blur md:left-6 md:top-6">
+          <div className="pointer-events-none absolute left-4 top-4 inline-flex items-center gap-2 rounded-full bg-white/95 px-3 py-1.5 text-[0.75rem] font-medium text-neutral-700 shadow-sm ring-1 ring-neutral-200 backdrop-blur md:left-6 md:top-6">
             <span className="block h-1.5 w-1.5 animate-pulse rounded-full bg-blue-600" />
             ACEWATER · 파주 본사
           </div>
@@ -162,7 +162,7 @@ function MapSection() {
             shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
           }`}
         >
-          <p className="text-[12px] text-neutral-500">
+          <p className="text-[0.75rem] text-neutral-500">
             지도가 표시되지 않으면 아래 외부 지도 서비스에서 열어주세요.
           </p>
           <div className="flex flex-wrap gap-2">
@@ -182,7 +182,7 @@ function ExternalLink({ href, label }: { href: string; label: string }) {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="group inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-white px-3.5 py-1.5 text-[12px] font-medium text-neutral-700 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
+      className="group inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-white px-3.5 py-1.5 text-[0.75rem] font-medium text-neutral-700 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
     >
       {label}
       <svg
@@ -221,14 +221,14 @@ function ContactCards() {
       <div className="mx-auto max-w-[1200px] px-6 py-24 md:py-32">
         <header className="mb-12 max-w-[640px]">
           <p
-            className={`text-[14px] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
+            className={`text-[0.875rem] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
               shown ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
             }`}
           >
             Contact
           </p>
           <h2
-            className={`text-[28px] font-bold leading-[1.3] md:text-[34px] transition-all duration-1000 delay-100 ${
+            className={`text-[1.75rem] font-bold leading-[1.3] md:text-[2.125rem] transition-all duration-1000 delay-100 ${
               shown ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
             }`}
           >
@@ -245,17 +245,17 @@ function ContactCards() {
             style={{ transitionDelay: shown ? '200ms' : '0ms' }}
           >
             <CardHeader label="Address" title="주소" />
-            <p className="mt-4 text-[16px] font-semibold leading-[1.6] tracking-tight md:text-[18px]">
+            <p className="mt-4 text-[1rem] font-semibold leading-[1.6] tracking-tight md:text-[1.125rem]">
               {ADDRESS_KO}
             </p>
-            <p className="mt-1 text-[12px] text-neutral-500">
+            <p className="mt-1 text-[0.75rem] text-neutral-500">
               헤이리·통일동산 인근 · 우편번호 10860
             </p>
             <div className="mt-5 flex flex-wrap gap-2">
               <button
                 type="button"
                 onClick={copyAddress}
-                className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-white px-3.5 py-1.5 text-[12px] font-medium text-neutral-700 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
+                className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-white px-3.5 py-1.5 text-[0.75rem] font-medium text-neutral-700 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
               >
                 {copied ? (
                   <>
@@ -278,7 +278,7 @@ function ContactCards() {
                 href={KAKAO_LINK}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-full bg-neutral-900 px-3.5 py-1.5 text-[12px] font-medium text-white transition hover:bg-neutral-700"
+                className="inline-flex items-center gap-1.5 rounded-full bg-neutral-900 px-3.5 py-1.5 text-[0.75rem] font-medium text-white transition hover:bg-neutral-700"
               >
                 길찾기
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -300,17 +300,17 @@ function ContactCards() {
             <CardHeader label="Phone" title="전화·팩스" />
             <a
               href={`tel:${PHONE.replaceAll('-', '')}`}
-              className="mt-4 inline-flex items-center gap-2 text-[20px] font-extrabold tracking-tight text-neutral-900 transition hover:text-blue-700 md:text-[22px]"
+              className="mt-4 inline-flex items-center gap-2 text-[1.25rem] font-extrabold tracking-tight text-neutral-900 transition hover:text-blue-700 md:text-[1.375rem]"
             >
               {PHONE}
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="opacity-50 transition group-hover:opacity-100">
                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
               </svg>
             </a>
-            <p className="mt-2 text-[12px] text-neutral-500">
+            <p className="mt-2 text-[0.75rem] text-neutral-500">
               팩스 <span className="font-mono text-neutral-700">{FAX}</span>
             </p>
-            <p className="mt-3 text-[12px] leading-[1.7] text-neutral-500">
+            <p className="mt-3 text-[0.75rem] leading-[1.7] text-neutral-500">
               평일 09:00 – 18:00 · 주말·공휴일 휴무
             </p>
 
@@ -327,14 +327,14 @@ function ContactCards() {
             <CardHeader label="Email" title="이메일 문의" />
             <a
               href={`mailto:${EMAIL}`}
-              className="mt-4 inline-flex items-center gap-2 text-[18px] font-bold tracking-tight text-neutral-900 transition hover:text-blue-700 md:text-[20px]"
+              className="mt-4 inline-flex items-center gap-2 text-[1.125rem] font-bold tracking-tight text-neutral-900 transition hover:text-blue-700 md:text-[1.25rem]"
             >
               {EMAIL}
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M5 12h14M13 5l7 7-7 7" />
               </svg>
             </a>
-            <p className="mt-3 text-[13px] leading-[1.75] text-neutral-500">
+            <p className="mt-3 text-[0.875rem] leading-[1.75] text-neutral-500">
               견적·도면 문의, 시공 협의 등은 위 메일로 보내주시면 영업일 기준 1~2일 내에
               답변드리겠습니다.
             </p>
@@ -350,10 +350,10 @@ function ContactCards() {
 function CardHeader({ label, title }: { label: string; title: string }) {
   return (
     <>
-      <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-blue-700">
+      <p className="text-[0.75rem] font-semibold uppercase tracking-[0.3em] text-blue-700">
         {label}
       </p>
-      <h3 className="mt-1.5 text-[16px] font-bold tracking-tight">{title}</h3>
+      <h3 className="mt-1.5 text-[1rem] font-bold tracking-tight">{title}</h3>
     </>
   )
 }
@@ -367,21 +367,21 @@ function Directions() {
       <div className="mx-auto max-w-[1200px] px-6 py-24 md:py-32">
         <header className="mb-12 max-w-[640px]">
           <p
-            className={`text-[14px] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
+            className={`text-[0.875rem] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
               shown ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
             }`}
           >
             Directions
           </p>
           <h2
-            className={`text-[28px] font-bold leading-[1.3] md:text-[34px] transition-all duration-1000 delay-100 ${
+            className={`text-[1.75rem] font-bold leading-[1.3] md:text-[2.125rem] transition-all duration-1000 delay-100 ${
               shown ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
             }`}
           >
             오시는 길 안내
           </h2>
           <p
-            className={`mt-4 text-[14px] leading-[1.85] text-neutral-600 md:text-[15px] transition-all duration-1000 delay-200 ${
+            className={`mt-4 text-[0.875rem] leading-[1.85] text-neutral-600 md:text-[1rem] transition-all duration-1000 delay-200 ${
               shown ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
             }`}
           >
@@ -461,16 +461,16 @@ function Directions() {
           style={{ transitionDelay: shown ? '600ms' : '0ms' }}
         >
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-white/80">
+            <p className="text-[0.75rem] font-semibold uppercase tracking-[0.3em] text-white/80">
               Before You Visit
             </p>
-            <p className="mt-2 text-[18px] font-bold tracking-tight md:text-[20px]">
+            <p className="mt-2 text-[1.125rem] font-bold tracking-tight md:text-[1.25rem]">
               방문 전 전화 한 통이면 더 정확한 안내를 받을 수 있습니다.
             </p>
           </div>
           <a
             href={`tel:${PHONE.replaceAll('-', '')}`}
-            className="inline-flex shrink-0 items-center gap-2 rounded-full bg-white px-6 py-3 text-[14px] font-bold text-blue-700 transition hover:bg-blue-50"
+            className="inline-flex shrink-0 items-center gap-2 rounded-full bg-white px-6 py-3 text-[0.875rem] font-bold text-blue-700 transition hover:bg-blue-50"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
@@ -513,10 +513,10 @@ function DirectionCard({
           {icon}
         </span>
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-blue-700">
+          <p className="text-[0.75rem] font-semibold uppercase tracking-[0.3em] text-blue-700">
             {label}
           </p>
-          <h3 className="mt-0.5 text-[18px] font-bold tracking-tight">{title}</h3>
+          <h3 className="mt-0.5 text-[1.125rem] font-bold tracking-tight">{title}</h3>
         </div>
       </div>
 
@@ -525,8 +525,8 @@ function DirectionCard({
           <li key={i} className="flex gap-3">
             <span className="mt-[7px] block h-1.5 w-1.5 shrink-0 rounded-full bg-blue-500" />
             <div className="min-w-0">
-              <p className="text-[13px] font-semibold text-neutral-900">{s.from}</p>
-              <p className="mt-1 text-[13px] leading-[1.7] text-neutral-600">{s.detail}</p>
+              <p className="text-[0.875rem] font-semibold text-neutral-900">{s.from}</p>
+              <p className="mt-1 text-[0.875rem] leading-[1.7] text-neutral-600">{s.detail}</p>
             </div>
           </li>
         ))}

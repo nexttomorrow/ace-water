@@ -131,12 +131,12 @@ export default function ProductSearchModal({
         {/* 헤더 */}
         <header className="flex items-center justify-between border-b border-neutral-200 px-6 py-4">
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-blue-700">
+            <p className="text-[0.75rem] font-semibold uppercase tracking-[0.3em] text-blue-700">
               Search Products
             </p>
-            <h2 className="mt-0.5 text-[18px] font-bold tracking-tight">
+            <h2 className="mt-0.5 text-[1.125rem] font-bold tracking-tight">
               제품 검색
-              <span className="ml-2 rounded-full bg-neutral-100 px-2 py-0.5 text-[11px] font-mono text-neutral-600">
+              <span className="ml-2 rounded-full bg-neutral-100 px-2 py-0.5 text-[0.75rem] font-mono text-neutral-600">
                 {selectedIds.size}
               </span>
             </h2>
@@ -173,7 +173,7 @@ export default function ProductSearchModal({
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="제품명·모델명·카테고리로 검색"
-              className="w-full rounded-lg border border-neutral-300 bg-white py-2.5 pl-10 pr-3 text-[13px] focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+              className="w-full rounded-lg border border-neutral-300 bg-white py-2.5 pl-10 pr-3 text-[0.875rem] focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
               autoFocus
             />
           </div>
@@ -200,18 +200,18 @@ export default function ProductSearchModal({
         {/* 본문 */}
         <div className="flex-1 overflow-y-auto px-6 py-4">
           {options.length === 0 ? (
-            <p className="px-4 py-12 text-center text-[13px] text-neutral-500">
+            <p className="px-4 py-12 text-center text-[0.875rem] text-neutral-500">
               등록된 제품이 없습니다.
             </p>
           ) : grouped.length === 0 ? (
-            <p className="px-4 py-12 text-center text-[13px] text-neutral-500">
+            <p className="px-4 py-12 text-center text-[0.875rem] text-neutral-500">
               검색 결과가 없습니다.
             </p>
           ) : (
             <div className="space-y-5">
               {grouped.map(([groupName, items]) => (
                 <div key={groupName}>
-                  <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.3em] text-neutral-500">
+                  <p className="mb-2 text-[0.75rem] font-semibold uppercase tracking-[0.3em] text-neutral-500">
                     {groupName}
                   </p>
                   <ul className="space-y-1">
@@ -221,7 +221,7 @@ export default function ProductSearchModal({
                       return (
                         <li key={p.id}>
                           <label
-                            className={`flex items-center gap-3 rounded-lg border px-3 py-2 text-[13px] transition ${
+                            className={`flex items-center gap-3 rounded-lg border px-3 py-2 text-[0.875rem] transition ${
                               alreadyAdded
                                 ? 'cursor-not-allowed border-transparent bg-neutral-50 opacity-50'
                                 : checked
@@ -260,28 +260,28 @@ export default function ProductSearchModal({
                                 />
                               </button>
                             ) : (
-                              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-md bg-neutral-100 text-[10px] text-neutral-400 ring-1 ring-neutral-200">
+                              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-md bg-neutral-100 text-[0.75rem] text-neutral-400 ring-1 ring-neutral-200">
                                 no img
                               </div>
                             )}
 
                             <span className="min-w-0 flex-1">
                               {p.modelName && (
-                                <span className="block truncate font-mono text-[11.5px] text-neutral-500">
+                                <span className="block truncate font-mono text-[0.75rem] text-neutral-500">
                                   {p.modelName}
                                 </span>
                               )}
-                              <span className="block truncate text-[13px] font-semibold text-neutral-900">
+                              <span className="block truncate text-[0.875rem] font-semibold text-neutral-900">
                                 {p.name}
                               </span>
                               <span className="mt-0.5 flex flex-wrap items-center gap-1">
                                 {p.categoryName && (
-                                  <span className="inline-block rounded-full bg-white px-1.5 py-0.5 text-[10px] font-medium text-neutral-500 ring-1 ring-neutral-200">
+                                  <span className="inline-block rounded-full bg-white px-1.5 py-0.5 text-[0.75rem] font-medium text-neutral-500 ring-1 ring-neutral-200">
                                     {p.categoryName}
                                   </span>
                                 )}
                                 {alreadyAdded && (
-                                  <span className="inline-flex items-center gap-1 rounded-full bg-neutral-200 px-1.5 py-0.5 text-[10px] font-semibold text-neutral-700">
+                                  <span className="inline-flex items-center gap-1 rounded-full bg-neutral-200 px-1.5 py-0.5 text-[0.75rem] font-semibold text-neutral-700">
                                     <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
                                       <path d="M5 12l5 5L20 7" />
                                     </svg>
@@ -303,7 +303,7 @@ export default function ProductSearchModal({
 
         {/* 하단 액션 */}
         <footer className="flex items-center justify-between gap-3 border-t border-neutral-200 px-6 py-4">
-          <p className="text-[12px] text-neutral-500">
+          <p className="text-[0.75rem] text-neutral-500">
             {selectedIds.size > 0
               ? `${selectedIds.size}개 선택됨 — 모델명 입력에 자동으로 추가됩니다.`
               : '여러 개 체크하면 콤마로 합쳐 입력됩니다.'}
@@ -312,7 +312,7 @@ export default function ProductSearchModal({
             <button
               type="button"
               onClick={onClose}
-              className="rounded-full border border-neutral-200 bg-white px-4 py-2 text-[13px] font-medium text-neutral-700 transition hover:bg-neutral-50"
+              className="rounded-full border border-neutral-200 bg-white px-4 py-2 text-[0.875rem] font-medium text-neutral-700 transition hover:bg-neutral-50"
             >
               취소
             </button>
@@ -320,7 +320,7 @@ export default function ProductSearchModal({
               type="button"
               onClick={handleSubmit}
               disabled={selectedIds.size === 0}
-              className="rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 px-5 py-2 text-[13px] font-bold text-white shadow-sm transition hover:shadow-md disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
+              className="rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 px-5 py-2 text-[0.875rem] font-bold text-white shadow-sm transition hover:shadow-md disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
             >
               추가
             </button>
@@ -365,7 +365,7 @@ export default function ProductSearchModal({
             />
           </div>
           {previewLabel && (
-            <p className="absolute bottom-6 left-1/2 -translate-x-1/2 rounded-full bg-white/10 px-4 py-1.5 text-[12px] font-medium text-white backdrop-blur">
+            <p className="absolute bottom-6 left-1/2 -translate-x-1/2 rounded-full bg-white/10 px-4 py-1.5 text-[0.75rem] font-medium text-white backdrop-blur">
               {previewLabel}
             </p>
           )}
@@ -388,7 +388,7 @@ function CategoryPill({
     <button
       type="button"
       onClick={onClick}
-      className={`whitespace-nowrap rounded-full px-3 py-1 text-[11.5px] font-medium transition ${
+      className={`whitespace-nowrap rounded-full px-3 py-1 text-[0.75rem] font-medium transition ${
         active
           ? 'bg-neutral-900 text-white'
           : 'border border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-100'

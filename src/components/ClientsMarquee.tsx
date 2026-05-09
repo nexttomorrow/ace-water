@@ -38,7 +38,7 @@ const ROW_3: Logo[] = [
 function LogoCard({ logo }: { logo: Logo }) {
   return (
     <div className="group/logo mx-3 flex h-[84px] w-[200px] shrink-0 items-center justify-center rounded-lg border border-neutral-200 bg-white opacity-60 grayscale transition duration-300 ease-out hover:-translate-y-0.5 hover:scale-[1.03] hover:opacity-100 hover:grayscale-0 hover:border-neutral-300 hover:shadow-md hover:shadow-neutral-300/40">
-      <span className={`text-[16px] font-extrabold tracking-tight ${logo.hue}`}>
+      <span className={`text-[1rem] font-extrabold tracking-tight ${logo.hue}`}>
         {logo.name}
       </span>
     </div>

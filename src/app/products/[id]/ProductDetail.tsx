@@ -139,7 +139,7 @@ export default function ProductDetail({
                   </svg>
                 </button>
 
-                <div className="pointer-events-none absolute bottom-3 left-3 rounded-full bg-black/55 px-2.5 py-1 text-[11px] font-medium text-white backdrop-blur md:bottom-4 md:left-4">
+                <div className="pointer-events-none absolute bottom-3 left-3 rounded-full bg-black/55 px-2.5 py-1 text-[0.75rem] font-medium text-white backdrop-blur md:bottom-4 md:left-4">
                   {activeIdx + 1} / {total}
                 </div>
               </>
@@ -180,8 +180,8 @@ export default function ProductDetail({
                     sizes="120px"
                   />
                   <span className="absolute inset-0 flex flex-col items-center justify-center text-white">
-                    <span className="text-[15px] font-bold leading-none">+{overflowCount}</span>
-                    <span className="mt-1 text-[10px] font-medium tracking-wide">더보기</span>
+                    <span className="text-[1rem] font-bold leading-none">+{overflowCount}</span>
+                    <span className="mt-1 text-[0.75rem] font-medium tracking-wide">더보기</span>
                   </span>
                 </button>
               )}
@@ -193,22 +193,22 @@ export default function ProductDetail({
         <aside className="md:col-span-5">
           <div className="md:sticky md:top-24">
             {categoryName && (
-              <p className="text-[14px] font-semibold uppercase tracking-[0.3em] text-blue-700">
+              <p className="text-[0.875rem] font-semibold uppercase tracking-[0.3em] text-blue-700">
                 {categoryName}
               </p>
             )}
 
             {product.model_name && (
-              <h1 className="mt-2 text-[26px] font-extrabold leading-[1.2] tracking-tight md:text-[30px]">
+              <h1 className="mt-2 text-[1.625rem] font-extrabold leading-[1.2] tracking-tight md:text-[1.875rem]">
                 {product.model_name}
               </h1>
             )}
-            <p className="mt-1 text-[15px] text-neutral-500">{product.name}</p>
+            <p className="mt-1 text-[1rem] text-neutral-500">{product.name}</p>
 
             <button
               type="button"
               onClick={scrollToDetail}
-              className="mt-3 inline-flex items-center gap-1 text-[13px] font-medium text-neutral-700 underline-offset-4 hover:text-blue-700 hover:underline"
+              className="mt-3 inline-flex items-center gap-1 text-[0.875rem] font-medium text-neutral-700 underline-offset-4 hover:text-blue-700 hover:underline"
             >
               <span className="text-rose-500">*</span>
               상세정보 자세히보기 (클릭)
@@ -223,11 +223,11 @@ export default function ProductDetail({
               <SpecRow label="소재" text={product.material} />
               {componentTags.length > 0 && (
                 <div>
-                  <p className="text-[13px] font-bold text-neutral-900">구성품</p>
+                  <p className="text-[0.875rem] font-bold text-neutral-900">구성품</p>
                   <div className="mt-2 flex flex-wrap gap-1.5">
                     {componentTags.map((t, i) => {
                       const baseCls =
-                        'inline-flex items-center rounded-full px-3 py-1 text-[12px] font-medium transition'
+                        'inline-flex items-center rounded-full px-3 py-1 text-[0.75rem] font-medium transition'
                       if (t.targetId) {
                         return (
                           <Link
@@ -256,7 +256,7 @@ export default function ProductDetail({
               {/* 색상 옵션 */}
               {product.colors && product.colors.length > 0 && (
                 <div>
-                  <p className="text-[13px] font-bold text-neutral-900">색상</p>
+                  <p className="text-[0.875rem] font-bold text-neutral-900">색상</p>
                   <ColorSwatches colors={product.colors} />
                 </div>
               )}
@@ -270,7 +270,7 @@ export default function ProductDetail({
                     ? `${product.model_name} ${product.name}`
                     : product.name
                 )}`}
-                className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 px-4 py-3 text-[13px] font-bold text-white shadow-[0_18px_36px_-18px_rgba(37,99,235,0.5)] hover:shadow-[0_22px_40px_-18px_rgba(37,99,235,0.6)]"
+                className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 px-4 py-3 text-[0.875rem] font-bold text-white shadow-[0_18px_36px_-18px_rgba(37,99,235,0.5)] hover:shadow-[0_22px_40px_-18px_rgba(37,99,235,0.6)]"
               >
                 견적문의
               </Link>
@@ -280,7 +280,7 @@ export default function ProductDetail({
                     ? `${product.model_name} ${product.name}`
                     : product.name
                 )}&drawing=1`}
-                className="inline-flex items-center justify-center rounded-full border border-neutral-200 bg-white px-4 py-3 text-[13px] font-bold text-neutral-900 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
+                className="inline-flex items-center justify-center rounded-full border border-neutral-200 bg-white px-4 py-3 text-[0.875rem] font-bold text-neutral-900 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
               >
                 도면문의
               </Link>
@@ -289,7 +289,7 @@ export default function ProductDetail({
                 target={specSheetUrl ? '_blank' : undefined}
                 rel="noreferrer"
                 aria-disabled={!specSheetUrl}
-                className={`inline-flex items-center justify-center rounded-full border px-4 py-3 text-[13px] font-bold transition ${
+                className={`inline-flex items-center justify-center rounded-full border px-4 py-3 text-[0.875rem] font-bold transition ${
                   specSheetUrl
                     ? 'border-neutral-200 bg-white text-neutral-900 hover:border-neutral-900 hover:bg-neutral-900 hover:text-white'
                     : 'pointer-events-none border-neutral-200 bg-neutral-50 text-neutral-400'
@@ -303,7 +303,7 @@ export default function ProductDetail({
                     ? `/products?category=${product.category_id}`
                     : '/products'
                 }
-                className="inline-flex items-center justify-center rounded-full border border-neutral-200 bg-white px-4 py-3 text-[13px] font-bold text-neutral-900 transition hover:border-neutral-900 hover:bg-neutral-900 hover:text-white"
+                className="inline-flex items-center justify-center rounded-full border border-neutral-200 bg-white px-4 py-3 text-[0.875rem] font-bold text-neutral-900 transition hover:border-neutral-900 hover:bg-neutral-900 hover:text-white"
               >
                 목록으로
               </Link>
@@ -349,7 +349,7 @@ function ColorSwatches({ colors }: { colors: { name: string; hex: string }[] }) 
   const active = colors[activeIdx] ?? colors[0]
   return (
     <div className="mt-2">
-      <p className="text-[13px] font-medium text-neutral-700">{active?.name}</p>
+      <p className="text-[0.875rem] font-medium text-neutral-700">{active?.name}</p>
       <div className="mt-2 flex flex-wrap gap-2">
         {colors.map((c, i) => {
           const isActive = i === activeIdx
@@ -411,13 +411,13 @@ function SpecRow({ label, text }: { label: string; text: string | null }) {
   if (!text || !text.trim()) return null
   return (
     <div>
-      <p className="text-[13px] font-bold text-neutral-900">{label}</p>
-      <div className="mt-1 space-y-0.5 text-[14px] leading-relaxed text-neutral-700">
+      <p className="text-[0.875rem] font-bold text-neutral-900">{label}</p>
+      <div className="mt-1 space-y-0.5 text-[0.875rem] leading-relaxed text-neutral-700">
         {text.split('\n').map((line, i) => {
           const trimmed = line.trim()
           if (trimmed.startsWith('*')) {
             return (
-              <p key={i} className="text-[13px] text-rose-600">
+              <p key={i} className="text-[0.875rem] text-rose-600">
                 {trimmed}
               </p>
             )
@@ -442,7 +442,7 @@ function TabButton({
     <button
       type="button"
       onClick={onClick}
-      className={`relative px-6 py-3 text-[15px] font-semibold transition ${
+      className={`relative px-6 py-3 text-[1rem] font-semibold transition ${
         active ? 'text-neutral-900' : 'text-neutral-400 hover:text-neutral-700'
       }`}
     >
@@ -482,7 +482,7 @@ function DetailTabContent({
 
       {/* 제품사양 표 */}
       <section>
-        <h3 className="mb-6 text-center text-[18px] font-bold tracking-tight">제품사양</h3>
+        <h3 className="mb-6 text-center text-[1.125rem] font-bold tracking-tight">제품사양</h3>
         <dl className="mx-auto max-w-3xl divide-y divide-neutral-200 border-y border-neutral-200">
           <SpecListRow label="모델명" text={product.model_name} />
           <SpecListRow label="제품명" text={product.name} />
@@ -491,7 +491,7 @@ function DetailTabContent({
           <SpecListRow label="소재" text={product.material} />
           {componentTags.length > 0 && (
             <div className="grid grid-cols-12 gap-3 px-4 py-4">
-              <dt className="col-span-12 text-[14px] font-bold text-neutral-900 md:col-span-3">
+              <dt className="col-span-12 text-[0.875rem] font-bold text-neutral-900 md:col-span-3">
                 구성품
               </dt>
               <dd className="col-span-12 md:col-span-9">
@@ -501,14 +501,14 @@ function DetailTabContent({
                       <Link
                         key={i}
                         href={`/products/${t.targetId}`}
-                        className="inline-flex items-center rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-[12px] font-medium text-blue-700 transition hover:border-blue-600 hover:bg-blue-600 hover:text-white"
+                        className="inline-flex items-center rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-[0.75rem] font-medium text-blue-700 transition hover:border-blue-600 hover:bg-blue-600 hover:text-white"
                       >
                         {t.name}
                       </Link>
                     ) : (
                       <span
                         key={i}
-                        className="inline-flex items-center rounded-full border border-neutral-200 bg-white px-3 py-1 text-[12px] font-medium text-neutral-700"
+                        className="inline-flex items-center rounded-full border border-neutral-200 bg-white px-3 py-1 text-[0.75rem] font-medium text-neutral-700"
                       >
                         {t.name}
                       </span>
@@ -521,7 +521,7 @@ function DetailTabContent({
           <SpecListRow label="별도설비 (추가항목)" text={product.extras_text} />
           {product.colors && product.colors.length > 0 && (
             <div className="grid grid-cols-12 gap-3 px-4 py-4">
-              <dt className="col-span-12 text-[14px] font-bold text-neutral-900 md:col-span-3">
+              <dt className="col-span-12 text-[0.875rem] font-bold text-neutral-900 md:col-span-3">
                 색상
               </dt>
               <dd className="col-span-12 md:col-span-9">
@@ -529,7 +529,7 @@ function DetailTabContent({
                   {product.colors.map((c, i) => (
                     <span
                       key={i}
-                      className="inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-2.5 py-1 text-[12px] text-neutral-700"
+                      className="inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-2.5 py-1 text-[0.75rem] text-neutral-700"
                       title={c.name}
                     >
                       <span
@@ -563,15 +563,15 @@ function SpecListRow({ label, text }: { label: string; text: string | null }) {
   if (!text || !text.trim()) return null
   return (
     <div className="grid grid-cols-12 gap-3 px-4 py-4">
-      <dt className="col-span-12 text-[14px] font-bold text-neutral-900 md:col-span-3">
+      <dt className="col-span-12 text-[0.875rem] font-bold text-neutral-900 md:col-span-3">
         {label}
       </dt>
-      <dd className="col-span-12 space-y-0.5 text-[14px] leading-relaxed text-neutral-700 md:col-span-9">
+      <dd className="col-span-12 space-y-0.5 text-[0.875rem] leading-relaxed text-neutral-700 md:col-span-9">
         {text.split('\n').map((line, i) => {
           const trimmed = line.trim()
           if (trimmed.startsWith('*')) {
             return (
-              <p key={i} className="text-[13px] font-medium text-rose-600">
+              <p key={i} className="text-[0.875rem] font-medium text-rose-600">
                 {trimmed}
               </p>
             )
@@ -591,7 +591,7 @@ function CasesTabContent({ linkedCases }: { linkedCases: LinkedCase[] }) {
           <rect x="3" y="3" width="18" height="18" rx="2" />
           <path d="M3 16l5-5 4 4 3-3 6 6" />
         </svg>
-        <p className="text-[14px]">이 제품과 연결된 시공사례가 아직 없습니다.</p>
+        <p className="text-[0.875rem]">이 제품과 연결된 시공사례가 아직 없습니다.</p>
       </div>
     )
   }
@@ -611,11 +611,11 @@ function CasesTabContent({ linkedCases }: { linkedCases: LinkedCase[] }) {
             />
           </div>
           <div className="mt-4">
-            <p className="truncate text-[15px] font-semibold text-neutral-900 transition group-hover:text-blue-700">
+            <p className="truncate text-[1rem] font-semibold text-neutral-900 transition group-hover:text-blue-700">
               {c.title}
             </p>
             {c.siteName && (
-              <p className="mt-1 truncate text-[12px] text-neutral-500">{c.siteName}</p>
+              <p className="mt-1 truncate text-[0.75rem] text-neutral-500">{c.siteName}</p>
             )}
           </div>
         </Link>

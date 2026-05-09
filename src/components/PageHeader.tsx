@@ -28,10 +28,10 @@ export default async function PageHeader({
 
   return (
     <div className="text-center">
-      <h1 className="text-[28px] font-bold leading-tight md:text-[36px]">{title}</h1>
+      <h1 className="text-[1.75rem] font-bold leading-tight md:text-[2.25rem]">{title}</h1>
       <div className="mx-auto mt-3 h-[2px] w-10 bg-neutral-900" />
       {description && (
-        <p className="mt-4 text-[14px] text-neutral-500">{description}</p>
+        <p className="mt-4 text-[0.875rem] text-neutral-500">{description}</p>
       )}
     </div>
   )

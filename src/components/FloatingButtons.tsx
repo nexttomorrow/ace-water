@@ -6,6 +6,10 @@ type MenuItem = {
   label: string
   href: string
   icon: React.ReactNode
+  /** true 면 새 탭으로 (외부 링크) */
+  external?: boolean
+  /** href 가 없는 placeholder (예: 카탈로그 PDF 미첨부) */
+  comingSoon?: boolean
 }
 
 const iconClass = 'h-5 w-5'
@@ -19,8 +23,8 @@ const stroke = {
 
 const MENU_ITEMS: MenuItem[] = [
   {
-    label: '견적/도면문의',
-    href: '#',
+    label: '견적문의',
+    href: '/design-estimate',
     icon: (
       <svg viewBox="0 0 24 24" className={iconClass} {...stroke}>
         <path d="M4 4h13l3 3v13H4z" />
@@ -29,8 +33,11 @@ const MENU_ITEMS: MenuItem[] = [
     ),
   },
   {
+    // TODO: PDF 파일 업로드 후 href 를 해당 PDF 경로로 교체.
+    //       예: '/catalog/acewater-2026.pdf' + external: true (새 탭)
     label: '카탈로그',
     href: '#',
+    comingSoon: true,
     icon: (
       <svg viewBox="0 0 24 24" className={iconClass} {...stroke}>
         <path d="M4 5a2 2 0 0 1 2-2h6v18H6a2 2 0 0 1-2-2z" />
@@ -39,18 +46,8 @@ const MENU_ITEMS: MenuItem[] = [
     ),
   },
   {
-    label: '물가자료',
-    href: '#',
-    icon: (
-      <svg viewBox="0 0 24 24" className={iconClass} {...stroke}>
-        <path d="M3 20h18" />
-        <path d="M6 20V10M11 20V6M16 20v-8M21 20V4" />
-      </svg>
-    ),
-  },
-  {
-    label: 'AS/부품구매',
-    href: '#',
+    label: 'AS센터',
+    href: '/as',
     icon: (
       <svg viewBox="0 0 24 24" className={iconClass} {...stroke}>
         <path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L4 17l3 3 5.3-5.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.5-2.5z" />
@@ -59,7 +56,8 @@ const MENU_ITEMS: MenuItem[] = [
   },
   {
     label: 'BLOG',
-    href: '#',
+    href: 'https://blog.naver.com/aw5000',
+    external: true,
     icon: (
       <svg viewBox="0 0 24 24" className={iconClass} {...stroke}>
         <path d="M4 5a2 2 0 0 1 2-2h9l5 5v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" />
@@ -69,7 +67,8 @@ const MENU_ITEMS: MenuItem[] = [
   },
   {
     label: '에이스아트',
-    href: '#',
+    href: 'https://www.ace-art.net/',
+    external: true,
     icon: (
       <svg viewBox="0 0 24 24" className={iconClass} {...stroke}>
         <path d="M3 12L12 4l9 8" />
@@ -100,21 +99,47 @@ export default function FloatingButtons() {
         aria-label="빠른 메뉴"
       >
         <ul className="pointer-events-auto flex flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white/95 shadow-[0_8px_30px_rgba(0,0,0,0.08)] backdrop-blur">
-          {MENU_ITEMS.map((item) => (
-            <li key={item.label} className="border-b border-neutral-100 last:border-b-0">
-              <a
-                href={item.href}
-                className="group flex w-[88px] flex-col items-center gap-1.5 px-2 py-3.5 text-neutral-700 transition hover:bg-neutral-900 hover:text-white"
-              >
-                <span className="text-neutral-500 transition group-hover:text-white">
-                  {item.icon}
-                </span>
-                <span className="whitespace-nowrap text-[12px] font-semibold tracking-tight">
-                  {item.label}
-                </span>
-              </a>
-            </li>
-          ))}
+          {MENU_ITEMS.map((item) => {
+            const baseCls =
+              'group relative flex w-[88px] flex-col items-center gap-1.5 px-2 py-3.5 text-neutral-700 transition'
+            const interactiveCls = 'hover:bg-neutral-900 hover:text-white'
+            const disabledCls = 'cursor-not-allowed opacity-60'
+            return (
+              <li key={item.label} className="border-b border-neutral-100 last:border-b-0">
+                {item.comingSoon ? (
+                  <button
+                    type="button"
+                    aria-label={`${item.label} (준비중)`}
+                    title="준비중"
+                    disabled
+                    className={`${baseCls} ${disabledCls}`}
+                  >
+                    <span className="text-neutral-400">{item.icon}</span>
+                    <span className="whitespace-nowrap text-[0.75rem] font-semibold tracking-tight">
+                      {item.label}
+                    </span>
+                    <span className="absolute right-1.5 top-1.5 rounded-full bg-neutral-100 px-1.5 py-0.5 text-[0.75rem] font-medium text-neutral-500">
+                      준비중
+                    </span>
+                  </button>
+                ) : (
+                  <a
+                    href={item.href}
+                    target={item.external ? '_blank' : undefined}
+                    rel={item.external ? 'noreferrer noopener' : undefined}
+                    className={`${baseCls} ${interactiveCls}`}
+                  >
+                    <span className="text-neutral-500 transition group-hover:text-white">
+                      {item.icon}
+                    </span>
+                    <span className="whitespace-nowrap text-[0.75rem] font-semibold tracking-tight">
+                      {item.label}
+                    </span>
+                  </a>
+                )}
+              </li>
+            )
+          })}
         </ul>
       </aside>
 

@@ -30,6 +30,7 @@ export type GalleryItem = {
   client_name: string | null
   product_hrefs: string[]
   additional_images: string[]
+  is_active: boolean
 }
 
 export type ProductComponent = {

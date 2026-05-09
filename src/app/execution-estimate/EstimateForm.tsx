@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import AddressSearchInput from "@/components/AddressSearchInput";
 import ModelItemsField from "@/components/estimate-form/ModelItemsField";
+import Select from "@/components/ui/Select";
 import {
   ESTIMATE_REQUEST_TYPES,
   ESTIMATE_DELIVERY_METHODS,
@@ -59,18 +60,18 @@ export default function EstimateForm({
   return (
     <form action={action} className="flex flex-col gap-12">
       {errorMessage && (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-[13px] text-red-700">
+        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-[0.875rem] text-red-700">
           {errorMessage}
         </div>
       )}
 
-      <p className="-mb-6 text-right text-[12px] text-red-600">
+      <p className="-mb-6 text-right text-[0.75rem] text-red-600">
         <span aria-hidden>*</span>표시는 필수 기입란입니다.
       </p>
 
       {/* ① 요청사항 */}
       <Section english="Request" title="요청사항">
-        <p className="mb-4 text-[12px] text-neutral-500">
+        <p className="mb-4 text-[0.75rem] text-neutral-500">
           해당하는 요청 항목을 모두 체크해주세요. (1개 이상)
         </p>
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -79,7 +80,7 @@ export default function EstimateForm({
             return (
               <label
                 key={opt.value}
-                className={`group flex cursor-pointer items-center gap-3 rounded-lg border px-4 py-3 text-[14px] transition ${
+                className={`group flex cursor-pointer items-center gap-3 rounded-lg border px-4 py-3 text-[0.875rem] transition ${
                   checked
                     ? "border-blue-500 bg-blue-50/60 text-blue-900"
                     : "border-neutral-200 bg-white hover:border-neutral-300 hover:bg-neutral-50"
@@ -163,30 +164,18 @@ export default function EstimateForm({
 
       {/* ③ 납품방법 */}
       <Section english="Delivery" title="납품방법">
-        <div className="grid grid-cols-1 gap-x-5 gap-y-4 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-x-5 gap-y-4 md:grid-cols-2">
           <Field label="납품방법" required>
-            <select
+            <Select
               name="delivery_method"
               required
               value={deliveryMethod}
-              onChange={(e) => setDeliveryMethod(e.target.value)}
-              className={inputCls}
-            >
-              <option value="">선택</option>
-              {ESTIMATE_DELIVERY_METHODS.map((m) => (
-                <option key={m.value} value={m.value}>
-                  {m.label}
-                </option>
-              ))}
-            </select>
-          </Field>
-          <Field label="현장 주소" required className="md:col-span-2">
-            <AddressSearchInput
-              name="site_address"
-              required
-              placeholder="주소 검색을 눌러 입력해주세요"
-              className={inputCls}
-              withDetailField
+              onChange={setDeliveryMethod}
+              options={ESTIMATE_DELIVERY_METHODS.map((m) => ({
+                value: m.value,
+                label: m.label,
+              }))}
+              placeholder="선택"
             />
           </Field>
           <Field label="납기 요청일(예상)">
@@ -197,9 +186,18 @@ export default function EstimateForm({
               className={inputCls}
             />
           </Field>
+          <Field label="현장 주소" required className="md:col-span-2">
+            <AddressSearchInput
+              name="site_address"
+              required
+              placeholder="주소 검색을 눌러 입력해주세요"
+              className={inputCls}
+              withDetailField
+            />
+          </Field>
         </div>
 
-        <ul className="mt-5 space-y-1.5 text-[12px] leading-[1.7] text-red-600">
+        <ul className="mt-5 space-y-1.5 text-[0.75rem] leading-[1.7] text-red-600">
           <li>
             * 제주 등 섬지역의 경우 공장상차도(발주처 직접배차)만 가능합니다.
           </li>
@@ -210,7 +208,7 @@ export default function EstimateForm({
         </ul>
 
         {isInstall && (
-          <p className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-[12px] font-medium text-amber-800 ring-1 ring-amber-100">
+          <p className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-[0.75rem] font-medium text-amber-800 ring-1 ring-amber-100">
             ⚠️ 설치도를 선택하셨습니다. 현장에 지게차 인입이 가능한지 미리 확인
             부탁드립니다.
           </p>
@@ -220,10 +218,10 @@ export default function EstimateForm({
       {/* ④ 제품정보 */}
       <Section english="Product" title="제품정보">
         <div className="mb-3 flex items-baseline justify-between">
-          <label className="flex items-baseline gap-1 text-[13px] font-medium text-neutral-800">
+          <label className="flex items-baseline gap-1 text-[0.875rem] font-medium text-neutral-800">
             <span className="text-red-600">*</span>모델명 · 수량
           </label>
-          <span className="text-[11px] text-neutral-500">
+          <span className="text-[0.75rem] text-neutral-500">
             여러 모델을 한 번에 문의하실 수 있어요
           </span>
         </div>
@@ -237,7 +235,7 @@ export default function EstimateForm({
         />
 
         <div className="mt-6">
-          <p className="mb-3 text-[13px] font-medium text-neutral-700">
+          <p className="mb-3 text-[0.875rem] font-medium text-neutral-700">
             추가요청
           </p>
           <div className="space-y-3">
@@ -260,10 +258,10 @@ export default function EstimateForm({
                       className="mt-1 h-4 w-4 cursor-pointer accent-blue-600"
                     />
                     <span className="min-w-0 flex-1">
-                      <span className="block text-[14px] font-semibold text-neutral-900">
+                      <span className="block text-[0.875rem] font-semibold text-neutral-900">
                         {opt.label}
                       </span>
-                      <span className="mt-1 block text-[12px] leading-[1.7] text-neutral-500">
+                      <span className="mt-1 block text-[0.75rem] leading-[1.7] text-neutral-500">
                         {opt.desc}
                       </span>
                     </span>
@@ -290,10 +288,10 @@ export default function EstimateForm({
         <label className="block">
           <span className="sr-only">파일첨부</span>
           <div className="flex items-stretch gap-2">
-            <div className="flex flex-1 items-center rounded-lg border border-neutral-300 bg-white px-3 text-[13px] text-neutral-500">
+            <div className="flex flex-1 items-center rounded-lg border border-neutral-300 bg-white px-3 text-[0.875rem] text-neutral-500">
               {fileName || "도면 등 참고용 파일을 선택해주세요"}
             </div>
-            <span className="cursor-pointer rounded-lg bg-neutral-900 px-5 py-2.5 text-[13px] font-medium text-white transition hover:bg-neutral-700">
+            <span className="cursor-pointer rounded-lg bg-neutral-900 px-5 py-2.5 text-[0.875rem] font-medium text-white transition hover:bg-neutral-700">
               파일 선택
             </span>
           </div>
@@ -306,7 +304,7 @@ export default function EstimateForm({
           />
         </label>
         <p
-          className={`mt-2 text-[12px] leading-[1.7] ${
+          className={`mt-2 text-[0.75rem] leading-[1.7] ${
             isManufacture ? "font-semibold text-red-600" : "text-neutral-500"
           }`}
         >
@@ -322,7 +320,7 @@ export default function EstimateForm({
         <ContactInfoBox />
       </div>
 
-      <p className="-mt-6 text-center text-[12px] text-neutral-500">
+      <p className="-mt-6 text-center text-[0.75rem] text-neutral-500">
         빠른 시일 내에 회신드리도록 하겠습니다.
       </p>
 
@@ -330,7 +328,7 @@ export default function EstimateForm({
       <div className="flex justify-center">
         <button
           type="submit"
-          className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 px-10 py-3.5 text-[14px] font-bold text-white shadow-[0_18px_36px_-18px_rgba(37,99,235,0.5)] transition hover:shadow-[0_22px_40px_-18px_rgba(37,99,235,0.6)]"
+          className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 px-10 py-3.5 text-[0.875rem] font-bold text-white shadow-[0_18px_36px_-18px_rgba(37,99,235,0.5)] transition hover:shadow-[0_22px_40px_-18px_rgba(37,99,235,0.6)]"
         >
           제출하기
           <svg
@@ -352,7 +350,7 @@ export default function EstimateForm({
 // ───────────── 부품 ─────────────
 
 const inputCls =
-  "w-full rounded-lg border border-neutral-300 bg-white px-3.5 py-2.5 text-[14px] text-neutral-900 placeholder:text-neutral-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100";
+  "w-full rounded-lg border border-neutral-300 bg-white px-3.5 py-2.5 text-[0.875rem] text-neutral-900 placeholder:text-neutral-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100";
 
 function Section({
   english,
@@ -366,10 +364,10 @@ function Section({
   return (
     <section>
       <header className="mb-5 border-b border-neutral-200 pb-3">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.35em] text-blue-700">
+        <p className="text-[0.75rem] font-semibold uppercase tracking-[0.35em] text-blue-700">
           {english}
         </p>
-        <h2 className="mt-1.5 text-[18px] font-bold tracking-tight md:text-[20px]">
+        <h2 className="mt-1.5 text-[1.125rem] font-bold tracking-tight md:text-[1.25rem]">
           {title}
         </h2>
       </header>
@@ -391,7 +389,7 @@ function Field({
 }) {
   return (
     <div className={className}>
-      <label className="mb-1.5 flex items-baseline gap-1 text-[13px] font-medium text-neutral-800">
+      <label className="mb-1.5 flex items-baseline gap-1 text-[0.875rem] font-medium text-neutral-800">
         {required && <span className="text-red-600">*</span>}
         {label}
       </label>

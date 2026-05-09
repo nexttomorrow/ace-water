@@ -71,13 +71,13 @@ export default function LinkedCasesField({
     <section className="rounded-lg border border-neutral-200 bg-white p-5">
       <header className="mb-1 flex flex-wrap items-baseline justify-between gap-2">
         <div>
-          <h2 className="text-[14px] font-bold text-neutral-900">
+          <h2 className="text-[0.875rem] font-bold text-neutral-900">
             시공사례 연결
-            <span className="ml-2 rounded-full bg-neutral-100 px-2 py-0.5 text-[11px] font-mono text-neutral-600">
+            <span className="ml-2 rounded-full bg-neutral-100 px-2 py-0.5 text-[0.75rem] font-mono text-neutral-600">
               {selectedIds.size}
             </span>
           </h2>
-          <p className="mt-0.5 text-[11px] text-neutral-500">
+          <p className="mt-0.5 text-[0.75rem] text-neutral-500">
             체크한 시공사례가{' '}
             {productId ? (
               <Link
@@ -94,9 +94,9 @@ export default function LinkedCasesField({
           </p>
         </div>
         <Link
-          href="/admin/gallery/new"
+          href="/mng/gallery/new"
           target="_blank"
-          className="rounded border border-neutral-300 bg-white px-3 py-1.5 text-[12px] font-medium text-neutral-700 hover:bg-neutral-100"
+          className="rounded border border-neutral-300 bg-white px-3 py-1.5 text-[0.75rem] font-medium text-neutral-700 hover:bg-neutral-100"
         >
           + 시공사례 등록
         </Link>
@@ -110,7 +110,7 @@ export default function LinkedCasesField({
             return (
               <span
                 key={id}
-                className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 py-1 pl-3 pr-1 text-[12px] font-medium text-blue-700 ring-1 ring-blue-200"
+                className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 py-1 pl-3 pr-1 text-[0.75rem] font-medium text-blue-700 ring-1 ring-blue-200"
               >
                 {c ? c.title : `#${id}`}
                 <button
@@ -148,17 +148,17 @@ export default function LinkedCasesField({
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="시공사례 제목·모델명·현장명으로 검색"
-          className="w-full rounded border border-neutral-300 bg-white py-2 pl-9 pr-3 text-[13px] focus:border-neutral-500 focus:outline-none"
+          className="w-full rounded border border-neutral-300 bg-white py-2 pl-9 pr-3 text-[0.875rem] focus:border-neutral-500 focus:outline-none"
         />
       </div>
 
       {/* 후보 그리드 */}
       <div className="mt-3 max-h-[420px] overflow-y-auto rounded border border-neutral-200 bg-neutral-50/40 p-3">
         {cases.length === 0 ? (
-          <p className="px-4 py-12 text-center text-[12px] text-neutral-500">
+          <p className="px-4 py-12 text-center text-[0.75rem] text-neutral-500">
             등록된 시공사례가 없습니다.{' '}
             <Link
-              href="/admin/gallery/new"
+              href="/mng/gallery/new"
               target="_blank"
               className="text-blue-600 hover:underline"
             >
@@ -166,7 +166,7 @@ export default function LinkedCasesField({
             </Link>
           </p>
         ) : filteredCases.length === 0 ? (
-          <p className="px-4 py-12 text-center text-[12px] text-neutral-500">
+          <p className="px-4 py-12 text-center text-[0.75rem] text-neutral-500">
             검색 결과가 없습니다.
           </p>
         ) : (
@@ -222,10 +222,10 @@ export default function LinkedCasesField({
                       </span>
                     </div>
                     <div className="px-2.5 py-2">
-                      <p className="truncate text-[13px] font-semibold text-neutral-900">
+                      <p className="truncate text-[0.875rem] font-semibold text-neutral-900">
                         {c.title}
                       </p>
-                      <p className="mt-0.5 truncate text-[11px] text-neutral-500">
+                      <p className="mt-0.5 truncate text-[0.75rem] text-neutral-500">
                         {c.siteName || c.modelName || '—'}
                       </p>
                     </div>

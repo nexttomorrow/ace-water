@@ -19,19 +19,19 @@ export default function SectionHeader({
     <div className="mb-12 flex items-end justify-between gap-4">
       <div>
         {eyebrow && (
-          <p className="mb-2 text-[12px] font-medium tracking-widest text-neutral-500 uppercase">
+          <p className="mb-2 text-[0.75rem] font-medium tracking-widest text-neutral-500 uppercase">
             {eyebrow}
           </p>
         )}
-        <h2 className="text-[28px] font-bold tracking-tight md:text-[36px]">
+        <h2 className="text-[1.75rem] font-bold tracking-tight md:text-[2.25rem]">
           {title}
         </h2>
-        {desc && <p className="mt-2 text-[14px] text-neutral-600">{desc}</p>}
+        {desc && <p className="mt-2 text-[0.875rem] text-neutral-600">{desc}</p>}
       </div>
       {moreHref && (
         <Link
           href={moreHref}
-          className="shrink-0 text-[14px] font-medium text-neutral-500 transition hover:text-black"
+          className="shrink-0 text-[0.875rem] font-medium text-neutral-500 transition hover:text-black"
         >
           {moreLabel}
         </Link>

@@ -141,7 +141,7 @@ function Toolbar({
       onClick={onClick}
       title={title}
       disabled={disabled}
-      className={`h-8 min-w-8 rounded px-2 text-[13px] font-medium transition ${
+      className={`h-8 min-w-8 rounded px-2 text-[0.875rem] font-medium transition ${
         active ? 'bg-neutral-900 text-white' : 'text-neutral-700 hover:bg-neutral-100'
       } disabled:opacity-40`}
     >

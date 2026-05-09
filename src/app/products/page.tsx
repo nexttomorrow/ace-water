@@ -163,7 +163,7 @@ export default async function ProductsPage({
         />
 
         <div className="mt-6 mb-6 flex items-center justify-between">
-          <p className="text-[13px] text-neutral-500">
+          <p className="text-[0.875rem] text-neutral-500">
             {activeCat ? (
               <>
                 <span className="font-semibold text-neutral-900">{activeCat.name}</span>
@@ -194,7 +194,7 @@ export default async function ProductsPage({
               <rect x="3" y="3" width="18" height="18" rx="2" />
               <path d="M3 9h18M9 21V9" />
             </svg>
-            <p className="text-[14px]">등록된 제품이 없습니다.</p>
+            <p className="text-[0.875rem]">등록된 제품이 없습니다.</p>
           </div>
         ) : (
           <>
@@ -294,7 +294,7 @@ function CategoryPill({
   return (
     <Link
       href={href}
-      className={`whitespace-nowrap rounded-full px-4 py-1.5 text-[13px] font-medium transition ${
+      className={`whitespace-nowrap rounded-full px-4 py-1.5 text-[0.875rem] font-medium transition ${
         active
           ? 'bg-neutral-900 text-white'
           : 'border border-neutral-200 bg-white text-neutral-600 hover:border-neutral-400 hover:text-neutral-900'

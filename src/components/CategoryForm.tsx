@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
+import Select from '@/components/ui/Select'
 import type { Category } from '@/lib/types'
 
 type Props = {
@@ -68,38 +69,42 @@ export default function CategoryForm({
         />
       </label>
 
-      <label className="flex flex-col text-sm">
+      <div className="flex flex-col text-sm">
         <span className="font-medium">상위 카테고리</span>
-        <select
-          name="parent_id"
-          value={parentId}
-          onChange={(e) => setParentId(e.target.value)}
-          className="mt-1 rounded border border-neutral-300 bg-white px-3 py-2"
-        >
-          <option value="">(없음 — 메인 메뉴 아이템)</option>
-          {topLevelOptions.map((t) => (
-            <option key={t.id} value={t.id}>
-              {t.name}
-            </option>
-          ))}
-        </select>
-        <span className="mt-1 text-[11px] text-neutral-500">
+        <div className="mt-1">
+          <Select
+            name="parent_id"
+            value={parentId}
+            onChange={setParentId}
+            placeholder="(없음 — 메인 메뉴 아이템)"
+            options={[
+              { value: '', label: '(없음 — 메인 메뉴 아이템)' },
+              ...topLevelOptions.map((t) => ({
+                value: String(t.id),
+                label: t.name,
+              })),
+            ]}
+          />
+        </div>
+        <span className="mt-1 text-[0.75rem] text-neutral-500">
           상위를 선택하면 메가메뉴 안에 노출됩니다. 없으면 메인 메뉴 아이템이 됩니다.
         </span>
-      </label>
+      </div>
 
-      <label className="flex flex-col text-sm">
+      <div className="flex flex-col text-sm">
         <span className="font-medium">표시 방식</span>
-        <select
-          name="display_type"
-          defaultValue={v.display_type}
-          className="mt-1 rounded border border-neutral-300 bg-white px-3 py-2"
-        >
-          <option value="tile">tile — 메가메뉴 좌측 그리드 (이미지 + 이름)</option>
-          <option value="text">text — 메가메뉴 좌측 그리드 (이름만, 이미지 없음)</option>
-          <option value="link">link — 메가메뉴 우측 텍스트 링크</option>
-        </select>
-      </label>
+        <div className="mt-1">
+          <Select
+            name="display_type"
+            defaultValue={v.display_type}
+            options={[
+              { value: 'tile', label: 'tile — 메가메뉴 좌측 그리드 (이미지 + 이름)' },
+              { value: 'text', label: 'text — 메가메뉴 좌측 그리드 (이름만, 이미지 없음)' },
+              { value: 'link', label: 'link — 메가메뉴 우측 텍스트 링크' },
+            ]}
+          />
+        </div>
+      </div>
 
       <label className="flex flex-col text-sm">
         <span className="font-medium">href (이동할 URL)</span>
@@ -109,22 +114,8 @@ export default function CategoryForm({
           placeholder="예: /gallery 또는 https://..."
           className="mt-1 rounded border border-neutral-300 bg-white px-3 py-2"
         />
-        <span className="mt-1 text-[11px] text-neutral-500">
+        <span className="mt-1 text-[0.75rem] text-neutral-500">
           비우면 # 으로 처리됩니다.
-        </span>
-      </label>
-
-      <label className="flex flex-col text-sm">
-        <span className="font-medium">설명 (서브페이지 부제목)</span>
-        <textarea
-          name="description"
-          rows={2}
-          defaultValue={v.description ?? ''}
-          placeholder="해당 페이지 상단에 보여질 한 줄 설명"
-          className="mt-1 resize-y rounded border border-neutral-300 bg-white px-3 py-2"
-        />
-        <span className="mt-1 text-[11px] text-neutral-500">
-          이 카테고리의 href와 일치하는 서브페이지 헤더에 노출됩니다.
         </span>
       </label>
 
@@ -143,7 +134,7 @@ export default function CategoryForm({
               />
             </div>
             {showRemoveImage && (
-              <label className="flex items-center gap-2 text-[12px] text-neutral-600">
+              <label className="flex items-center gap-2 text-[0.75rem] text-neutral-600">
                 <input type="checkbox" name="remove_image" />
                 이미지 제거
               </label>
@@ -167,7 +158,7 @@ export default function CategoryForm({
             defaultValue={v.sort_order}
             className="mt-1 rounded border border-neutral-300 bg-white px-3 py-2"
           />
-          <span className="mt-1 text-[11px] text-neutral-500">작을수록 앞</span>
+          <span className="mt-1 text-[0.75rem] text-neutral-500">작을수록 앞</span>
         </label>
 
         <label className="flex flex-col text-sm">
@@ -187,20 +178,20 @@ export default function CategoryForm({
       </label>
 
       <fieldset className="mt-2 rounded-lg border border-neutral-200 bg-neutral-50/50 p-4">
-        <legend className="px-2 text-[13px] font-semibold text-neutral-700">
+        <legend className="px-2 text-[0.875rem] font-semibold text-neutral-700">
           서브페이지 배너 (선택)
         </legend>
-        <p className="mb-3 text-[11px] text-neutral-500">
+        <p className="mb-3 text-[0.75rem] text-neutral-500">
           이 카테고리의 href 페이지 상단에 노출되는 큰 배너입니다. 권장 1920×600.
         </p>
         {isTopLevel ? (
-          <p className="mb-3 rounded-md bg-blue-50 px-3 py-2 text-[11.5px] leading-[1.6] text-blue-800 ring-1 ring-blue-100">
+          <p className="mb-3 rounded-md bg-blue-50 px-3 py-2 text-[0.75rem] leading-[1.6] text-blue-800 ring-1 ring-blue-100">
             💡 <strong>대분류</strong>에 등록한 배너 이미지는, 배너가 비어있는{' '}
             <strong>하위 카테고리</strong>들이 그대로 상속받아 사용합니다. 하위에서 자체
             배너를 따로 등록하면 그 카테고리에서는 자체 배너가 우선 적용돼요.
           </p>
         ) : (
-          <p className="mb-3 rounded-md bg-amber-50 px-3 py-2 text-[11.5px] leading-[1.6] text-amber-800 ring-1 ring-amber-100">
+          <p className="mb-3 rounded-md bg-amber-50 px-3 py-2 text-[0.75rem] leading-[1.6] text-amber-800 ring-1 ring-amber-100">
             💡 비워두면 <strong>상위 카테고리의 배너</strong>를 자동 상속합니다. 자체 배너를
             등록하면 그 배너가 상속분을 덮어씁니다.
           </p>
@@ -221,7 +212,7 @@ export default function CategoryForm({
                 />
               </div>
               {showRemoveBannerImage && (
-                <label className="flex items-center gap-2 text-[12px] text-neutral-600">
+                <label className="flex items-center gap-2 text-[0.75rem] text-neutral-600">
                   <input type="checkbox" name="remove_banner_image" />
                   배너 제거
                 </label>
@@ -252,7 +243,7 @@ export default function CategoryForm({
             name="banner_subtitle"
             rows={2}
             defaultValue={v.banner_subtitle ?? ''}
-            placeholder="비우면 위의 설명을 사용합니다"
+            placeholder="해당 페이지 상단에 보여질 한 줄 설명 (선택)"
             className="mt-1 resize-y rounded border border-neutral-300 bg-white px-3 py-2"
           />
         </label>
@@ -261,13 +252,13 @@ export default function CategoryForm({
       <div className="mt-2 flex gap-2">
         <button
           type="submit"
-          className="rounded-full bg-black px-5 py-2 text-[13px] font-medium text-white hover:bg-neutral-800"
+          className="rounded-full bg-black px-5 py-2 text-[0.875rem] font-medium text-white hover:bg-neutral-800"
         >
           {submitLabel}
         </button>
         <Link
           href={cancelHref}
-          className="rounded-full border border-neutral-300 px-5 py-2 text-[13px] hover:bg-neutral-100"
+          className="rounded-full border border-neutral-300 px-5 py-2 text-[0.875rem] hover:bg-neutral-100"
         >
           취소
         </Link>

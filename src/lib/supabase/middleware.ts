@@ -36,19 +36,19 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  // /login is only reachable when redirecting to /admin
+  // /login is only reachable when redirecting to /mng
   if (path === '/login') {
     const redirectParam = request.nextUrl.searchParams.get('redirect') ?? ''
-    if (!redirectParam.startsWith('/admin')) {
+    if (!redirectParam.startsWith('/mng')) {
       const url = request.nextUrl.clone()
       url.pathname = '/'
       return NextResponse.redirect(url)
     }
   }
 
-  // protect /admin and write routes
+  // protect /mng and write routes
   const requiresAuth =
-    path.startsWith('/admin') ||
+    path.startsWith('/mng') ||
     path.startsWith('/board/new') ||
     path.match(/^\/board\/\d+\/edit$/)
 
@@ -60,7 +60,7 @@ export async function updateSession(request: NextRequest) {
   }
 
   // admin gate
-  if (path.startsWith('/admin') && user) {
+  if (path.startsWith('/mng') && user) {
     const { data: profile } = await supabase
       .from('profiles')
       .select('role')

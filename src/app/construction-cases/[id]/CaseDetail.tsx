@@ -13,6 +13,9 @@ type Props = {
   productLinks: { href: string; name: string }[]
   images: string[]
   categoryName: string | null
+  /** 이전/다음 시공사례 링크 — 좌우 화살표가 사진이 아닌 사례를 이동시킴 */
+  prevHref: string | null
+  nextHref: string | null
 }
 
 const VISIBLE_THUMBS = 6 // 썸네일 row 에 보일 최대 개수 (마지막 한 칸은 +N 더보기 자리)
@@ -26,6 +29,8 @@ export default function CaseDetail({
   productLinks,
   images,
   categoryName,
+  prevHref,
+  nextHref,
 }: Props) {
   const [activeIdx, setActiveIdx] = useState(0)
   const [lightboxOpen, setLightboxOpen] = useState(false)
@@ -122,41 +127,35 @@ export default function CaseDetail({
               ))}
             </div>
 
-            {/* prev/next 화살표 — 이미지 1장이면 숨김 */}
-            {total > 1 && (
-              <>
-                <button
-                  type="button"
-                  aria-label="이전 이미지"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    goPrev()
-                  }}
-                  className="absolute left-3 top-1/2 flex h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/95 text-neutral-900 shadow-md ring-1 ring-black/5 transition hover:bg-white md:left-4 md:h-11 md:w-11 md:opacity-0 md:group-hover:opacity-100"
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                    <path d="M15 18l-6-6 6-6" />
-                  </svg>
-                </button>
-                <button
-                  type="button"
-                  aria-label="다음 이미지"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    goNext()
-                  }}
-                  className="absolute right-3 top-1/2 flex h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/95 text-neutral-900 shadow-md ring-1 ring-black/5 transition hover:bg-white md:right-4 md:h-11 md:w-11 md:opacity-0 md:group-hover:opacity-100"
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                    <path d="M9 18l6-6-6-6" />
-                  </svg>
-                </button>
-              </>
+            {/* prev/next 화살표 — 이전/다음 "사례" 로 이동 (이미지 변경 X) */}
+            {prevHref && (
+              <Link
+                href={prevHref}
+                aria-label="이전 사례"
+                onClick={(e) => e.stopPropagation()}
+                className="absolute left-3 top-1/2 flex h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/95 text-neutral-900 shadow-md ring-1 ring-black/5 transition hover:bg-white md:left-4 md:h-11 md:w-11 md:opacity-0 md:group-hover:opacity-100"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                  <path d="M15 18l-6-6 6-6" />
+                </svg>
+              </Link>
+            )}
+            {nextHref && (
+              <Link
+                href={nextHref}
+                aria-label="다음 사례"
+                onClick={(e) => e.stopPropagation()}
+                className="absolute right-3 top-1/2 flex h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/95 text-neutral-900 shadow-md ring-1 ring-black/5 transition hover:bg-white md:right-4 md:h-11 md:w-11 md:opacity-0 md:group-hover:opacity-100"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                  <path d="M9 18l6-6-6-6" />
+                </svg>
+              </Link>
             )}
 
             {/* 좌하단 카운터 */}
             {total > 1 && (
-              <div className="pointer-events-none absolute bottom-3 left-3 rounded-full bg-black/55 px-2.5 py-1 text-[11px] font-medium text-white backdrop-blur md:bottom-4 md:left-4">
+              <div className="pointer-events-none absolute bottom-3 left-3 rounded-full bg-black/55 px-2.5 py-1 text-[0.75rem] font-medium text-white backdrop-blur md:bottom-4 md:left-4">
                 {activeIdx + 1} / {total}
               </div>
             )}
@@ -215,10 +214,10 @@ export default function CaseDetail({
                     sizes="120px"
                   />
                   <span className="absolute inset-0 flex flex-col items-center justify-center text-white">
-                    <span className="text-[15px] font-bold leading-none">
+                    <span className="text-[1rem] font-bold leading-none">
                       +{overflowCount}
                     </span>
-                    <span className="mt-1 text-[10px] font-medium tracking-wide">
+                    <span className="mt-1 text-[0.75rem] font-medium tracking-wide">
                       더보기
                     </span>
                   </span>
@@ -232,72 +231,86 @@ export default function CaseDetail({
         <aside className="md:col-span-5">
           <div className="md:sticky md:top-24">
             {categoryName && (
-              <p className="text-[14px] font-semibold uppercase tracking-[0.3em] text-blue-700">
+              <p className="text-[0.875rem] font-semibold uppercase tracking-[0.3em] text-blue-700">
                 {categoryName}
               </p>
             )}
 
-            <h1 className="mt-1 text-[24px] font-extrabold leading-[1.3] tracking-tight md:text-[28px]">
+            <h1 className="mt-1 text-[1.5rem] font-extrabold leading-[1.3] tracking-tight md:text-[1.75rem]">
               {modelName || title}
             </h1>
 
             {modelName && modelName !== title && (
-              <p className="mt-2 text-[14px] text-neutral-500">{title}</p>
+              <p className="mt-2 text-[0.875rem] text-neutral-500">{title}</p>
             )}
 
-            <div className="mt-7 space-y-4 border-t border-neutral-200 pt-7 text-[14px]">
+            <div className="mt-7 space-y-4 border-t border-neutral-200 pt-7 text-[0.875rem]">
               <Field label="현장명" value={siteName} />
               <Field label="발주처" value={clientName} />
             </div>
 
             {description && (
               <div className="mt-7 border-t border-neutral-200 pt-7">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-neutral-500">
+                <p className="text-[0.75rem] font-semibold uppercase tracking-[0.3em] text-neutral-500">
                   Description
                 </p>
-                <p className="mt-3 whitespace-pre-line text-[14px] leading-[1.85] text-neutral-700">
+                <p className="mt-3 whitespace-pre-line text-[0.875rem] leading-[1.85] text-neutral-700">
                   {description}
                 </p>
               </div>
             )}
 
             {productLinks.length > 0 && (
-              <div className="mt-8 space-y-2">
-                {productLinks.length > 1 && (
-                  <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.3em] text-neutral-500">
-                    Related Products
-                  </p>
-                )}
-                {productLinks.map((p, idx) => (
-                  <Link
-                    key={p.href}
-                    href={p.href}
-                    className={`group inline-flex w-full items-center justify-between gap-2 rounded-full px-6 py-3.5 text-[14px] font-bold transition ${
-                      idx === 0
-                        ? 'bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-[0_18px_36px_-18px_rgba(37,99,235,0.5)] hover:shadow-[0_22px_40px_-18px_rgba(37,99,235,0.6)]'
-                        : 'border border-neutral-200 bg-white text-neutral-900 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700'
-                    }`}
-                  >
-                    <span>{p.name} 보기</span>
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      className="transition-transform group-hover:translate-x-0.5"
-                    >
-                      <path d="M5 12h14M13 5l7 7-7 7" />
-                    </svg>
-                  </Link>
-                ))}
+              <div className="mt-8 border-t border-neutral-200 pt-7">
+                <p className="text-[0.875rem] font-bold text-neutral-900">관련 제품</p>
+                <ul className="mt-3 space-y-1.5">
+                  {productLinks.map((p) => (
+                    <li key={p.href}>
+                      <Link
+                        href={p.href}
+                        className="group inline-flex items-center gap-1.5 text-[0.875rem] font-medium text-neutral-700 transition hover:text-blue-700"
+                      >
+                        <span>{p.name}</span>
+                        <svg
+                          width="13"
+                          height="13"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          className="text-neutral-400 transition group-hover:translate-x-0.5 group-hover:text-blue-700"
+                        >
+                          <path d="M9 18l6-6-6-6" />
+                        </svg>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
 
+            {/* CTA — 제품 보러가기 (관련 제품 1개면 그 제품으로, 아니면 전체 카탈로그로) */}
+            <Link
+              href={productLinks.length === 1 ? productLinks[0].href : '/products'}
+              className="group mt-7 inline-flex w-full items-center justify-between gap-2 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 px-6 py-3.5 text-[0.875rem] font-bold text-white shadow-[0_18px_36px_-18px_rgba(37,99,235,0.5)] transition hover:shadow-[0_22px_40px_-18px_rgba(37,99,235,0.6)]"
+            >
+              <span>제품 보러가기</span>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                className="transition-transform group-hover:translate-x-0.5"
+              >
+                <path d="M5 12h14M13 5l7 7-7 7" />
+              </svg>
+            </Link>
+
             <Link
               href="/construction-cases"
-              className="mt-3 inline-flex w-full items-center justify-center gap-1.5 rounded-full border border-neutral-200 bg-white px-6 py-3 text-[13px] font-medium text-neutral-700 transition hover:bg-neutral-50"
+              className="mt-3 inline-flex w-full items-center justify-center gap-1.5 rounded-full border border-neutral-200 bg-white px-6 py-3 text-[0.875rem] font-medium text-neutral-700 transition hover:bg-neutral-50"
             >
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M19 12H5M12 19l-7-7 7-7" />
@@ -374,7 +387,7 @@ export default function CaseDetail({
             />
           </div>
 
-          <p className="absolute bottom-6 left-1/2 -translate-x-1/2 text-[12px] tracking-[0.3em] text-white/70">
+          <p className="absolute bottom-6 left-1/2 -translate-x-1/2 text-[0.75rem] tracking-[0.3em] text-white/70">
             {activeIdx + 1} / {total}
           </p>
         </div>
@@ -387,10 +400,10 @@ function Field({ label, value }: { label: string; value: string | null }) {
   if (!value) return null
   return (
     <div className="flex items-baseline gap-4">
-      <span className="w-16 shrink-0 text-[12px] font-medium uppercase tracking-[0.2em] text-neutral-400">
+      <span className="w-16 shrink-0 text-[0.75rem] font-medium uppercase tracking-[0.2em] text-neutral-400">
         {label}
       </span>
-      <span className="flex-1 text-[14px] text-neutral-800">{value}</span>
+      <span className="flex-1 text-[0.875rem] text-neutral-800">{value}</span>
     </div>
   )
 }

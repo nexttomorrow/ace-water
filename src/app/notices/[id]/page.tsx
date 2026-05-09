@@ -46,7 +46,7 @@ export default async function NoticeDetailPage({
     <article className="mx-auto max-w-[1440px] px-6 py-12">
       <header className="mb-5 border-b border-neutral-200 pb-4">
         <div className="mb-2">
-          <span className="inline-flex items-center rounded bg-neutral-900 px-2 py-0.5 text-[11px] font-bold text-white">
+          <span className="inline-flex items-center rounded bg-neutral-900 px-2 py-0.5 text-[0.75rem] font-bold text-white">
             공지
           </span>
         </div>

@@ -48,7 +48,7 @@ export default function CaseCategoryForm({
           placeholder="water-fountain"
           className="mt-1 rounded border border-neutral-300 bg-white px-3 py-2"
         />
-        <span className="mt-1 text-[11px] text-neutral-500">
+        <span className="mt-1 text-[0.75rem] text-neutral-500">
           영문 식별자. 비워둬도 됩니다.
         </span>
       </label>
@@ -61,7 +61,7 @@ export default function CaseCategoryForm({
           defaultValue={v.sort_order}
           className="mt-1 rounded border border-neutral-300 bg-white px-3 py-2"
         />
-        <span className="mt-1 text-[11px] text-neutral-500">작을수록 앞</span>
+        <span className="mt-1 text-[0.75rem] text-neutral-500">작을수록 앞</span>
       </label>
 
       <label className="flex items-center gap-2 text-sm">
@@ -72,13 +72,13 @@ export default function CaseCategoryForm({
       <div className="mt-2 flex gap-2">
         <button
           type="submit"
-          className="rounded-full bg-black px-5 py-2 text-[13px] font-medium text-white hover:bg-neutral-800"
+          className="rounded-full bg-black px-5 py-2 text-[0.875rem] font-medium text-white hover:bg-neutral-800"
         >
           {submitLabel}
         </button>
         <Link
           href={cancelHref}
-          className="rounded-full border border-neutral-300 px-5 py-2 text-[13px] hover:bg-neutral-100"
+          className="rounded-full border border-neutral-300 px-5 py-2 text-[0.875rem] hover:bg-neutral-100"
         >
           취소
         </Link>

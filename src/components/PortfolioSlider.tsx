@@ -51,7 +51,7 @@ export default function PortfolioSlider({ items }: { items: PortfolioItem[] }) {
               />
               <div className="pointer-events-none absolute inset-0 bg-black/0 transition duration-300 group-hover:bg-black/65" />
               <div className="pointer-events-none absolute inset-0 flex translate-y-2 flex-col items-center justify-center px-5 text-center opacity-0 transition duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-                <h3 className="text-[18px] font-bold text-white md:text-[20px]">{item.title}</h3>
+                <h3 className="text-[1.125rem] font-bold text-white md:text-[1.25rem]">{item.title}</h3>
                 <div className="my-2 h-[1px] w-6 bg-white/60" />
                 <p className="line-clamp-2 text-[0.875rem] leading-relaxed text-white/85">
                   {item.desc}

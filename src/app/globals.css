@@ -48,3 +48,23 @@ button:disabled,
 [disabled] {
   cursor: not-allowed;
 }
+
+/* ─────────────────────────────────────────────────────────
+   네이티브 <select> — 잔존 사용 케이스용 백업 스타일
+   사이트 전역에서는 @/components/ui/Select 커스텀 컴포넌트 사용.
+   ──────────────────────────────────────────────────────── */
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23737373' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 12px 12px;
+  background-color: #ffffff;
+  padding-right: 38px !important;
+}
+
+select::-ms-expand {
+  display: none;
+}

@@ -2,9 +2,9 @@ import React from "react";
 
 export default function PrivacyAgreementBox() {
   return (
-    <div className="w-full rounded-lg bg-neutral-100 p-5 text-[13px]">
+    <div className="w-full rounded-lg bg-neutral-100 p-5 text-[0.875rem]">
       {/* 개인정보처리방침 전문 스크롤 박스 */}
-      <div className="mb-4 h-24 w-full overflow-y-auto rounded border border-neutral-200 bg-white p-4 text-[11px] leading-relaxed text-neutral-500 shadow-inner">
+      <div className="mb-4 h-24 w-full overflow-y-auto rounded border border-neutral-200 bg-white p-4 text-[0.75rem] leading-relaxed text-neutral-500 shadow-inner">
         <p className="mb-4">
           에이스엔지니어링(이하 &quot;회사&quot;)은 정보주체의 자유와 권리
           보호를 위해 「개인정보 보호법」 및 관계 법령이 정한 바를 준수하여,

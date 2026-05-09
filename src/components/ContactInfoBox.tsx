@@ -5,7 +5,7 @@ export default function ContactInfoBox({
 }) {
   return (
     <div
-      className={`w-full rounded-lg bg-neutral-100 px-5 py-3.5 text-center text-[13px] leading-[1.85] text-neutral-600 md:text-[14px] ${className}`.trim()}
+      className={`w-full rounded-lg bg-neutral-100 px-5 py-3.5 text-center text-[0.875rem] leading-[1.85] text-neutral-600 md:text-[0.875rem] ${className}`.trim()}
     >
       기타 문의는{" "}
       <a

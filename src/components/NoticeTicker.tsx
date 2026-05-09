@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react'
 
 export type TickerNotice = { id: number; title: string }
 
-const ITEM_HEIGHT = 32
+const ITEM_HEIGHT = 28
 const SLIDE_INTERVAL = 3500
 const TRANSITION_MS = 500
 
@@ -44,7 +44,7 @@ export default function NoticeTicker({ notices }: { notices: TickerNotice[] }) {
 
   return (
     <div className="flex min-w-0 items-center gap-2">
-      <span className="shrink-0 rounded bg-neutral-900 px-1.5 py-0.5 text-[12px] font-bold tracking-tight text-white">
+      <span className="shrink-0 rounded bg-neutral-900 px-1.5 py-0.5 text-[0.75rem] font-bold tracking-tight text-white">
         공지
       </span>
       <div
@@ -68,7 +68,7 @@ export default function NoticeTicker({ notices }: { notices: TickerNotice[] }) {
             <Link
               key={`${n.id}-${i}`}
               href={`/notices/${n.id}`}
-              className="flex shrink-0 items-center truncate text-[14px] text-neutral-700 hover:text-black"
+              className="flex shrink-0 items-center truncate text-[0.75rem] text-neutral-700 transition hover:text-black"
               style={{ height: ITEM_HEIGHT }}
             >
               <span className="truncate">{n.title}</span>

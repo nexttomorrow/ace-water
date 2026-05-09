@@ -124,7 +124,7 @@ function Hero() {
 
       <div className="relative mx-auto max-w-[1200px] px-6 pb-24 pt-24 md:pb-32 md:pt-32">
         <p
-          className={`text-[12px] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
+          className={`text-[0.75rem] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
             shown ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'
           }`}
         >
@@ -132,7 +132,7 @@ function Hero() {
         </p>
 
         <h1
-          className={`mt-6 text-[40px] font-extrabold leading-[1.15] tracking-tight md:text-[68px] transition-all duration-1000 delay-150 ${
+          className={`mt-6 text-[2.5rem] font-extrabold leading-[1.15] tracking-tight md:text-[4.25rem] transition-all duration-1000 delay-150 ${
             shown ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
           }`}
         >
@@ -144,7 +144,7 @@ function Hero() {
         </h1>
 
         <p
-          className={`mt-8 max-w-[620px] text-[15px] leading-[1.9] text-neutral-600 md:text-[17px] transition-all duration-1000 delay-300 ${
+          className={`mt-8 max-w-[620px] text-[1rem] leading-[1.9] text-neutral-600 md:text-[1.125rem] transition-all duration-1000 delay-300 ${
             shown ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
           }`}
         >
@@ -166,10 +166,10 @@ function Diagram() {
     <section className="border-t border-neutral-100">
       <div className="mx-auto max-w-[1200px] px-6 py-24 md:py-32">
         <header className="mb-16 text-center">
-          <p className="text-[14px] font-semibold uppercase tracking-[0.4em] text-blue-700">
+          <p className="text-[0.875rem] font-semibold uppercase tracking-[0.4em] text-blue-700">
             Org Chart
           </p>
-          <h2 className="text-[28px] font-bold leading-[1.3] md:text-[34px]">조직 구조</h2>
+          <h2 className="text-[1.75rem] font-bold leading-[1.3] md:text-[2.125rem]">조직 구조</h2>
         </header>
 
         <div ref={wrapper.ref} className="relative">
@@ -275,13 +275,13 @@ function CeoCard({ active }: { active: boolean }) {
           animation: 'ceoPulse 2.6s ease-out infinite',
         }}
       />
-      <p className="text-[10px] font-semibold uppercase tracking-[0.45em] text-white/75">
+      <p className="text-[0.75rem] font-semibold uppercase tracking-[0.45em] text-white/75">
         CEO
       </p>
-      <p className="mt-1.5 text-[22px] font-extrabold tracking-tight md:text-[24px]">
+      <p className="mt-1.5 text-[1.375rem] font-extrabold tracking-tight md:text-[1.5rem]">
         대표이사
       </p>
-      <p className="mt-1 text-[12px] font-medium text-white/85">구 종 철</p>
+      <p className="mt-1 text-[0.75rem] font-medium text-white/85">구 종 철</p>
 
       <style jsx>{`
         @keyframes ceoPulse {
@@ -361,27 +361,27 @@ function DeptCard({
         </span>
         <div className="min-w-0">
           <p
-            className={`text-[10px] font-semibold uppercase tracking-[0.3em] transition-colors ${
+            className={`text-[0.75rem] font-semibold uppercase tracking-[0.3em] transition-colors ${
               active ? 'text-blue-700' : 'text-neutral-400'
             }`}
           >
             {dept.label}
           </p>
-          <h3 className="mt-0.5 truncate text-[17px] font-bold tracking-tight md:text-[18px]">
+          <h3 className="mt-0.5 truncate text-[1.125rem] font-bold tracking-tight md:text-[1.125rem]">
             {dept.title}
           </h3>
         </div>
       </div>
 
       {/* 설명 */}
-      <p className="mt-4 text-[13px] leading-[1.7] text-neutral-600">{dept.desc}</p>
+      <p className="mt-4 text-[0.875rem] leading-[1.7] text-neutral-600">{dept.desc}</p>
 
       {/* 업무 리스트 — 호버 시 좌측 점이 채워짐 */}
       <ul className="mt-5 space-y-2.5 border-t border-neutral-100 pt-4">
         {dept.duties.map((duty, i) => (
           <li
             key={duty}
-            className="flex items-center gap-2.5 text-[13px] text-neutral-700"
+            className="flex items-center gap-2.5 text-[0.875rem] text-neutral-700"
             style={{
               transitionDelay: active ? `${i * 60}ms` : '0ms',
             }}
@@ -422,14 +422,14 @@ function Closing() {
     <section ref={ref} className="border-t border-neutral-100 bg-neutral-50">
       <div className="mx-auto max-w-[900px] px-6 py-24 text-center md:py-32">
         <p
-          className={`text-[14px] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
+          className={`text-[0.875rem] font-semibold uppercase tracking-[0.4em] text-blue-700 transition-all duration-700 ${
             shown ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
           }`}
         >
           One Direction
         </p>
         <h3
-          className={`mt-3 text-[26px] font-bold leading-[1.4] md:text-[34px] transition-all duration-1000 delay-100 ${
+          className={`mt-3 text-[1.625rem] font-bold leading-[1.4] md:text-[2.125rem] transition-all duration-1000 delay-100 ${
             shown ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
           }`}
         >

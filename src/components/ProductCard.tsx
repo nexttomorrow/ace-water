@@ -55,7 +55,7 @@ export default function ProductCard({ item }: { item: ProductCardItem }) {
 
         {tag && (
           <span
-            className={`absolute left-3 top-3 z-10 rounded-full px-2.5 py-0.5 text-[10px] font-bold tracking-wider ${
+            className={`absolute left-3 top-3 z-10 rounded-full px-2.5 py-0.5 text-[0.75rem] font-bold tracking-wider ${
               BADGE_TONE[tag.tone] ?? BADGE_TONE.neutral
             }`}
           >
@@ -65,10 +65,10 @@ export default function ProductCard({ item }: { item: ProductCardItem }) {
       </div>
       <div className="mt-4">
         {item.modelName && (
-          <p className="text-[13px] font-bold text-neutral-900">{item.modelName}</p>
+          <p className="text-[0.875rem] font-bold text-neutral-900">{item.modelName}</p>
         )}
         <p
-          className={`text-[12px] text-neutral-600 transition group-hover:text-blue-700 ${
+          className={`text-[0.75rem] text-neutral-600 transition group-hover:text-blue-700 ${
             item.modelName ? 'mt-1' : 'font-bold text-neutral-900'
           }`}
         >
