@@ -1,77 +1,99 @@
-import Link from 'next/link'
-import { notFound } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
-import { deletePost } from '../actions'
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { deletePost } from "../actions";
+import sanitizeHtml from "sanitize-html";
 
 // Vercel/Edge 런타임 호환 — cookies 사용 + supabase 동적 데이터 → 명시적으로 동적 라우팅 표시
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default async function PostDetailPage({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: Promise<{ id: string }>;
 }) {
-  const { id } = await params
-  const postId = Number(id)
-  if (!Number.isFinite(postId)) notFound()
+  const { id } = await params;
+  const postId = Number(id);
+  if (!Number.isFinite(postId)) notFound();
 
-  const supabase = await createClient()
+  const supabase = await createClient();
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
   // 조인은 prod DB FK 추론에 의존해서 실패 케이스가 있음 → 분리 쿼리
   const { data: post, error: postErr } = await supabase
-    .from('posts')
-    .select('id, title, content, author_id, created_at, updated_at')
-    .eq('id', postId)
-    .maybeSingle()
+    .from("posts")
+    .select("id, title, content, author_id, created_at, updated_at")
+    .eq("id", postId)
+    .maybeSingle();
 
   if (postErr) {
-    console.error('[post detail] fetch failed', postErr)
+    console.error("[post detail] fetch failed", postErr);
   }
-  if (!post) notFound()
+  if (!post) notFound();
 
-  let authorNickname: string | null = null
+  let authorNickname: string | null = null;
   if (post.author_id) {
     const { data: authorRow } = await supabase
-      .from('profiles')
-      .select('nickname')
-      .eq('id', post.author_id)
-      .maybeSingle()
-    authorNickname = authorRow?.nickname ?? null
+      .from("profiles")
+      .select("nickname")
+      .eq("id", post.author_id)
+      .maybeSingle();
+    authorNickname = authorRow?.nickname ?? null;
   }
 
-  let isAdmin = false
+  let isAdmin = false;
   if (user) {
     const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .maybeSingle()
-    isAdmin = profile?.role === 'admin'
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .maybeSingle();
+    isAdmin = profile?.role === "admin";
   }
 
-  const canModify = !!user && (user.id === post.author_id || isAdmin)
+  const canModify = !!user && (user.id === post.author_id || isAdmin);
 
-  const handleDelete = deletePost.bind(null, postId)
+  const handleDelete = deletePost.bind(null, postId);
+
+  // HTML 정제 (XSS 방지)
+  const cleanContent = sanitizeHtml(post.content ?? "", {
+    allowedTags: sanitizeHtml.defaults.allowedTags.concat([
+      "img",
+      "h1",
+      "h2",
+      "h3",
+      "h4",
+      "h5",
+      "h6",
+      "span",
+      "p",
+    ]),
+    allowedAttributes: {
+      ...sanitizeHtml.defaults.allowedAttributes,
+      "*": ["style", "class"],
+      img: ["src", "alt", "width", "height"],
+    },
+  });
 
   return (
     <article className="mx-auto max-w-[1440px] px-6 py-12">
       <header className="mb-5 border-b border-neutral-200 pb-4">
         <h1 className="text-2xl font-bold">{post.title}</h1>
         <p className="mt-1 text-xs text-neutral-500">
-          {authorNickname ?? '익명'} · {new Date(post.created_at).toLocaleString('ko-KR')}
+          {authorNickname ?? "익명"} ·{" "}
+          {new Date(post.created_at).toLocaleString("ko-KR")}
           {post.updated_at !== post.created_at && (
-            <> · 수정됨 {new Date(post.updated_at).toLocaleString('ko-KR')}</>
+            <> · 수정됨 {new Date(post.updated_at).toLocaleString("ko-KR")}</>
           )}
         </p>
       </header>
 
       <div
         className="prose prose-neutral max-w-none [&_table]:border [&_table]:border-collapse [&_th]:border [&_th]:border-neutral-300 [&_th]:bg-neutral-100 [&_th]:px-2 [&_th]:py-1 [&_td]:border [&_td]:border-neutral-300 [&_td]:px-2 [&_td]:py-1 [&_img]:rounded"
-        dangerouslySetInnerHTML={{ __html: post.content ?? '' }}
+        dangerouslySetInnerHTML={{ __html: cleanContent }}
       />
 
       <div className="mt-8 flex gap-2">
@@ -101,5 +123,5 @@ export default async function PostDetailPage({
         )}
       </div>
     </article>
-  )
+  );
 }
