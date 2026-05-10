@@ -20,25 +20,13 @@ export default async function ResourceDetailPage({
     data: { user },
   } = await supabase.auth.getUser()
 
-  // 조인은 prod DB FK 추론에 의존해 실패 케이스가 있어 분리 쿼리
-  const { data: resource, error: resourceErr } = await supabase
+  const { data: resource } = await supabase
     .from('resources')
-    .select('*')
+    .select('*, profiles:author_id ( nickname )')
     .eq('id', rid)
-    .maybeSingle()
+    .single()
 
-  if (resourceErr) console.error('[resource detail] fetch failed', resourceErr)
   if (!resource) notFound()
-
-  let authorNickname: string | null = null
-  if (resource.author_id) {
-    const { data: authorRow } = await supabase
-      .from('profiles')
-      .select('nickname')
-      .eq('id', resource.author_id)
-      .maybeSingle()
-    authorNickname = authorRow?.nickname ?? null
-  }
 
   let isAdmin = false
   if (user) {
@@ -46,9 +34,11 @@ export default async function ResourceDetailPage({
       .from('profiles')
       .select('role')
       .eq('id', user.id)
-      .maybeSingle()
+      .single()
     isAdmin = profile?.role === 'admin'
   }
+
+  const author = Array.isArray(resource.profiles) ? resource.profiles[0] : resource.profiles
   const handleDelete = deleteResource.bind(null, rid)
   const color = getFileColor(resource.file_name)
 
@@ -69,7 +59,7 @@ export default async function ResourceDetailPage({
       <header className="mb-6 border-b border-neutral-200 pb-5">
         <h1 className="text-[1.5rem] font-bold leading-tight md:text-[1.75rem]">{resource.title}</h1>
         <p className="mt-2 text-[0.75rem] text-neutral-500">
-          {authorNickname ?? '관리자'} · {new Date(resource.created_at).toLocaleString('ko-KR')}
+          {author?.nickname ?? '관리자'} · {new Date(resource.created_at).toLocaleString('ko-KR')}
           {resource.updated_at !== resource.created_at && (
             <> · 수정됨 {new Date(resource.updated_at).toLocaleString('ko-KR')}</>
           )}

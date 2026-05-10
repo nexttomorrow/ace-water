@@ -3,8 +3,6 @@ import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { deletePost } from '../actions'
 
-// Vercel/Edge 런타임 호환 — cookies 사용 + supabase 동적 데이터 → 명시적으로 동적 라우팅 표시
-export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 export default async function PostDetailPage({
@@ -71,7 +69,7 @@ export default async function PostDetailPage({
 
       <div
         className="prose prose-neutral max-w-none [&_table]:border [&_table]:border-collapse [&_th]:border [&_th]:border-neutral-300 [&_th]:bg-neutral-100 [&_th]:px-2 [&_th]:py-1 [&_td]:border [&_td]:border-neutral-300 [&_td]:px-2 [&_td]:py-1 [&_img]:rounded"
-        dangerouslySetInnerHTML={{ __html: post.content ?? '' }}
+        dangerouslySetInnerHTML={{ __html: post.content }}
       />
 
       <div className="mt-8 flex gap-2">
