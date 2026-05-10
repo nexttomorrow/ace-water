@@ -51,8 +51,6 @@ type Props = {
   additional?: { path: string; url: string }[]
   specSheetUrl?: string | null
   specSheetName?: string | null
-  colorChartUrl?: string | null
-  colorChartName?: string | null
   /** 시공사례 멀티셀렉트 — 수정 모드에서만 의미있음 */
   productId?: number
   cases?: CaseOption[]
@@ -75,8 +73,6 @@ export default function ProductForm({
   additional,
   specSheetUrl,
   specSheetName,
-  colorChartUrl,
-  colorChartName,
   productId,
   cases,
   initialSelectedCaseIds,
@@ -778,60 +774,31 @@ export default function ProductForm({
       <section className="rounded-lg border border-neutral-200 bg-white p-5">
         <h2 className="mb-4 text-[0.875rem] font-bold text-neutral-900">다운로드 자료</h2>
         <p className="mb-4 text-[0.75rem] text-neutral-500">
-          상세 페이지 우측 액션 버튼(시방서 다운, 색상표)에 연결됩니다.
+          상세 페이지 우측 액션 버튼(시방서 다운)에 연결됩니다.
         </p>
 
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-          <div>
-            <FileInput
-              label="시방서 (PDF 등)"
-              name="spec_sheet"
-              hint={
-                specSheetUrl ? (
-                  <a
-                    href={specSheetUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-blue-600 hover:underline"
-                  >
-                    현재 파일: {specSheetName ?? '열기'}
-                  </a>
-                ) : undefined
-              }
-            />
-            {specSheetUrl && (
-              <label className="mt-2 flex items-center gap-2 text-[0.75rem] text-neutral-600">
-                <input type="checkbox" name="remove_spec_sheet" />
-                현재 파일 제거
-              </label>
-            )}
-          </div>
-
-          <div>
-            <FileInput
-              label="색상표"
-              name="color_chart"
-              hint={
-                colorChartUrl ? (
-                  <a
-                    href={colorChartUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-blue-600 hover:underline"
-                  >
-                    현재 파일: {colorChartName ?? '열기'}
-                  </a>
-                ) : undefined
-              }
-            />
-            {colorChartUrl && (
-              <label className="mt-2 flex items-center gap-2 text-[0.75rem] text-neutral-600">
-                <input type="checkbox" name="remove_color_chart" />
-                현재 파일 제거
-              </label>
-            )}
-          </div>
-        </div>
+        <FileInput
+          label="시방서 (PDF 등)"
+          name="spec_sheet"
+          hint={
+            specSheetUrl ? (
+              <a
+                href={specSheetUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="text-blue-600 hover:underline"
+              >
+                현재 파일: {specSheetName ?? '열기'}
+              </a>
+            ) : undefined
+          }
+        />
+        {specSheetUrl && (
+          <label className="mt-2 flex items-center gap-2 text-[0.75rem] text-neutral-600">
+            <input type="checkbox" name="remove_spec_sheet" />
+            현재 파일 제거
+          </label>
+        )}
       </section>
 
       {/* 부가 설명 */}

@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { deleteNotice } from '../actions'
 
+export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 export default async function NoticeDetailPage({
@@ -74,7 +75,7 @@ export default async function NoticeDetailPage({
 
       <div
         className="prose prose-neutral max-w-none [&_table]:border [&_table]:border-collapse [&_th]:border [&_th]:border-neutral-300 [&_th]:bg-neutral-100 [&_th]:px-2 [&_th]:py-1 [&_td]:border [&_td]:border-neutral-300 [&_td]:px-2 [&_td]:py-1 [&_img]:rounded"
-        dangerouslySetInnerHTML={{ __html: notice.content }}
+        dangerouslySetInnerHTML={{ __html: notice.content ?? '' }}
       />
 
       <div className="mt-8 flex gap-2">

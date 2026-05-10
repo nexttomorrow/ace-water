@@ -78,10 +78,6 @@ export default async function EditProductPage({
   const specSheetName = product.spec_sheet_path
     ? product.spec_sheet_path.split('/').pop() ?? null
     : null
-  const colorChartUrl = product.color_chart_path ? fileUrl(product.color_chart_path) : null
-  const colorChartName = product.color_chart_path
-    ? product.color_chart_path.split('/').pop() ?? null
-    : null
 
   const action = updateProduct.bind(null, itemId)
 
@@ -106,8 +102,6 @@ export default async function EditProductPage({
         additional={additional}
         specSheetUrl={specSheetUrl}
         specSheetName={specSheetName}
-        colorChartUrl={colorChartUrl}
-        colorChartName={colorChartName}
         productId={itemId}
         cases={caseOptions}
         initialSelectedCaseIds={initialSelectedCaseIds}

@@ -56,38 +56,44 @@ export default async function Header() {
     // CSS 변수 --site-header-h 로 헤더 총 높이를 노출 → StickySubmenuTabs 등 스크롤 동기화 컴포넌트가 참조.
     // 모바일: top utility 36 + main nav 64 = 100
     // 데스크탑: top utility 40 + main nav 72 = 112
+    // CSS 변수 --site-header-h = utility(40 desktop / 36 mobile) + nav(72/64) + ticker(32)
+    //   모바일: 36 + 64 + 32 = 132 (티커 있을 때) / 100 (없을 때)
+    //   데스크탑: 40 + 72 + 32 = 144 (티커 있을 때) / 112 (없을 때)
     <header
-      className="sticky top-0 z-50 overflow-x-clip bg-white [--site-header-h:100px] md:[--site-header-h:112px]"
+      className={`sticky top-0 z-50 overflow-x-clip bg-white ${
+        tickerNotices.length > 0
+          ? '[--site-header-h:132px] md:[--site-header-h:144px]'
+          : '[--site-header-h:100px] md:[--site-header-h:112px]'
+      }`}
     >
-      {/* Top utility bar */}
+      {/* Top utility bar — 링크만 (티커는 하단 스트립으로 분리) */}
       <div className="border-b border-neutral-200/80 bg-neutral-50">
-        <div className="mx-auto flex h-9 max-w-[1440px] items-center justify-between gap-4 px-6 text-[0.75rem] text-neutral-600 md:h-10">
-          <div className="min-w-0 max-w-[520px] flex-1">
-            <NoticeTicker notices={tickerNotices} />
-          </div>
-          <div className="flex shrink-0 items-center gap-3.5 md:gap-4">
-            {isAdmin && (
-              <>
-                <Link
-                  href="/mng"
-                  className="inline-flex items-center gap-1 rounded-full bg-neutral-900 px-2.5 py-0.5 text-[0.75rem] font-semibold text-white hover:bg-black"
-                >
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6z" />
-                  </svg>
-                  관리자
-                </Link>
-                <span aria-hidden className="text-neutral-300">|</span>
-              </>
-            )}
-            <Link href="/board" className="transition hover:text-neutral-900">게시판</Link>
-            <span aria-hidden className="text-neutral-300">|</span>
-            <Link href="/as" className="transition hover:text-neutral-900">AS센터</Link>
-            <span aria-hidden className="hidden text-neutral-300 sm:inline">|</span>
-            <Link href="/business" className="hidden transition hover:text-neutral-900 sm:inline">
-              비즈니스 문의
-            </Link>
-          </div>
+        <div className="mx-auto flex h-9 max-w-[1440px] items-center justify-end gap-3 px-6 text-[0.75rem] text-neutral-600 md:h-10 md:gap-4">
+          {isAdmin && (
+            <>
+              <Link
+                href="/mng"
+                className="inline-flex items-center gap-1 rounded-full bg-neutral-900 px-2.5 py-0.5 text-[0.75rem] font-semibold text-white hover:bg-black"
+              >
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6z" />
+                </svg>
+                관리자
+              </Link>
+              <span aria-hidden className="text-neutral-300">|</span>
+            </>
+          )}
+          <Link href="/board" className="transition hover:text-neutral-900">
+            게시판
+          </Link>
+          <span aria-hidden className="text-neutral-300">|</span>
+          <Link href="/as" className="transition hover:text-neutral-900">
+            AS센터
+          </Link>
+          <span aria-hidden className="text-neutral-300">|</span>
+          <Link href="/business" className="transition hover:text-neutral-900">
+            비즈니스 문의
+          </Link>
         </div>
       </div>
 
@@ -98,6 +104,15 @@ export default async function Header() {
         nickname={nickname}
         email={user?.email ?? null}
       />
+
+      {/* 공지 티커 — 메인 nav 아래 풀폭 스트립 */}
+      {tickerNotices.length > 0 && (
+        <div className="border-t border-neutral-100 bg-neutral-50/60">
+          <div className="mx-auto flex h-8 max-w-[1440px] items-center px-6">
+            <NoticeTicker notices={tickerNotices} />
+          </div>
+        </div>
+      )}
     </header>
   )
 }
