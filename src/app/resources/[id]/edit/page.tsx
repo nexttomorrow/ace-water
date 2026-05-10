@@ -3,6 +3,7 @@ import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { updateResource } from '../../actions'
 import { formatBytes, getFileColor } from '@/lib/files'
+import FileInput from '@/components/ui/FileInput'
 
 export default async function EditResourcePage({
   params,
@@ -86,19 +87,15 @@ export default async function EditResourcePage({
           </div>
         </div>
 
-        <div>
-          <label className="mb-1.5 block text-[0.875rem] font-semibold text-neutral-800">
-            파일 교체 <span className="text-neutral-400">(선택)</span>
-          </label>
-          <input
-            type="file"
-            name="file"
-            className="block w-full cursor-pointer rounded border border-neutral-300 bg-white text-[0.875rem] file:mr-4 file:cursor-pointer file:border-0 file:border-r file:border-neutral-300 file:bg-neutral-50 file:px-4 file:py-2.5 file:text-[0.875rem] file:font-semibold file:text-neutral-700 hover:file:bg-neutral-100"
-          />
-          <p className="mt-1.5 text-[0.75rem] text-neutral-500">
-            새 파일을 선택하면 기존 파일은 삭제되고 교체됩니다. 비워두면 그대로 유지됩니다.
-          </p>
-        </div>
+        <FileInput
+          label={
+            <>
+              파일 교체 <span className="font-normal text-neutral-400">(선택)</span>
+            </>
+          }
+          name="file"
+          hint="새 파일을 선택하면 기존 파일은 삭제되고 교체됩니다. 비워두면 그대로 유지됩니다."
+        />
 
         <div className="mt-2 flex gap-2">
           <button

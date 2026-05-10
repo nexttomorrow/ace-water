@@ -66,7 +66,6 @@ export default function CategoryForm({
           required
           defaultValue={v.name}
           placeholder="예: 모바일"
-          className="mt-1 rounded border border-neutral-300 bg-white px-3 py-2"
         />
       </label>
 
@@ -113,7 +112,6 @@ export default function CategoryForm({
           name="href"
           defaultValue={v.href ?? ''}
           placeholder="예: /gallery 또는 https://..."
-          className="mt-1 rounded border border-neutral-300 bg-white px-3 py-2"
         />
         <span className="mt-1 text-[0.75rem] text-neutral-500">
           비우면 # 으로 처리됩니다.
@@ -147,7 +145,6 @@ export default function CategoryForm({
           maxWidth={1024}
           maxHeight={1024}
           quality={85}
-          className="mt-1 rounded border border-neutral-300 bg-white px-3 py-2"
         />
       </label>
 

@@ -75,7 +75,7 @@ export default async function NewHeroSlidePage({
             maxWidth={2400}
             maxHeight={1400}
             quality={85}
-            className="mt-1 rounded border border-neutral-300 bg-white px-3 py-2"
+            className="mt-1"
           />
           <span className="mt-1 text-[0.75rem] text-neutral-500">
             가로형 이미지 권장 (1920×1080 이상). 업로드 시 자동으로 최적화됩니다.

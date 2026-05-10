@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { createResource } from '../actions'
+import FileInput from '@/components/ui/FileInput'
 
 export default async function NewResourcePage({
   searchParams,
@@ -57,20 +58,12 @@ export default async function NewResourcePage({
           />
         </div>
 
-        <div>
-          <label className="mb-1.5 block text-[0.875rem] font-semibold text-neutral-800">
-            첨부파일 <span className="text-rose-500">*</span>
-          </label>
-          <input
-            type="file"
-            name="file"
-            required
-            className="block w-full cursor-pointer rounded border border-neutral-300 bg-white text-[0.875rem] file:mr-4 file:cursor-pointer file:border-0 file:border-r file:border-neutral-300 file:bg-neutral-50 file:px-4 file:py-2.5 file:text-[0.875rem] file:font-semibold file:text-neutral-700 hover:file:bg-neutral-100"
-          />
-          <p className="mt-1.5 text-[0.75rem] text-neutral-500">
-            PDF, DOC, XLS, PPT, HWP, ZIP, 이미지 등 자유롭게 첨부 가능
-          </p>
-        </div>
+        <FileInput
+          label="첨부파일"
+          required
+          name="file"
+          hint="PDF, DOC, XLS, PPT, HWP, ZIP, 이미지 등 자유롭게 첨부 가능"
+        />
 
         <div className="mt-2 flex gap-2">
           <button

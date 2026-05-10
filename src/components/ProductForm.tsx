@@ -11,6 +11,7 @@ import ComponentPickerModal, {
   type PickedComponent,
 } from '@/components/mng/ComponentPickerModal'
 import Select from '@/components/ui/Select'
+import FileInput from '@/components/ui/FileInput'
 import {
   type Product,
   type ProductComponent,
@@ -689,7 +690,6 @@ export default function ProductForm({
             maxWidth={1920}
             maxHeight={1920}
             quality={85}
-            className="block w-full rounded border border-neutral-300 bg-white px-3 py-2 text-sm"
           />
           {imageUrl && (
             <p className="mt-1 text-[0.75rem] text-neutral-500">
@@ -750,7 +750,6 @@ export default function ProductForm({
             maxWidth={1920}
             maxHeight={1920}
             quality={85}
-            className="block w-full rounded border border-neutral-300 bg-white px-3 py-2 text-sm"
           />
         </div>
       </section>
@@ -784,23 +783,21 @@ export default function ProductForm({
 
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
           <div>
-            <p className="text-[0.875rem] font-semibold text-neutral-700">시방서 (PDF 등)</p>
-            {specSheetUrl && (
-              <p className="mt-1 text-[0.75rem]">
-                <a
-                  href={specSheetUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-blue-600 hover:underline"
-                >
-                  {specSheetName ?? '현재 파일'}
-                </a>
-              </p>
-            )}
-            <input
+            <FileInput
+              label="시방서 (PDF 등)"
               name="spec_sheet"
-              type="file"
-              className="mt-2 block w-full rounded border border-neutral-300 bg-white px-3 py-2 text-sm"
+              hint={
+                specSheetUrl ? (
+                  <a
+                    href={specSheetUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-blue-600 hover:underline"
+                  >
+                    현재 파일: {specSheetName ?? '열기'}
+                  </a>
+                ) : undefined
+              }
             />
             {specSheetUrl && (
               <label className="mt-2 flex items-center gap-2 text-[0.75rem] text-neutral-600">
@@ -811,23 +808,21 @@ export default function ProductForm({
           </div>
 
           <div>
-            <p className="text-[0.875rem] font-semibold text-neutral-700">색상표</p>
-            {colorChartUrl && (
-              <p className="mt-1 text-[0.75rem]">
-                <a
-                  href={colorChartUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-blue-600 hover:underline"
-                >
-                  {colorChartName ?? '현재 파일'}
-                </a>
-              </p>
-            )}
-            <input
+            <FileInput
+              label="색상표"
               name="color_chart"
-              type="file"
-              className="mt-2 block w-full rounded border border-neutral-300 bg-white px-3 py-2 text-sm"
+              hint={
+                colorChartUrl ? (
+                  <a
+                    href={colorChartUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-blue-600 hover:underline"
+                  >
+                    현재 파일: {colorChartName ?? '열기'}
+                  </a>
+                ) : undefined
+              }
             />
             {colorChartUrl && (
               <label className="mt-2 flex items-center gap-2 text-[0.75rem] text-neutral-600">

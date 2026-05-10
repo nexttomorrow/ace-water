@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import AddressSearchInput from "@/components/AddressSearchInput";
 import ModelItemsField from "@/components/estimate-form/ModelItemsField";
 import Select from "@/components/ui/Select";
+import FileInput from "@/components/ui/FileInput";
 import {
   ESTIMATE_REQUEST_TYPES,
   ESTIMATE_DELIVERY_METHODS,
@@ -311,33 +312,19 @@ export default function EstimateForm({
 
       {/* ⑥ 파일첨부 */}
       <Section english="Attachment" title="파일첨부">
-        <label className="block">
-          <span className="sr-only">파일첨부</span>
-          <div className="flex items-stretch gap-2">
-            <div className="flex flex-1 items-center rounded-lg border border-neutral-300 bg-white px-3 text-[0.875rem] text-neutral-500">
-              {fileName || "도면 등 참고용 파일을 선택해주세요"}
-            </div>
-            <span className="cursor-pointer rounded-lg bg-neutral-900 px-5 py-2.5 text-[0.875rem] font-medium text-white transition hover:bg-neutral-700">
-              파일 선택
+        <FileInput
+          name="attachment"
+          accept="image/*,application/pdf,.dwg,.dxf,.zip,.hwp,.doc,.docx,.xls,.xlsx,.ppt,.pptx"
+          onChange={onFileChange}
+          rightLabel={fileName || undefined}
+          hint={
+            <span className={isManufacture ? "font-semibold text-red-600" : undefined}>
+              {isManufacture
+                ? "* 제작의뢰의 경우 참고용 이미지 또는 도면 파일 첨부가 필수입니다."
+                : "* 디자인 제작의뢰 시 참고용 이미지/도면 첨부가 필수입니다. (선택 항목)"}
             </span>
-          </div>
-          <input
-            type="file"
-            name="attachment"
-            onChange={onFileChange}
-            className="sr-only"
-            accept="image/*,application/pdf,.dwg,.dxf,.zip,.hwp,.doc,.docx,.xls,.xlsx,.ppt,.pptx"
-          />
-        </label>
-        <p
-          className={`mt-2 text-[0.75rem] leading-[1.7] ${
-            isManufacture ? "font-semibold text-red-600" : "text-neutral-500"
-          }`}
-        >
-          {isManufacture
-            ? "* 제작의뢰의 경우 참고용 이미지 또는 도면 파일 첨부가 필수입니다."
-            : "* 디자인 제작의뢰 시 참고용 이미지/도면 첨부가 필수입니다. (선택 항목)"}
-        </p>
+          }
+        />
       </Section>
 
       {/* 하단 동의 및 안내 (묶음) */}

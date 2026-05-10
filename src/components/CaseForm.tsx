@@ -348,7 +348,6 @@ export default function CaseForm({
           maxWidth={1920}
           maxHeight={1920}
           quality={85}
-          className="block w-full rounded border border-neutral-300 bg-white px-3 py-2 text-sm"
         />
         {imageUrl && (
           <p className="mt-1 text-[0.75rem] text-neutral-500">
@@ -430,7 +429,6 @@ export default function CaseForm({
             maxHeight={1920}
             quality={85}
             onChange={onAddFiles}
-            className="block w-full rounded border border-neutral-300 bg-white px-3 py-2 text-sm"
           />
 
           {overLimit && (

@@ -9,6 +9,7 @@ import { optimizeImageFile } from '@/components/OptimizedImageInput'
 
 import AddressSearchInput from '@/components/AddressSearchInput'
 import Select from '@/components/ui/Select'
+import FileInput from '@/components/ui/FileInput'
 
 export const inputCls =
   'w-full rounded-lg border border-neutral-300 bg-white px-3.5 py-2.5 text-[0.875rem] text-neutral-900 placeholder:text-neutral-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100'
@@ -278,29 +279,15 @@ export function FileField({
   }
 
   return (
-    <div>
-      {label && <Label label={label} required={required} />}
-      <label className="block">
-        <span className="sr-only">파일 첨부</span>
-        <div className="flex items-stretch gap-2">
-          <div className="flex flex-1 items-center rounded-lg border border-neutral-300 bg-white px-3 text-[0.875rem] text-neutral-500">
-            {fileName || '도면 등 참고용 파일을 선택해주세요'}
-          </div>
-          <span className="cursor-pointer rounded-lg bg-neutral-900 px-5 py-2.5 text-[0.875rem] font-medium text-white transition hover:bg-neutral-700">
-            파일 선택
-          </span>
-        </div>
-        <input
-          type="file"
-          name={name}
-          required={required}
-          accept={accept}
-          onChange={handleChange}
-          className="sr-only"
-        />
-      </label>
-      {description && <div className="mt-2 text-[0.75rem] leading-[1.7]">{description}</div>}
-    </div>
+    <FileInput
+      label={label}
+      required={required}
+      name={name}
+      accept={accept}
+      onChange={handleChange}
+      rightLabel={fileName || undefined}
+      hint={description}
+    />
   )
 }
 

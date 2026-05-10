@@ -83,7 +83,7 @@ export default async function EditHeroSlidePage({
             maxWidth={2400}
             maxHeight={1400}
             quality={85}
-            className="mt-1 rounded border border-neutral-300 bg-white px-3 py-2"
+            className="mt-1"
           />
         </label>
 

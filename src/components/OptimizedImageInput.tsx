@@ -108,6 +108,16 @@ export default function OptimizedImageInput({
     onChange?.(e)
   }
 
+  // 사이트 전역 파일 업로더 스타일 (FileInput 과 동일).
+  // className prop 은 추가 클래스 (위치/너비 조정 등) — 기본 스타일은 항상 유지.
+  const baseCls =
+    'block w-full cursor-pointer rounded border border-neutral-300 bg-white text-[0.875rem]' +
+    ' file:mr-4 file:cursor-pointer file:border-0 file:border-r file:border-neutral-300' +
+    ' file:bg-neutral-50 file:px-4 file:py-2.5 file:text-[0.875rem] file:font-semibold' +
+    ' file:text-neutral-700 hover:file:bg-neutral-100' +
+    ' focus:outline-none focus:ring-2 focus:ring-blue-100' +
+    ' disabled:cursor-not-allowed disabled:opacity-50'
+
   return (
     <div className="flex flex-col gap-1">
       <input
@@ -116,7 +126,7 @@ export default function OptimizedImageInput({
         accept="image/*"
         onChange={handleChange}
         disabled={disabled || optimizing}
-        className={className}
+        className={`${baseCls} ${className ?? ''}`}
         {...rest}
       />
       {showStats && optimizing && (
