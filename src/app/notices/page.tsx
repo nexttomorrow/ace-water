@@ -31,17 +31,34 @@ export default async function NoticesListPage({
     isAdmin = profile?.role === 'admin'
   }
 
+  // 조인 대신 분리 쿼리 — prod DB FK 추론 실패 케이스 회피
   const { data, error, count } = await supabase
     .from('notices')
-    .select('id, title, created_at, author_id, profiles:author_id ( nickname )', {
-      count: 'exact',
-    })
+    .select('id, title, created_at, author_id', { count: 'exact' })
     .order('created_at', { ascending: false })
     .range(from, to)
 
   const total = count ?? 0
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
   const currentPage = Math.min(page, totalPages)
+
+  const authorIds = Array.from(
+    new Set(
+      ((data ?? []) as Array<{ author_id: string | null }>)
+        .map((r) => r.author_id)
+        .filter((v): v is string => !!v)
+    )
+  )
+  const nicknameById = new Map<string, string>()
+  if (authorIds.length > 0) {
+    const { data: profs } = await supabase
+      .from('profiles')
+      .select('id, nickname')
+      .in('id', authorIds)
+    for (const p of (profs ?? []) as Array<{ id: string; nickname: string | null }>) {
+      if (p.nickname) nicknameById.set(p.id, p.nickname)
+    }
+  }
 
   return (
     <>
@@ -77,7 +94,7 @@ export default async function NoticesListPage({
         <>
           <ul className="divide-y divide-neutral-200 rounded border border-neutral-200 bg-white">
             {data.map((p) => {
-              const author = Array.isArray(p.profiles) ? p.profiles[0] : p.profiles
+              const nickname = p.author_id ? nicknameById.get(p.author_id) : null
               return (
                 <li key={p.id}>
                   <Link
@@ -91,7 +108,7 @@ export default async function NoticesListPage({
                       {p.title}
                     </span>
                     <span className="ml-3 shrink-0 text-xs text-neutral-500">
-                      {author?.nickname ?? '관리자'} ·{' '}
+                      {nickname ?? '관리자'} ·{' '}
                       {new Date(p.created_at).toLocaleDateString('ko-KR')}
                     </span>
                   </Link>

@@ -19,13 +19,27 @@ export default async function PostDetailPage({
     data: { user },
   } = await supabase.auth.getUser()
 
-  const { data: post } = await supabase
+  // 조인은 prod DB FK 추론에 의존해서 실패 케이스가 있음 → 분리 쿼리
+  const { data: post, error: postErr } = await supabase
     .from('posts')
-    .select('*, profiles:author_id ( nickname )')
+    .select('id, title, content, author_id, created_at, updated_at')
     .eq('id', postId)
-    .single()
+    .maybeSingle()
 
+  if (postErr) {
+    console.error('[post detail] fetch failed', postErr)
+  }
   if (!post) notFound()
+
+  let authorNickname: string | null = null
+  if (post.author_id) {
+    const { data: authorRow } = await supabase
+      .from('profiles')
+      .select('nickname')
+      .eq('id', post.author_id)
+      .maybeSingle()
+    authorNickname = authorRow?.nickname ?? null
+  }
 
   let isAdmin = false
   if (user) {
@@ -33,11 +47,10 @@ export default async function PostDetailPage({
       .from('profiles')
       .select('role')
       .eq('id', user.id)
-      .single()
+      .maybeSingle()
     isAdmin = profile?.role === 'admin'
   }
 
-  const author = Array.isArray(post.profiles) ? post.profiles[0] : post.profiles
   const canModify = !!user && (user.id === post.author_id || isAdmin)
 
   const handleDelete = deletePost.bind(null, postId)
@@ -47,7 +60,7 @@ export default async function PostDetailPage({
       <header className="mb-5 border-b border-neutral-200 pb-4">
         <h1 className="text-2xl font-bold">{post.title}</h1>
         <p className="mt-1 text-xs text-neutral-500">
-          {author?.nickname ?? '익명'} · {new Date(post.created_at).toLocaleString('ko-KR')}
+          {authorNickname ?? '익명'} · {new Date(post.created_at).toLocaleString('ko-KR')}
           {post.updated_at !== post.created_at && (
             <> · 수정됨 {new Date(post.updated_at).toLocaleString('ko-KR')}</>
           )}

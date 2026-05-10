@@ -6,28 +6,40 @@ export const revalidate = 0
 
 export default async function AdminNoticesPage() {
   const supabase = await createClient()
+  // prod DB FK 추론 회피 — 분리 쿼리
   const { data } = await supabase
     .from('notices')
-    .select('id, title, created_at, author_id, profiles:author_id ( nickname )')
+    .select('id, title, created_at, author_id')
     .order('created_at', { ascending: false })
 
   type Row = {
     id: number
     title: string
     created_at: string
-    author_id: string
-    profiles?: { nickname: string | null } | { nickname: string | null }[] | null
+    author_id: string | null
+  }
+  const rows = (data ?? []) as Row[]
+
+  const authorIds = Array.from(
+    new Set(rows.map((r) => r.author_id).filter((v): v is string => !!v))
+  )
+  const nicknameById = new Map<string, string>()
+  if (authorIds.length > 0) {
+    const { data: profs } = await supabase
+      .from('profiles')
+      .select('id, nickname')
+      .in('id', authorIds)
+    for (const p of (profs ?? []) as Array<{ id: string; nickname: string | null }>) {
+      if (p.nickname) nicknameById.set(p.id, p.nickname)
+    }
   }
 
-  const notices = ((data ?? []) as Row[]).map((p) => {
-    const author = Array.isArray(p.profiles) ? p.profiles[0] : p.profiles
-    return {
-      id: p.id,
-      title: p.title,
-      created_at: p.created_at,
-      authorNickname: author?.nickname ?? null,
-    }
-  })
+  const notices = rows.map((p) => ({
+    id: p.id,
+    title: p.title,
+    created_at: p.created_at,
+    authorNickname: p.author_id ? nicknameById.get(p.author_id) ?? null : null,
+  }))
 
   return (
     <div className="mx-auto max-w-[1440px] px-6 py-12">

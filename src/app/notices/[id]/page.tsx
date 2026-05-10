@@ -19,13 +19,27 @@ export default async function NoticeDetailPage({
     data: { user },
   } = await supabase.auth.getUser()
 
-  const { data: notice } = await supabase
+  // 조인은 prod DB 의 FK 관계 추론에 의존해서 실패 케이스가 있음 → 분리 쿼리
+  const { data: notice, error: noticeErr } = await supabase
     .from('notices')
-    .select('*, profiles:author_id ( nickname )')
+    .select('id, title, content, author_id, created_at, updated_at')
     .eq('id', noticeId)
-    .single()
+    .maybeSingle()
 
+  if (noticeErr) {
+    console.error('[notice detail] fetch failed', noticeErr)
+  }
   if (!notice) notFound()
+
+  let authorNickname: string | null = null
+  if (notice.author_id) {
+    const { data: authorRow } = await supabase
+      .from('profiles')
+      .select('nickname')
+      .eq('id', notice.author_id)
+      .maybeSingle()
+    authorNickname = authorRow?.nickname ?? null
+  }
 
   let isAdmin = false
   if (user) {
@@ -33,11 +47,10 @@ export default async function NoticeDetailPage({
       .from('profiles')
       .select('role')
       .eq('id', user.id)
-      .single()
+      .maybeSingle()
     isAdmin = profile?.role === 'admin'
   }
 
-  const author = Array.isArray(notice.profiles) ? notice.profiles[0] : notice.profiles
   const canModify = isAdmin
 
   const handleDelete = deleteNotice.bind(null, noticeId)
@@ -52,7 +65,7 @@ export default async function NoticeDetailPage({
         </div>
         <h1 className="text-2xl font-bold">{notice.title}</h1>
         <p className="mt-1 text-xs text-neutral-500">
-          {author?.nickname ?? '관리자'} · {new Date(notice.created_at).toLocaleString('ko-KR')}
+          {authorNickname ?? '관리자'} · {new Date(notice.created_at).toLocaleString('ko-KR')}
           {notice.updated_at !== notice.created_at && (
             <> · 수정됨 {new Date(notice.updated_at).toLocaleString('ko-KR')}</>
           )}
