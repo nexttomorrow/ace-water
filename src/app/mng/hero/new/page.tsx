@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { createHeroSlide } from '../../actions'
 import OptimizedImageInput from '@/components/OptimizedImageInput'
+import HeroDurationField from '@/components/HeroDurationField'
 import { HERO_SLIDES_MAX } from '@/lib/types'
 
 export default async function NewHeroSlidePage({
@@ -67,6 +68,13 @@ export default async function NewHeroSlidePage({
             작은 숫자가 먼저 표시돼요
           </span>
         </label>
+        <div className="flex flex-col text-sm">
+          슬라이드 속도
+          <HeroDurationField />
+          <span className="mt-1 text-[0.75rem] text-neutral-500">
+            이 슬라이드가 다음으로 넘어가기까지의 시간이에요
+          </span>
+        </div>
         <label className="flex flex-col text-sm">
           이미지
           <OptimizedImageInput

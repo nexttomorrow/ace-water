@@ -8,6 +8,7 @@ create table if not exists public.hero_slides (
   title       text not null,
   image_path  text not null,
   sort_order  int  not null default 0,
+  duration_ms int  not null default 5000,
   created_at  timestamptz not null default now()
 );
 

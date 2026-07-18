@@ -6,8 +6,12 @@ import { createClient } from '@/lib/supabase/server'
 import {
   HERO_SLIDES_MAX,
   CASE_ADDITIONAL_MAX,
+  QUICK_MENU_MAX,
+  QUICK_MENU_TITLE_MAX,
+  clampHeroDuration,
   type EstimateStatus,
 } from '@/lib/types'
+import { normalizeIconKey } from '@/lib/quickMenuIcons'
 
 async function ensureAdmin() {
   const supabase = await createClient()
@@ -771,6 +775,7 @@ export async function createHeroSlide(formData: FormData) {
   const eyebrow = String(formData.get('eyebrow') ?? '').trim()
   const title = String(formData.get('title') ?? '').trim()
   const sortOrder = Number(formData.get('sort_order') ?? 0) || 0
+  const durationMs = clampHeroDuration(formData.get('duration_ms'))
   const file = formData.get('image') as File | null
 
   if (!title || !file || file.size === 0) {
@@ -802,6 +807,7 @@ export async function createHeroSlide(formData: FormData) {
     title,
     image_path: path,
     sort_order: sortOrder,
+    duration_ms: durationMs,
   })
   if (error) {
     await supabase.storage.from('hero').remove([path])
@@ -819,6 +825,7 @@ export async function updateHeroSlide(id: number, formData: FormData) {
   const eyebrow = String(formData.get('eyebrow') ?? '').trim()
   const title = String(formData.get('title') ?? '').trim()
   const sortOrder = Number(formData.get('sort_order') ?? 0) || 0
+  const durationMs = clampHeroDuration(formData.get('duration_ms'))
   const file = formData.get('image') as File | null
 
   if (!title) {
@@ -829,11 +836,13 @@ export async function updateHeroSlide(id: number, formData: FormData) {
     eyebrow: string
     title: string
     sort_order: number
+    duration_ms: number
     image_path?: string
   } = {
     eyebrow,
     title,
     sort_order: sortOrder,
+    duration_ms: durationMs,
   }
 
   let oldPath: string | null = null
@@ -888,6 +897,75 @@ export async function deleteHeroSlide(id: number) {
 
   revalidatePath('/mng/hero')
   revalidatePath('/')
+}
+
+// ---------- quick menu (우측 플로팅) ----------
+
+function parseQuickMenuFields(formData: FormData) {
+  const title = String(formData.get('title') ?? '')
+    .trim()
+    .slice(0, QUICK_MENU_TITLE_MAX)
+  const href = String(formData.get('href') ?? '').trim()
+  const iconKey = normalizeIconKey(formData.get('icon_key'))
+  const sortOrder = Number(formData.get('sort_order') ?? 0) || 0
+  return { title, href, icon_key: iconKey, sort_order: sortOrder }
+}
+
+export async function createQuickMenuItem(formData: FormData) {
+  const { supabase } = await ensureAdmin()
+  const fields = parseQuickMenuFields(formData)
+
+  if (!fields.title || !fields.href) {
+    redirect('/mng/quick-menu/new?error=' + encodeURIComponent('타이틀과 링크를 입력해주세요'))
+  }
+
+  const { count } = await supabase
+    .from('quick_menu_items')
+    .select('*', { count: 'exact', head: true })
+  if ((count ?? 0) >= QUICK_MENU_MAX) {
+    redirect(
+      '/mng/quick-menu/new?error=' +
+        encodeURIComponent(`퀵메뉴는 최대 ${QUICK_MENU_MAX}개까지 등록할 수 있어요`)
+    )
+  }
+
+  const { error } = await supabase.from('quick_menu_items').insert(fields)
+  if (error) {
+    redirect('/mng/quick-menu/new?error=' + encodeURIComponent(error.message))
+  }
+
+  revalidatePath('/mng/quick-menu')
+  revalidatePath('/', 'layout')
+  redirect('/mng/quick-menu')
+}
+
+export async function updateQuickMenuItem(id: number, formData: FormData) {
+  const { supabase } = await ensureAdmin()
+  const fields = parseQuickMenuFields(formData)
+
+  if (!fields.title || !fields.href) {
+    redirect(
+      `/mng/quick-menu/${id}/edit?error=` + encodeURIComponent('타이틀과 링크를 입력해주세요')
+    )
+  }
+
+  const { error } = await supabase.from('quick_menu_items').update(fields).eq('id', id)
+  if (error) {
+    redirect(`/mng/quick-menu/${id}/edit?error=` + encodeURIComponent(error.message))
+  }
+
+  revalidatePath('/mng/quick-menu')
+  revalidatePath('/', 'layout')
+  redirect('/mng/quick-menu')
+}
+
+export async function deleteQuickMenuItem(id: number) {
+  const { supabase } = await ensureAdmin()
+  const { error } = await supabase.from('quick_menu_items').delete().eq('id', id)
+  if (error) throw new Error(error.message)
+
+  revalidatePath('/mng/quick-menu')
+  revalidatePath('/', 'layout')
 }
 
 // ---------- subpage banner (banner fields only) ----------

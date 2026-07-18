@@ -235,11 +235,46 @@ export type HeroSlide = {
   title: string
   image_path: string
   sort_order: number
+  /** 해당 슬라이드가 화면에 머무는 시간(ms) */
+  duration_ms: number
   created_at: string
 }
 
 export const HERO_SLIDES_MAX = 6
+
+// ───────────── 히어로 슬라이드 속도(표시 시간) ─────────────
+/** 슬라이드 표시 시간 기본값 (ms) */
+export const HERO_DURATION_DEFAULT_MS = 5000
+/** 최소 표시 시간 (ms) — 2초 */
+export const HERO_DURATION_MIN_MS = 2000
+/** 최대 표시 시간 (ms) — 12초 */
+export const HERO_DURATION_MAX_MS = 12000
+/** 슬라이드 전환(페이드) 시간 (ms) */
+export const HERO_TRANSITION_MS = 900
+
+/** 입력값을 허용 범위(ms)로 보정. 유효하지 않으면 기본값. */
+export function clampHeroDuration(value: unknown): number {
+  const n = Math.round(Number(value))
+  if (!Number.isFinite(n)) return HERO_DURATION_DEFAULT_MS
+  return Math.min(HERO_DURATION_MAX_MS, Math.max(HERO_DURATION_MIN_MS, n))
+}
 export const CASE_ADDITIONAL_MAX = 8
+
+// ───────────── 퀵메뉴 (우측 플로팅) ─────────────
+
+export type QuickMenuItem = {
+  id: number
+  title: string
+  href: string
+  icon_key: string
+  sort_order: number
+  created_at: string
+}
+
+/** 퀵메뉴 최대 개수 */
+export const QUICK_MENU_MAX = 8
+/** 퀵메뉴 타이틀 최대 글자수 */
+export const QUICK_MENU_TITLE_MAX = 10
 
 // ───────────── 견적/도면 문의 ─────────────
 

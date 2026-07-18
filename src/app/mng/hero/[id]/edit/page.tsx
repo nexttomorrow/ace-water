@@ -4,7 +4,8 @@ import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { updateHeroSlide } from '../../../actions'
 import OptimizedImageInput from '@/components/OptimizedImageInput'
-import type { HeroSlide } from '@/lib/types'
+import HeroDurationField from '@/components/HeroDurationField'
+import { HERO_DURATION_DEFAULT_MS, type HeroSlide } from '@/lib/types'
 
 export default async function EditHeroSlidePage({
   params,
@@ -76,6 +77,15 @@ export default async function EditHeroSlidePage({
             className="mt-1 rounded border border-neutral-300 bg-white px-3 py-2"
           />
         </label>
+        <div className="flex flex-col text-sm">
+          슬라이드 속도
+          <HeroDurationField
+            defaultValueMs={slide.duration_ms ?? HERO_DURATION_DEFAULT_MS}
+          />
+          <span className="mt-1 text-[0.75rem] text-neutral-500">
+            이 슬라이드가 다음으로 넘어가기까지의 시간이에요
+          </span>
+        </div>
         <label className="flex flex-col text-sm">
           이미지 교체 (선택)
           <OptimizedImageInput

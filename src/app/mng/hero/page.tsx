@@ -2,7 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/server'
 import { deleteHeroSlide } from '../actions'
-import { HERO_SLIDES_MAX, type HeroSlide } from '@/lib/types'
+import { HERO_SLIDES_MAX, HERO_DURATION_DEFAULT_MS, type HeroSlide } from '@/lib/types'
 
 export const revalidate = 0
 
@@ -64,6 +64,16 @@ export default async function AdminHeroPage() {
                   />
                   <span className="absolute left-2 top-2 rounded bg-black/70 px-2 py-0.5 text-[0.75rem] font-semibold text-white">
                     #{slide.sort_order}
+                  </span>
+                  <span className="absolute right-2 top-2 flex items-center gap-1 rounded bg-black/70 px-2 py-0.5 text-[0.6875rem] font-semibold text-white">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="9" />
+                      <path d="M12 7v5l3 2" />
+                    </svg>
+                    {((slide.duration_ms ?? HERO_DURATION_DEFAULT_MS) / 1000)
+                      .toFixed(1)
+                      .replace(/\.0$/, '')}
+                    초
                   </span>
                 </div>
                 <div className="px-4 py-3">

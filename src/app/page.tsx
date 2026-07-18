@@ -103,6 +103,7 @@ export default async function Home() {
           src: heroPublicUrl(s.image_path),
           eyebrow: s.eyebrow || undefined,
           title: s.title,
+          duration: s.duration_ms,
         }))
       : fallbackHero
 
