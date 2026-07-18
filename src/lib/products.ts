@@ -20,7 +20,7 @@ export const PRODUCT_ROOT_NAME = '제품안내'
  * 구성품 카테고리 이름.
  * 제품 등록 폼의 "구성품" 검색 모달에서 이 카테고리에 속한 제품만 노출됨.
  */
-export const COMPONENT_CATEGORY_NAME = '부속품'
+export const COMPONENT_CATEGORY_NAME = '구성품'
 
 /**
  * 시공사례에서 사용할 카테고리 목록.
@@ -122,7 +122,7 @@ export async function fetchProductOptions(): Promise<ProductOption[]> {
 
 /**
  * 제품 등록 폼의 "구성품" 검색 모달용 데이터.
- * "부속품" 카테고리에 속한 활성 제품만 반환.
+ * "구성품" 카테고리에 속한 활성 제품만 반환.
  * 자기 자신은 제외 가능 (excludeId).
  */
 export async function fetchLinkableProductsForPicker(
@@ -130,7 +130,7 @@ export async function fetchLinkableProductsForPicker(
 ): Promise<LinkableProductOption[]> {
   const supabase = await createClient()
 
-  // 1) "부속품" 카테고리 id 찾기 — 못 찾으면 빈 배열
+  // 1) "구성품" 카테고리 id 찾기 — 못 찾으면 빈 배열
   const { data: componentCat } = await supabase
     .from('categories')
     .select('id')

@@ -2,7 +2,7 @@
 
 /**
  * 제품 등록·수정 폼의 "구성품" 입력에서 사용하는 검색 모달.
- * 자유 입력이 아닌, 등록된 활성 제품(=부속품) 중에서만 골라 추가.
+ * 자유 입력이 아닌, 등록된 활성 제품(=구성품) 중에서만 골라 추가.
  *
  * - 카테고리 필터 + 검색 + 멀티 체크
  * - 이미 추가된 제품은 비활성 (중복 방지)
@@ -142,7 +142,7 @@ export default function ComponentPickerModal({
               Pick Component
             </p>
             <h2 className="mt-0.5 text-[1.125rem] font-bold tracking-tight">
-              부속품 선택
+              구성품 선택
               <span className="ml-2 rounded-full bg-neutral-100 px-2 py-0.5 text-[0.75rem] font-mono text-neutral-600">
                 {selectedIds.size}
               </span>
@@ -208,7 +208,7 @@ export default function ComponentPickerModal({
         <div className="flex-1 overflow-y-auto px-6 py-4">
           {options.length === 0 ? (
             <p className="px-4 py-12 text-center text-[0.875rem] text-neutral-500">
-              등록된 부속품이 없습니다. 먼저 제품을 등록해주세요.
+              등록된 구성품이 없습니다. 먼저 제품을 등록해주세요.
             </p>
           ) : grouped.length === 0 ? (
             <p className="px-4 py-12 text-center text-[0.875rem] text-neutral-500">
