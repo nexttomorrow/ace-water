@@ -1,6 +1,11 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import Image from 'next/image'
+import { CERTIFICATIONS_INITIAL_VISIBLE, type Certification } from '@/lib/types'
+
+const certImageUrl = (path: string) =>
+  `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/certifications/${path}`
 
 function useReveal<T extends HTMLElement = HTMLDivElement>(threshold = 0.2) {
   const ref = useRef<T>(null)
@@ -23,7 +28,11 @@ function useReveal<T extends HTMLElement = HTMLDivElement>(threshold = 0.2) {
   return { ref, shown }
 }
 
-export default function CompanyIntro() {
+export default function CompanyIntro({
+  certifications = [],
+}: {
+  certifications?: Certification[]
+}) {
   return (
     <main className="bg-white text-neutral-900">
       <Hero />
@@ -31,7 +40,7 @@ export default function CompanyIntro() {
       <CeoMessage />
       <ByTheNumbers />
       <BusinessAreas />
-      <Certifications />
+      <Certifications items={certifications} />
     </main>
   )
 }
@@ -378,8 +387,18 @@ function BusinessAreas() {
 
 // ───────────────────────── 6) CERTIFICATIONS ─────────────────────────
 
-function Certifications() {
+function Certifications({ items }: { items: Certification[] }) {
   const { ref, shown } = useReveal<HTMLElement>(0.15)
+  const [expanded, setExpanded] = useState(false)
+  /** 라이트박스에 띄운 인증서 인덱스 (null 이면 닫힘) */
+  const [viewerIndex, setViewerIndex] = useState<number | null>(null)
+
+  // 등록된 인증서가 없으면 섹션 자체를 감춥니다.
+  if (items.length === 0) return null
+
+  const hasMore = items.length > CERTIFICATIONS_INITIAL_VISIBLE
+  const visible = expanded ? items : items.slice(0, CERTIFICATIONS_INITIAL_VISIBLE)
+
   return (
     <section ref={ref} className="border-t border-neutral-100">
       <div className="mx-auto max-w-[1200px] px-6 py-24 md:py-32">
@@ -400,39 +419,205 @@ function Certifications() {
           </h2>
         </header>
 
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-6 md:gap-4">
-          {Array.from({ length: 12 }).map((_, i) => (
-            <div
-              key={i}
-              className="group aspect-[3/4] cursor-pointer overflow-hidden rounded-md bg-white ring-1 ring-neutral-200 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_32px_-16px_rgba(0,0,0,0.18)] hover:ring-blue-300"
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5 md:gap-4">
+          {visible.map((cert, i) => (
+            <button
+              key={cert.id}
+              type="button"
+              onClick={() => setViewerIndex(i)}
+              aria-label={`${cert.title} 인증서 크게 보기`}
+              className="group flex cursor-pointer flex-col overflow-hidden rounded-md bg-white text-left ring-1 ring-neutral-200 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_32px_-16px_rgba(0,0,0,0.18)] hover:ring-blue-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               style={{
+                // 접혀 있던 항목이 펼쳐질 땐 등장 지연 없이 바로 보이게 합니다.
                 opacity: shown ? 1 : 0,
                 transform: shown ? 'translateY(0)' : 'translateY(16px)',
                 transition: 'opacity 700ms ease, transform 700ms ease',
-                transitionDelay: shown ? `${200 + i * 50}ms` : '0ms',
+                transitionDelay:
+                  shown && i < CERTIFICATIONS_INITIAL_VISIBLE ? `${200 + i * 50}ms` : '0ms',
               }}
             >
-              <div className="flex h-full flex-col items-center justify-center text-neutral-400">
-                <svg
-                  width="32"
-                  height="32"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.3"
-                  className="transition-all duration-300 group-hover:scale-110 group-hover:text-blue-500"
-                >
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                  <path d="M14 2v6h6M9 13l2 2 4-4" />
-                </svg>
-                <span className="mt-3 text-[0.75rem] font-medium tracking-wide group-hover:text-blue-700">
-                  Cert {String(i + 1).padStart(2, '0')}
-                </span>
+              <div className="relative aspect-[3/4] w-full overflow-hidden bg-neutral-50">
+                <Image
+                  src={certImageUrl(cert.image_path)}
+                  alt={cert.title}
+                  fill
+                  sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 20vw"
+                  className="object-contain transition-transform duration-300 group-hover:scale-[1.04]"
+                  unoptimized
+                />
               </div>
-            </div>
+              <div className="border-t border-neutral-100 px-3 py-3">
+                <p className="line-clamp-2 text-[0.8125rem] font-semibold leading-snug tracking-wide text-neutral-700 transition group-hover:text-blue-700">
+                  {cert.title}
+                </p>
+                {cert.subtitle && (
+                  <p className="mt-1 line-clamp-1 text-[0.6875rem] text-neutral-400">
+                    {cert.subtitle}
+                  </p>
+                )}
+              </div>
+            </button>
           ))}
         </div>
+
+        {hasMore && (
+          <div className="mt-10 flex justify-center">
+            <button
+              type="button"
+              onClick={() => setExpanded((v) => !v)}
+              className="group inline-flex items-center gap-2 rounded-full border border-neutral-300 px-6 py-3 text-[0.875rem] font-semibold text-neutral-700 transition-all duration-300 hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700"
+            >
+              {expanded ? '접기' : `더보기 (${items.length - CERTIFICATIONS_INITIAL_VISIBLE})`}
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className={`transition-transform duration-300 ${expanded ? 'rotate-180' : ''}`}
+              >
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </button>
+          </div>
+        )}
       </div>
+
+      {viewerIndex !== null && (
+        <CertificationViewer
+          items={visible}
+          index={viewerIndex}
+          onIndexChange={setViewerIndex}
+          onClose={() => setViewerIndex(null)}
+        />
+      )}
     </section>
+  )
+}
+
+/** 인증서 확대 보기 — 배경/ESC 로 닫고, 좌우 키·버튼으로 이동. */
+function CertificationViewer({
+  items,
+  index,
+  onIndexChange,
+  onClose,
+}: {
+  items: Certification[]
+  index: number
+  onIndexChange: (i: number) => void
+  onClose: () => void
+}) {
+  const cert = items[index]
+
+  const go = useCallback(
+    (delta: number) => {
+      onIndexChange((index + delta + items.length) % items.length)
+    },
+    [index, items.length, onIndexChange]
+  )
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+      else if (e.key === 'ArrowRight') go(1)
+      else if (e.key === 'ArrowLeft') go(-1)
+    }
+    window.addEventListener('keydown', onKey)
+    // 뒤 배경 스크롤 잠금
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      document.body.style.overflow = prevOverflow
+    }
+  }, [go, onClose])
+
+  if (!cert) return null
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={cert.title}
+      onClick={onClose}
+      className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/85 p-4 backdrop-blur-sm md:p-8"
+    >
+      <button
+        type="button"
+        onClick={onClose}
+        aria-label="닫기"
+        className="absolute right-4 top-4 rounded-full p-2 text-white/70 transition hover:bg-white/10 hover:text-white md:right-6 md:top-6"
+      >
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+          <path d="M18 6 6 18M6 6l12 12" />
+        </svg>
+      </button>
+
+      {items.length > 1 && (
+        <>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation()
+              go(-1)
+            }}
+            aria-label="이전 인증서"
+            className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full p-3 text-white/70 transition hover:bg-white/10 hover:text-white md:left-6"
+          >
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="m15 18-6-6 6-6" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation()
+              go(1)
+            }}
+            aria-label="다음 인증서"
+            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-3 text-white/70 transition hover:bg-white/10 hover:text-white md:right-6"
+          >
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="m9 18 6-6-6-6" />
+            </svg>
+          </button>
+        </>
+      )}
+
+      {/* 이미지 영역 — 배경 클릭으로 닫히지 않도록 이벤트 차단 */}
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="relative flex max-h-[78vh] w-full max-w-[860px] flex-1 items-center justify-center"
+      >
+        <Image
+          key={cert.id}
+          src={certImageUrl(cert.image_path)}
+          alt={cert.title}
+          width={1600}
+          height={2200}
+          className="max-h-[78vh] w-auto max-w-full rounded-sm bg-white object-contain shadow-2xl"
+          unoptimized
+          priority
+        />
+      </div>
+
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="mt-5 shrink-0 text-center text-white"
+      >
+        <p className="text-[1.0625rem] font-bold tracking-tight">{cert.title}</p>
+        {cert.subtitle && (
+          <p className="mt-1 text-[0.8125rem] text-white/60">{cert.subtitle}</p>
+        )}
+        {items.length > 1 && (
+          <p className="mt-3 text-[0.75rem] tracking-[0.2em] text-white/40">
+            {index + 1} / {items.length}
+          </p>
+        )}
+      </div>
+    </div>
   )
 }

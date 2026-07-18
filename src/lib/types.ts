@@ -260,6 +260,22 @@ export function clampHeroDuration(value: unknown): number {
 }
 export const CASE_ADDITIONAL_MAX = 8
 
+// ───────────── 인증서 (회사소개 하단) ─────────────
+
+export type Certification = {
+  id: number
+  title: string
+  subtitle: string
+  image_path: string
+  sort_order: number
+  created_at: string
+}
+
+/** 인증서 그리드 한 줄에 표시하는 개수 */
+export const CERTIFICATIONS_PER_ROW = 5
+/** "더보기" 없이 처음 보여주는 개수 (2줄) */
+export const CERTIFICATIONS_INITIAL_VISIBLE = CERTIFICATIONS_PER_ROW * 2
+
 // ───────────── 퀵메뉴 (우측 플로팅) ─────────────
 
 export type QuickMenuItem = {
