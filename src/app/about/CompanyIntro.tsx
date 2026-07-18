@@ -387,11 +387,35 @@ function BusinessAreas() {
 
 // ───────────────────────── 6) CERTIFICATIONS ─────────────────────────
 
+/** 더보기로 펼쳐지는 항목의 등장/퇴장 시간 (ms) */
+const CERT_REVEAL_MS = 380
+
 function Certifications({ items }: { items: Certification[] }) {
   const { ref, shown } = useReveal<HTMLElement>(0.15)
+  /** 초과 항목의 DOM 마운트 여부 */
   const [expanded, setExpanded] = useState(false)
+  /** 초과 항목의 페이드 상태 — 마운트 직후 한 프레임 뒤에 켜야 트랜지션이 걸립니다 */
+  const [extraShown, setExtraShown] = useState(false)
   /** 라이트박스에 띄운 인증서 인덱스 (null 이면 닫힘) */
   const [viewerIndex, setViewerIndex] = useState<number | null>(null)
+  const collapseTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (collapseTimer.current) clearTimeout(collapseTimer.current)
+    }
+  }, [])
+
+  const toggleExpanded = () => {
+    if (collapseTimer.current) clearTimeout(collapseTimer.current)
+    if (!expanded) {
+      setExpanded(true) // 먼저 마운트(투명 상태)
+      requestAnimationFrame(() => requestAnimationFrame(() => setExtraShown(true)))
+    } else {
+      setExtraShown(false) // 페이드 아웃 후 언마운트
+      collapseTimer.current = setTimeout(() => setExpanded(false), CERT_REVEAL_MS)
+    }
+  }
 
   // 등록된 인증서가 없으면 섹션 자체를 감춥니다.
   if (items.length === 0) return null
@@ -427,14 +451,26 @@ function Certifications({ items }: { items: Certification[] }) {
               onClick={() => setViewerIndex(i)}
               aria-label={`${cert.title} 인증서 크게 보기`}
               className="group flex cursor-pointer flex-col overflow-hidden rounded-md bg-white text-left ring-1 ring-neutral-200 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_32px_-16px_rgba(0,0,0,0.18)] hover:ring-blue-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-              style={{
-                // 접혀 있던 항목이 펼쳐질 땐 등장 지연 없이 바로 보이게 합니다.
-                opacity: shown ? 1 : 0,
-                transform: shown ? 'translateY(0)' : 'translateY(16px)',
-                transition: 'opacity 700ms ease, transform 700ms ease',
-                transitionDelay:
-                  shown && i < CERTIFICATIONS_INITIAL_VISIBLE ? `${200 + i * 50}ms` : '0ms',
-              }}
+              style={(() => {
+                const isExtra = i >= CERTIFICATIONS_INITIAL_VISIBLE
+                if (isExtra) {
+                  // 더보기로 펼쳐지는 항목 — 순차적으로 부드럽게 등장/퇴장
+                  const step = i - CERTIFICATIONS_INITIAL_VISIBLE
+                  return {
+                    opacity: extraShown ? 1 : 0,
+                    transform: extraShown ? 'translateY(0)' : 'translateY(12px)',
+                    transition: `opacity ${CERT_REVEAL_MS}ms ease, transform ${CERT_REVEAL_MS}ms ease`,
+                    // 접을 땐 지연 없이 한번에 사라지게
+                    transitionDelay: extraShown ? `${step * 40}ms` : '0ms',
+                  }
+                }
+                return {
+                  opacity: shown ? 1 : 0,
+                  transform: shown ? 'translateY(0)' : 'translateY(16px)',
+                  transition: 'opacity 700ms ease, transform 700ms ease',
+                  transitionDelay: shown ? `${200 + i * 50}ms` : '0ms',
+                }
+              })()}
             >
               <div className="relative aspect-[3/4] w-full overflow-hidden bg-neutral-50">
                 <Image
@@ -464,10 +500,10 @@ function Certifications({ items }: { items: Certification[] }) {
           <div className="mt-10 flex justify-center">
             <button
               type="button"
-              onClick={() => setExpanded((v) => !v)}
+              onClick={toggleExpanded}
               className="group inline-flex items-center gap-2 rounded-full border border-neutral-300 px-6 py-3 text-[0.875rem] font-semibold text-neutral-700 transition-all duration-300 hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700"
             >
-              {expanded ? '접기' : `더보기 (${items.length - CERTIFICATIONS_INITIAL_VISIBLE})`}
+              {extraShown ? '접기' : `더보기 (${items.length - CERTIFICATIONS_INITIAL_VISIBLE})`}
               <svg
                 width="16"
                 height="16"
@@ -477,7 +513,7 @@ function Certifications({ items }: { items: Certification[] }) {
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className={`transition-transform duration-300 ${expanded ? 'rotate-180' : ''}`}
+                className={`transition-transform duration-300 ${extraShown ? 'rotate-180' : ''}`}
               >
                 <path d="m6 9 6 6 6-6" />
               </svg>
@@ -511,6 +547,20 @@ function CertificationViewer({
   onClose: () => void
 }) {
   const cert = items[index]
+  /** 등장 애니메이션 — 마운트 후 한 프레임 뒤에 켭니다 */
+  const [entered, setEntered] = useState(false)
+  /** 닫는 중 (페이드 아웃이 끝난 뒤 실제로 언마운트) */
+  const [closing, setClosing] = useState(false)
+
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setEntered(true))
+    return () => cancelAnimationFrame(id)
+  }, [])
+
+  const close = useCallback(() => {
+    setClosing(true)
+    setTimeout(onClose, 220)
+  }, [onClose])
 
   const go = useCallback(
     (delta: number) => {
@@ -521,7 +571,7 @@ function CertificationViewer({
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
+      if (e.key === 'Escape') close()
       else if (e.key === 'ArrowRight') go(1)
       else if (e.key === 'ArrowLeft') go(-1)
     }
@@ -533,7 +583,7 @@ function CertificationViewer({
       window.removeEventListener('keydown', onKey)
       document.body.style.overflow = prevOverflow
     }
-  }, [go, onClose])
+  }, [go, close])
 
   if (!cert) return null
 
@@ -542,12 +592,14 @@ function CertificationViewer({
       role="dialog"
       aria-modal="true"
       aria-label={cert.title}
-      onClick={onClose}
-      className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/85 p-4 backdrop-blur-sm md:p-8"
+      onClick={close}
+      className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/85 p-4 backdrop-blur-sm transition-opacity duration-200 ease-out md:p-8 ${
+        entered && !closing ? 'opacity-100' : 'opacity-0'
+      }`}
     >
       <button
         type="button"
-        onClick={onClose}
+        onClick={close}
         aria-label="닫기"
         className="absolute right-4 top-4 rounded-full p-2 text-white/70 transition hover:bg-white/10 hover:text-white md:right-6 md:top-6"
       >
@@ -590,7 +642,9 @@ function CertificationViewer({
       {/* 이미지 영역 — 배경 클릭으로 닫히지 않도록 이벤트 차단 */}
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative flex max-h-[78vh] w-full max-w-[860px] flex-1 items-center justify-center"
+        className={`relative flex max-h-[78vh] w-full max-w-[860px] flex-1 items-center justify-center transition-all duration-300 ease-out ${
+          entered && !closing ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-3 scale-95 opacity-0'
+        }`}
       >
         <Image
           key={cert.id}
@@ -606,7 +660,9 @@ function CertificationViewer({
 
       <div
         onClick={(e) => e.stopPropagation()}
-        className="mt-5 shrink-0 text-center text-white"
+        className={`mt-5 shrink-0 text-center text-white transition-all duration-300 ease-out ${
+          entered && !closing ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
+        }`}
       >
         <p className="text-[1.0625rem] font-bold tracking-tight">{cert.title}</p>
         {cert.subtitle && (
