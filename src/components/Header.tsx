@@ -4,6 +4,11 @@ import MainNav, { type NavTopCategory } from './MainNav'
 import NoticeTicker, { type TickerNotice } from './NoticeTicker'
 import { applyProductCategoryHrefs } from '@/lib/products'
 import type { Category } from '@/lib/types'
+import {
+  SITE_LOGO_TEXT_KEY,
+  SITE_LOGO_IMAGE_KEY,
+  SITE_LOGO_DEFAULT_TEXT,
+} from '@/lib/types'
 
 export default async function Header() {
   const supabase = await createClient()
@@ -52,6 +57,18 @@ export default async function Header() {
     .limit(5)
   const tickerNotices: TickerNotice[] = (noticeData ?? []) as TickerNotice[]
 
+  // 사이트 로고 설정 (테이블/행이 없어도 안전하게 기본 텍스트로 폴백)
+  const { data: logoRows } = await supabase
+    .from('site_settings')
+    .select('key, value')
+    .in('key', [SITE_LOGO_TEXT_KEY, SITE_LOGO_IMAGE_KEY])
+  const logoMap = new Map((logoRows ?? []).map((r) => [r.key as string, r.value as string]))
+  const logoText = logoMap.get(SITE_LOGO_TEXT_KEY)?.trim() || SITE_LOGO_DEFAULT_TEXT
+  const logoImagePath = logoMap.get(SITE_LOGO_IMAGE_KEY)?.trim() || null
+  const logoImageUrl = logoImagePath
+    ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/site/${logoImagePath}`
+    : null
+
   return (
     // CSS 변수 --site-header-h 로 헤더 총 높이를 노출 → StickySubmenuTabs 등 스크롤 동기화 컴포넌트가 참조.
     // 모바일: top utility 36 + main nav 64 = 100
@@ -97,6 +114,8 @@ export default async function Header() {
         isAdmin={isAdmin}
         nickname={nickname}
         email={user?.email ?? null}
+        logoText={logoText}
+        logoImageUrl={logoImageUrl}
       />
     </header>
   )

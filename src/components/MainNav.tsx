@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { logout } from '@/app/login/actions'
 import type { Category } from '@/lib/types'
+import SearchOverlay from './SearchOverlay'
 
 export type NavTopCategory = Category & {
   tiles: Category[]
@@ -18,13 +19,26 @@ type Props = {
   isAdmin: boolean
   nickname: string | null
   email: string | null
+  /** 헤더 로고 텍스트 (이미지가 없을 때 노출) */
+  logoText: string
+  /** 헤더 로고 이미지 URL (있으면 이미지 우선) */
+  logoImageUrl: string | null
 }
 
-export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, email }: Props) {
+export default function MainNav({
+  categories,
+  isLoggedIn,
+  isAdmin,
+  nickname,
+  email,
+  logoText,
+  logoImageUrl,
+}: Props) {
   const [activeId, setActiveId] = useState<number | null>(null)
   const [displayedId, setDisplayedId] = useState<number | null>(null)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [expandedMobileId, setExpandedMobileId] = useState<number | null>(null)
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
   const active = categories.find((c) => c.id === activeId) ?? null
   const displayed = categories.find((c) => c.id === displayedId) ?? null
   const hasMega =
@@ -72,10 +86,23 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
 
       <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between px-6 md:h-[72px]">
         <Link href="/" className="shrink-0" onMouseEnter={() => setActiveId(null)}>
-          <span className="text-[1.375rem] font-extrabold tracking-tight text-black">ACEWATER</span>
+          {logoImageUrl ? (
+            // 업로드 로고 — 임의 크기 이미지라 next/image 대신 <img>, 높이 고정 + 가로 비율 자동
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={logoImageUrl}
+              alt={logoText}
+              className="h-8 w-auto object-contain"
+              draggable={false}
+            />
+          ) : (
+            <span className="text-[1.375rem] font-extrabold tracking-tight text-black">
+              {logoText}
+            </span>
+          )}
         </Link>
 
-        <nav className="ml-3 hidden flex-1 items-center min-[1022px]:flex">
+        <nav className="hidden flex-1 items-center justify-center min-[1022px]:flex">
           {categories.length === 0 ? (
             <div className="px-3 py-3 text-[0.875rem] text-neutral-400">
               {isAdmin ? '메뉴를 추가해주세요' : '메뉴 준비 중'}
@@ -153,7 +180,9 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
           </button>
 
           <button
+            type="button"
             aria-label="검색"
+            onClick={() => setIsSearchOpen(true)}
             className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-neutral-100"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -183,6 +212,9 @@ export default function MainNav({ categories, isLoggedIn, isAdmin, nickname, ema
           ) : null}
         </div>
       </div>
+
+      {/* 통합검색 오버레이 */}
+      {isSearchOpen && <SearchOverlay onClose={() => setIsSearchOpen(false)} />}
 
       {/* MOBILE PANEL */}
       {isMobileMenuOpen && (

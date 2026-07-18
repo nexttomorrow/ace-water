@@ -31,7 +31,7 @@ export default function SectionHeader({
       {moreHref && (
         <Link
           href={moreHref}
-          className="shrink-0 text-[0.875rem] font-medium text-neutral-500 transition hover:text-black"
+          className="shrink-0 inline-flex items-center gap-1 rounded-full border border-neutral-300 px-4 py-2 text-[0.8125rem] font-medium text-neutral-600 transition hover:border-neutral-900 hover:bg-neutral-900 hover:text-white"
         >
           {moreLabel}
         </Link>

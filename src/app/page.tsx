@@ -1,12 +1,14 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/server'
-import type { HeroSlide, GalleryItem, Product } from '@/lib/types'
+import type { HeroSlide, GalleryItem, Product, ClientLogo } from '@/lib/types'
+import { CLIENTS_SECTION_ENABLED_KEY } from '@/lib/types'
 import HeroSlider, { type HeroSliderItem } from '@/components/HeroSlider'
 import PortfolioSlider, { type PortfolioItem } from '@/components/PortfolioSlider'
 import SectionHeader from '@/components/SectionHeader'
-import ClientsMarquee from '@/components/ClientsMarquee'
-import ProductCard, { type ProductCardItem } from '@/components/ProductCard'
+import ClientsMarquee, { type MarqueeLogo } from '@/components/ClientsMarquee'
+import { type ProductCardItem } from '@/components/ProductCard'
+import ProductSlider from '@/components/ProductSlider'
 
 export const revalidate = 0
 
@@ -27,7 +29,13 @@ export default async function Home() {
     isAdmin = profile?.role === 'admin'
   }
 
-  const [{ data: heroData }, { data: caseData }, { data: productData }] = await Promise.all([
+  const [
+    { data: heroData },
+    { data: caseData },
+    { data: productData },
+    { data: clientLogoData },
+    { data: clientsSetting },
+  ] = await Promise.all([
     supabase
       .from('hero_slides')
       .select('*')
@@ -45,6 +53,19 @@ export default async function Home() {
       .eq('is_active', true)
       .order('sort_order', { ascending: true })
       .order('created_at', { ascending: false }),
+    // 고객사 로고 — 활성만, 노출 순서대로
+    supabase
+      .from('client_logos')
+      .select('id, name, image_path, link_url, sort_order')
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true })
+      .order('id', { ascending: true }),
+    // 고객사 섹션 on/off 설정 (없으면 기본 활성)
+    supabase
+      .from('site_settings')
+      .select('value')
+      .eq('key', CLIENTS_SECTION_ENABLED_KEY)
+      .maybeSingle(),
   ])
 
   const heroSlides = (heroData ?? []) as HeroSlide[]
@@ -53,6 +74,25 @@ export default async function Home() {
     Product,
     'id' | 'name' | 'model_name' | 'main_image_path' | 'tags'
   >[]
+
+  const clientsUrl = (path: string) =>
+    `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/clients/${path}`
+
+  const clientLogos: MarqueeLogo[] = (
+    (clientLogoData ?? []) as Pick<
+      ClientLogo,
+      'id' | 'name' | 'image_path' | 'link_url'
+    >[]
+  ).map((l) => ({
+    id: l.id,
+    name: l.name,
+    src: clientsUrl(l.image_path),
+    href: l.link_url,
+  }))
+
+  // 설정 미존재(null) 이면 기본 활성. 'false' 문자열일 때만 비활성.
+  const clientsSectionEnabled = clientsSetting?.value !== 'false'
+  const showClients = clientsSectionEnabled && clientLogos.length > 0
 
   const productImageUrl = (path: string) =>
     `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/products/${path}`
@@ -71,14 +111,15 @@ export default async function Home() {
     tags: p.tags ?? [],
   })
 
+  // 최대 12개까지 노출 — 화면에 보이는 개수(베스트 4/신제품 3)보다 많으면 슬라이드로 넘겨봄
   const bestSellerProducts = allProducts
     .filter((p) => Array.isArray(p.tags) && p.tags.includes('best'))
-    .slice(0, 5)
+    .slice(0, 12)
     .map(toCardItem)
 
   const newProductItems = allProducts
     .filter((p) => Array.isArray(p.tags) && p.tags.includes('new'))
-    .slice(0, 5)
+    .slice(0, 12)
     .map(toCardItem)
 
   const fallbackHero: HeroSliderItem[] = [
@@ -241,11 +282,11 @@ export default async function Home() {
                 desc="가장 많은 사랑을 받은 베스트셀러 제품입니다"
                 moreHref="/products?tag=best"
               />
-              <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 md:grid-cols-5">
-                {bestSellerProducts.map((p) => (
-                  <ProductCard key={p.id} item={p} />
-                ))}
-              </div>
+              <ProductSlider
+                items={bestSellerProducts}
+                desktopPerView={4}
+                gridClassName="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-4 md:gap-x-8"
+              />
             </div>
           )}
 
@@ -257,11 +298,11 @@ export default async function Home() {
                 desc="새롭게 출시된 ACEWATER의 신제품입니다"
                 moreHref="/products?tag=new"
               />
-              <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 md:grid-cols-5">
-                {newProductItems.map((p) => (
-                  <ProductCard key={p.id} item={p} />
-                ))}
-              </div>
+              <ProductSlider
+                items={newProductItems}
+                desktopPerView={3}
+                gridClassName="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3"
+              />
             </div>
           )}
 
@@ -331,16 +372,18 @@ export default async function Home() {
         <PortfolioSlider items={portfolioItems} />
       </section>
 
-      {/* CLIENTS / 고객사 */}
-      <section className="bg-white py-20">
-        <div className="mx-auto max-w-[1440px] px-6">
-          <SectionHeader
-            title="고객사"
-            desc="ACEWATER와 함께하는 신뢰의 파트너입니다"
-          />
-        </div>
-        <ClientsMarquee />
-      </section>
+      {/* CLIENTS / 고객사 — 어드민에서 활성화 + 로고가 1개 이상일 때만 노출 */}
+      {showClients && (
+        <section className="bg-white py-20">
+          <div className="mx-auto max-w-[1440px] px-6">
+            <SectionHeader
+              title="고객사"
+              desc="ACEWATER와 함께하는 신뢰의 파트너입니다"
+            />
+          </div>
+          <ClientsMarquee logos={clientLogos} />
+        </section>
+      )}
 
     </>
   )

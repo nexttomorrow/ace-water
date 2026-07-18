@@ -6,8 +6,11 @@ import { usePathname } from "next/navigation";
 const tabs = [
   { label: "대시보드", href: "/mng" },
   { label: "월별 리포트", href: "/mng/reports" },
+  { label: "로고", href: "/mng/logo" },
   { label: "메인 슬라이드", href: "/mng/hero" },
+  { label: "고객사 로고", href: "/mng/clients" },
   { label: "퀵메뉴", href: "/mng/quick-menu" },
+  { label: "팝업", href: "/mng/popups" },
   { label: "카테고리 관리", href: "/mng/categories" },
   { label: "제품 관리", href: "/mng/products" },
   { label: "필터 관리", href: "/mng/filters" },

@@ -3,13 +3,26 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import DOMPurify from 'isomorphic-dompurify'
 import {
   HERO_SLIDES_MAX,
   CASE_ADDITIONAL_MAX,
   QUICK_MENU_MAX,
   QUICK_MENU_TITLE_MAX,
+  CLIENT_LOGOS_MAX,
+  CLIENTS_SECTION_ENABLED_KEY,
+  SITE_LOGO_TEXT_KEY,
+  SITE_LOGO_IMAGE_KEY,
+  SITE_LOGO_DEFAULT_TEXT,
+  POPUP_TYPES,
+  POPUP_DEVICES,
+  POPUP_DISMISSES,
   clampHeroDuration,
   type EstimateStatus,
+  type PopupType,
+  type PopupDevice,
+  type PopupContentType,
+  type PopupDismiss,
 } from '@/lib/types'
 import { normalizeIconKey } from '@/lib/quickMenuIcons'
 
@@ -968,6 +981,172 @@ export async function deleteQuickMenuItem(id: number) {
   revalidatePath('/', 'layout')
 }
 
+// ---------- popups (팝업 시스템) ----------
+
+function sanitizePopupHtml(html: string): string {
+  return DOMPurify.sanitize(html, {
+    USE_PROFILES: { html: true },
+    ADD_ATTR: ['target', 'rel', 'style'],
+  })
+}
+
+/** datetime-local(로컬시간) → ISO. 값 없으면 null. */
+function toIso(v: FormDataEntryValue | null): string | null {
+  const s = String(v ?? '').trim()
+  if (!s) return null
+  const d = new Date(s)
+  return Number.isNaN(d.getTime()) ? null : d.toISOString()
+}
+
+/** 정수 or null (빈 값 허용) */
+function intOrNull(v: FormDataEntryValue | null): number | null {
+  const s = String(v ?? '').trim()
+  if (s === '') return null
+  const n = Number(s)
+  return Number.isFinite(n) ? Math.round(n) : null
+}
+
+function parsePopupFields(formData: FormData) {
+  const rawContentType = String(formData.get('content_type') ?? 'image')
+  const content_type: PopupContentType = rawContentType === 'html' ? 'html' : 'image'
+  const rawType = String(formData.get('popup_type') ?? 'layer')
+  const popup_type = (POPUP_TYPES.includes(rawType as PopupType) ? rawType : 'layer') as PopupType
+  const rawDevice = String(formData.get('device') ?? 'all')
+  const device = (POPUP_DEVICES.includes(rawDevice as PopupDevice) ? rawDevice : 'all') as PopupDevice
+  const rawDismiss = String(formData.get('dismiss_option') ?? 'today')
+  const dismiss_option = (
+    POPUP_DISMISSES.includes(rawDismiss as PopupDismiss) ? rawDismiss : 'today'
+  ) as PopupDismiss
+  const bodyRaw = String(formData.get('body_html') ?? '').trim()
+
+  return {
+    title: String(formData.get('title') ?? '').trim(),
+    content_type,
+    image_url: String(formData.get('image_url') ?? '').trim() || null,
+    body_html: bodyRaw ? sanitizePopupHtml(bodyRaw) : null,
+    link_url: String(formData.get('link_url') ?? '').trim() || null,
+    open_new_tab: formData.get('open_new_tab') === 'on',
+    popup_type,
+    device,
+    starts_at: toIso(formData.get('starts_at')),
+    ends_at: toIso(formData.get('ends_at')),
+    pos_x: intOrNull(formData.get('pos_x')),
+    pos_y: intOrNull(formData.get('pos_y')),
+    width: intOrNull(formData.get('width')),
+    height: intOrNull(formData.get('height')),
+    dismiss_option,
+    sort_order: Number(formData.get('sort_order') ?? 0) || 0,
+    is_active: formData.get('is_active') === 'on',
+  }
+}
+
+type PopupFields = ReturnType<typeof parsePopupFields>
+
+/** 저장 전 공통 검증 — 문제 있으면 에러 메시지, 없으면 null */
+function validatePopup(f: PopupFields): string | null {
+  if (!f.title) return '제목을 입력해주세요'
+  if (!f.starts_at || !f.ends_at) return '노출 기간(시작/종료 일시)을 입력해주세요'
+  if (new Date(f.ends_at) < new Date(f.starts_at)) return '종료 일시가 시작 일시보다 빠를 수 없어요'
+  if (f.content_type === 'html' && !f.body_html) return 'HTML/텍스트 본문을 입력해주세요'
+  return null
+}
+
+async function uploadPopupImage(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  file: File
+): Promise<string> {
+  const ext = file.name.split('.').pop() ?? 'jpg'
+  const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
+  const { error } = await supabase.storage
+    .from('popups')
+    .upload(path, file, { contentType: file.type, upsert: false })
+  if (error) throw error
+  const { data } = supabase.storage.from('popups').getPublicUrl(path)
+  return data.publicUrl
+}
+
+export async function createPopup(formData: FormData) {
+  const { supabase } = await ensureAdmin()
+  const fields = parsePopupFields(formData)
+
+  const err = validatePopup(fields)
+  if (err) redirect('/mng/popups/new?error=' + encodeURIComponent(err))
+
+  const file = formData.get('image') as File | null
+  let image_url = fields.image_url
+  if (fields.content_type === 'image' && file && file.size > 0) {
+    try {
+      image_url = await uploadPopupImage(supabase, file)
+    } catch (e) {
+      redirect('/mng/popups/new?error=' + encodeURIComponent(getErrorMessage(e, '이미지 업로드 실패')))
+    }
+  }
+  if (fields.content_type === 'image' && !image_url) {
+    redirect(
+      '/mng/popups/new?error=' +
+        encodeURIComponent('이미지를 업로드하거나 이미지 URL을 입력해주세요')
+    )
+  }
+
+  const { error } = await supabase.from('popups').insert({ ...fields, image_url })
+  if (error) redirect('/mng/popups/new?error=' + encodeURIComponent(error.message))
+
+  revalidatePath('/mng/popups')
+  revalidatePath('/', 'layout')
+  redirect('/mng/popups')
+}
+
+export async function updatePopup(id: number, formData: FormData) {
+  const { supabase } = await ensureAdmin()
+  const fields = parsePopupFields(formData)
+
+  const err = validatePopup(fields)
+  if (err) redirect(`/mng/popups/${id}/edit?error=` + encodeURIComponent(err))
+
+  const file = formData.get('image') as File | null
+  let image_url = fields.image_url
+  if (fields.content_type === 'image' && file && file.size > 0) {
+    try {
+      image_url = await uploadPopupImage(supabase, file)
+    } catch (e) {
+      redirect(
+        `/mng/popups/${id}/edit?error=` + encodeURIComponent(getErrorMessage(e, '이미지 업로드 실패'))
+      )
+    }
+  }
+  if (fields.content_type === 'image' && !image_url) {
+    redirect(
+      `/mng/popups/${id}/edit?error=` +
+        encodeURIComponent('이미지를 업로드하거나 이미지 URL을 입력해주세요')
+    )
+  }
+
+  const { error } = await supabase.from('popups').update({ ...fields, image_url }).eq('id', id)
+  if (error) redirect(`/mng/popups/${id}/edit?error=` + encodeURIComponent(error.message))
+
+  revalidatePath('/mng/popups')
+  revalidatePath('/', 'layout')
+  redirect('/mng/popups')
+}
+
+export async function deletePopup(id: number) {
+  const { supabase } = await ensureAdmin()
+  const { error } = await supabase.from('popups').delete().eq('id', id)
+  if (error) throw new Error(error.message)
+
+  revalidatePath('/mng/popups')
+  revalidatePath('/', 'layout')
+}
+
+export async function togglePopupActive(id: number, currentValue: boolean) {
+  const { supabase } = await ensureAdmin()
+  const { error } = await supabase.from('popups').update({ is_active: !currentValue }).eq('id', id)
+  if (error) throw new Error(error.message)
+
+  revalidatePath('/mng/popups')
+  revalidatePath('/', 'layout')
+}
+
 // ---------- subpage banner (banner fields only) ----------
 
 export async function updateCategoryBanner(id: number, formData: FormData) {
@@ -1049,4 +1228,233 @@ export async function toggleCategoryActive(id: number, currentValue: boolean) {
 
   revalidatePath('/mng/categories')
   revalidatePath('/', 'layout')
+}
+
+// ---------- client logos (고객사 로고 마퀴) ----------
+
+/** 링크값 정규화 — 비었으면 null. http(s):// 나 / 로 시작하면 그대로, 그 외 도메인은 https:// 보정 */
+function normalizeLinkUrl(raw: string): string | null {
+  const v = raw.trim()
+  if (!v) return null
+  if (/^(https?:\/\/|\/)/i.test(v)) return v
+  return `https://${v}`
+}
+
+export async function createClientLogo(formData: FormData) {
+  const { supabase } = await ensureAdmin()
+
+  const name = String(formData.get('name') ?? '').trim()
+  const linkUrl = normalizeLinkUrl(String(formData.get('link_url') ?? ''))
+  const sortOrder = Number(formData.get('sort_order') ?? 0) || 0
+  const file = formData.get('image') as File | null
+
+  if (!name) {
+    redirect('/mng/clients/new?error=' + encodeURIComponent('로고 이름을 입력해주세요'))
+  }
+  if (!file || file.size === 0) {
+    redirect('/mng/clients/new?error=' + encodeURIComponent('로고 이미지를 등록해주세요'))
+  }
+
+  const { count } = await supabase
+    .from('client_logos')
+    .select('*', { count: 'exact', head: true })
+  if ((count ?? 0) >= CLIENT_LOGOS_MAX) {
+    redirect(
+      '/mng/clients/new?error=' +
+        encodeURIComponent(`로고는 최대 ${CLIENT_LOGOS_MAX}개까지 등록할 수 있어요`)
+    )
+  }
+
+  const ext = file.name.split('.').pop() ?? 'webp'
+  const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
+
+  const { error: uploadError } = await supabase.storage
+    .from('clients')
+    .upload(path, file, { contentType: file.type, upsert: false })
+  if (uploadError) {
+    redirect('/mng/clients/new?error=' + encodeURIComponent(uploadError.message))
+  }
+
+  const { error } = await supabase.from('client_logos').insert({
+    name,
+    image_path: path,
+    link_url: linkUrl,
+    sort_order: sortOrder,
+  })
+  if (error) {
+    await supabase.storage.from('clients').remove([path])
+    redirect('/mng/clients/new?error=' + encodeURIComponent(error.message))
+  }
+
+  revalidatePath('/mng/clients')
+  revalidatePath('/')
+  redirect('/mng/clients')
+}
+
+export async function updateClientLogo(id: number, formData: FormData) {
+  const { supabase } = await ensureAdmin()
+
+  const name = String(formData.get('name') ?? '').trim()
+  const linkUrl = normalizeLinkUrl(String(formData.get('link_url') ?? ''))
+  const sortOrder = Number(formData.get('sort_order') ?? 0) || 0
+  const file = formData.get('image') as File | null
+
+  if (!name) {
+    redirect(`/mng/clients/${id}/edit?error=` + encodeURIComponent('로고 이름을 입력해주세요'))
+  }
+
+  const update: {
+    name: string
+    link_url: string | null
+    sort_order: number
+    image_path?: string
+  } = { name, link_url: linkUrl, sort_order: sortOrder }
+
+  let oldPath: string | null = null
+  if (file && file.size > 0) {
+    const { data: existing } = await supabase
+      .from('client_logos')
+      .select('image_path')
+      .eq('id', id)
+      .single()
+    oldPath = existing?.image_path ?? null
+
+    const ext = file.name.split('.').pop() ?? 'webp'
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
+    const { error: uploadError } = await supabase.storage
+      .from('clients')
+      .upload(path, file, { contentType: file.type })
+    if (uploadError) {
+      redirect(`/mng/clients/${id}/edit?error=` + encodeURIComponent(uploadError.message))
+    }
+    update.image_path = path
+  }
+
+  const { error } = await supabase.from('client_logos').update(update).eq('id', id)
+  if (error) {
+    redirect(`/mng/clients/${id}/edit?error=` + encodeURIComponent(error.message))
+  }
+
+  if (oldPath && update.image_path) {
+    await supabase.storage.from('clients').remove([oldPath])
+  }
+
+  revalidatePath('/mng/clients')
+  revalidatePath('/')
+  redirect('/mng/clients')
+}
+
+export async function deleteClientLogo(id: number) {
+  const { supabase } = await ensureAdmin()
+
+  const { data: existing } = await supabase
+    .from('client_logos')
+    .select('image_path')
+    .eq('id', id)
+    .single()
+
+  const { error } = await supabase.from('client_logos').delete().eq('id', id)
+  if (error) throw new Error(error.message)
+
+  if (existing?.image_path) {
+    await supabase.storage.from('clients').remove([existing.image_path])
+  }
+
+  revalidatePath('/mng/clients')
+  revalidatePath('/')
+}
+
+export async function toggleClientLogoActive(id: number, currentValue: boolean) {
+  const { supabase } = await ensureAdmin()
+
+  const { error } = await supabase
+    .from('client_logos')
+    .update({ is_active: !currentValue })
+    .eq('id', id)
+  if (error) throw new Error(error.message)
+
+  revalidatePath('/mng/clients')
+  revalidatePath('/')
+}
+
+/** 고객사 섹션 전체 노출 on/off (site_settings 토글) */
+export async function setClientsSectionEnabled(enabled: boolean) {
+  const { supabase } = await ensureAdmin()
+
+  const { error } = await supabase.from('site_settings').upsert(
+    {
+      key: CLIENTS_SECTION_ENABLED_KEY,
+      value: enabled ? 'true' : 'false',
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: 'key' }
+  )
+  if (error) throw new Error(error.message)
+
+  revalidatePath('/mng/clients')
+  revalidatePath('/')
+}
+
+// ---------- site logo (헤더 로고) ----------
+
+/** site_settings 단일 키 저장 */
+async function upsertSetting(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  key: string,
+  value: string
+) {
+  const { error } = await supabase
+    .from('site_settings')
+    .upsert({ key, value, updated_at: new Date().toISOString() }, { onConflict: 'key' })
+  if (error) throw new Error(error.message)
+}
+
+/**
+ * 헤더 로고 설정 — 텍스트 + (선택)이미지.
+ * 이미지가 있으면 이미지 우선, 없으면 텍스트 로고로 노출.
+ * remove_image 체크 시 기존 이미지 제거 → 텍스트로 복귀.
+ */
+export async function updateSiteLogo(formData: FormData) {
+  const { supabase } = await ensureAdmin()
+
+  const text = String(formData.get('logo_text') ?? '').trim() || SITE_LOGO_DEFAULT_TEXT
+  const removeImage = formData.get('remove_image') === 'on'
+  const file = formData.get('image') as File | null
+
+  const { data: cur } = await supabase
+    .from('site_settings')
+    .select('value')
+    .eq('key', SITE_LOGO_IMAGE_KEY)
+    .maybeSingle()
+  const currentPath = cur?.value?.trim() || null
+
+  let newPath: string | null = currentPath
+  let pathToRemove: string | null = null
+
+  if (file && file.size > 0) {
+    const ext = file.name.split('.').pop() ?? 'webp'
+    const path = `logo-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
+    const { error: uploadError } = await supabase.storage
+      .from('site')
+      .upload(path, file, { contentType: file.type, upsert: false })
+    if (uploadError) {
+      redirect('/mng/logo?error=' + encodeURIComponent(uploadError.message))
+    }
+    newPath = path
+    if (currentPath) pathToRemove = currentPath
+  } else if (removeImage && currentPath) {
+    newPath = null
+    pathToRemove = currentPath
+  }
+
+  await upsertSetting(supabase, SITE_LOGO_TEXT_KEY, text)
+  await upsertSetting(supabase, SITE_LOGO_IMAGE_KEY, newPath ?? '')
+
+  if (pathToRemove) {
+    await supabase.storage.from('site').remove([pathToRemove])
+  }
+
+  // 로고는 모든 페이지 레이아웃(헤더)에 걸쳐 있으므로 레이아웃 단위로 무효화
+  revalidatePath('/', 'layout')
+  redirect('/mng/logo')
 }

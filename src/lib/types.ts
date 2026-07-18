@@ -351,3 +351,139 @@ export const ESTIMATE_FORM_TYPE_LABEL: Record<string, string> = {
   'manufacture-request': '제작 의뢰',
 }
 
+// ═════════════════ 팝업 시스템 ═════════════════
+// DB 테이블: public.popups (supabase/popups.sql)
+
+/** 팝업 유형 — 레이어(딤드+중앙) / 일반(좌표) */
+export type PopupType = 'layer' | 'general'
+/** 본문 유형 */
+export type PopupContentType = 'image' | 'html'
+/** 노출 대상 기기 (반응형 노출 제어) */
+export type PopupDevice = 'all' | 'pc' | 'mobile'
+/** 다시 보지 않기 옵션 — 오늘 하루(24h) / 일주일(168h) / 사용 안 함(닫기만) */
+export type PopupDismiss = 'today' | 'week' | 'none'
+
+/** 팝업 레코드 (popups 테이블과 1:1) */
+export type Popup = {
+  id: number
+  title: string
+  /** 본문 유형 — 'image' 면 image_url, 'html' 면 body_html 사용 */
+  content_type: PopupContentType
+  /** content_type='image' — 외부 URL 또는 업로드된 이미지 public URL */
+  image_url: string | null
+  /** content_type='html' — 정화(sanitize)된 HTML */
+  body_html: string | null
+  /** 콘텐츠 클릭 시 이동할 링크 (없으면 링크 없음) */
+  link_url: string | null
+  /** 링크를 새 탭으로 열지 여부 */
+  open_new_tab: boolean
+  popup_type: PopupType
+  /** 노출 대상 기기 (전체/PC/모바일) — 반응형 노출 */
+  device: PopupDevice
+  /** 노출 시작 (ISO) */
+  starts_at: string
+  /** 노출 종료 (ISO) */
+  ends_at: string
+  /** general 유형 좌표 (px). null 이면 기본 배치 */
+  pos_x: number | null
+  pos_y: number | null
+  /** 크기 (px). null = 콘텐츠 자동. 화면보다 크면 자동 축소(반응형) */
+  width: number | null
+  height: number | null
+  /** 다시 보지 않기 옵션 (닫기 버튼은 항상 표시) */
+  dismiss_option: PopupDismiss
+  /** 노출 우선순위 — 작을수록 먼저 */
+  sort_order: number
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+/** 어드민 폼 입력값 (id/타임스탬프 제외) */
+export type PopupInput = Omit<Popup, 'id' | 'created_at' | 'updated_at'>
+
+export const POPUP_TYPE_LABEL: Record<PopupType, string> = {
+  layer: '레이어 팝업',
+  general: '일반 팝업',
+}
+
+export const POPUP_TYPE_DESC: Record<PopupType, string> = {
+  layer: '배경을 어둡게(딤드) 하고 화면 중앙에 고정 노출',
+  general: '지정한 좌표(X, Y)에 노출',
+}
+
+export const POPUP_DEVICE_LABEL: Record<PopupDevice, string> = {
+  all: '전체',
+  pc: 'PC',
+  mobile: '모바일',
+}
+
+export const POPUP_CONTENT_TYPE_LABEL: Record<PopupContentType, string> = {
+  image: '이미지',
+  html: '텍스트/HTML',
+}
+
+export const POPUP_DISMISS_LABEL: Record<PopupDismiss, string> = {
+  today: '오늘 하루 보지 않기',
+  week: '일주일간 보지 않기',
+  none: '사용 안 함 (닫기만)',
+}
+
+/** dismiss 옵션 → 숨김 지속 시간(시간). 'none' 은 지속 숨김 없음 */
+export const POPUP_DISMISS_HOURS: Record<Exclude<PopupDismiss, 'none'>, number> = {
+  today: 24,
+  week: 24 * 7,
+}
+
+export const POPUP_TYPES: PopupType[] = ['layer', 'general']
+export const POPUP_DEVICES: PopupDevice[] = ['all', 'pc', 'mobile']
+export const POPUP_DISMISSES: PopupDismiss[] = ['today', 'week', 'none']
+
+/** 화면당 동시 노출 최대 개수 (임시 정책 — 정책 확정 시 조정) */
+export const POPUP_MAX_VISIBLE = 3
+/** 모바일 판별 기준 폭 (px, 이하이면 모바일로 간주) */
+export const POPUP_MOBILE_BREAKPOINT = 768
+
+// ═════════════════ 고객사 로고 (메인 하단 마퀴) ═════════════════
+// DB 테이블: public.client_logos (supabase/client_logos.sql)
+
+/** 고객사 로고 레코드 (client_logos 테이블과 1:1) */
+export type ClientLogo = {
+  id: number
+  /** 로고 이름 (이미지 alt / 관리 목록 식별용) */
+  name: string
+  /** 로고 이미지 public URL 경로 (clients 버킷 내) */
+  image_path: string
+  /** 클릭 시 이동할 링크 (없으면 링크 없음) */
+  link_url: string | null
+  /** 노출 순서 — 작을수록 먼저 */
+  sort_order: number
+  is_active: boolean
+  created_at: string
+}
+
+/** 등록 가능한 로고 최대 개수 */
+export const CLIENT_LOGOS_MAX = 60
+/** 로고 카드 고정 크기 (px) — 마퀴 카드/크롭 기준 */
+export const CLIENT_LOGO_CARD_WIDTH = 200
+export const CLIENT_LOGO_CARD_HEIGHT = 84
+/** 마퀴 행 개수 (로고 수가 적으면 자동 축소) */
+export const CLIENT_LOGO_ROWS = 3
+/** 이 개수 이상 등록되면 정적 배치 대신 슬라이드(마퀴)로 전환 */
+export const CLIENT_LOGO_SLIDE_MIN = 8
+
+/** 섹션 on/off 설정 키 (site_settings) */
+export const CLIENTS_SECTION_ENABLED_KEY = 'clients_section_enabled'
+
+// ═════════════════ 사이트 로고 (헤더) ═════════════════
+// site_settings 에 저장. 이미지가 없으면 텍스트 로고로 폴백.
+
+/** 로고 텍스트 설정 키 */
+export const SITE_LOGO_TEXT_KEY = 'logo_text'
+/** 로고 이미지 경로 설정 키 (site 버킷) */
+export const SITE_LOGO_IMAGE_KEY = 'logo_image_path'
+/** 기본 로고 텍스트 */
+export const SITE_LOGO_DEFAULT_TEXT = 'ACEWATER'
+/** 헤더 로고 표시 높이 (px) — 현재 텍스트 로고와 비슷한 크기로 고정 */
+export const SITE_LOGO_DISPLAY_HEIGHT = 32
+
