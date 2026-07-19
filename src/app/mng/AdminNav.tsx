@@ -1,65 +1,67 @@
-'use client'
+"use client";
 
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { useEffect, useState } from 'react'
-import AdminNavIcon from './AdminNavIcon'
-import { NAV_GROUPS, findActive } from './nav-items'
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useState, useSyncExternalStore } from "react";
+import AdminNavIcon from "./AdminNavIcon";
+import { NAV_GROUPS, findActive } from "./nav-items";
+
+// 메뉴 목록은 nav-items.ts 한 곳에서 관리한다 (AdminHeader 도 같은 배열을 쓴다).
+
+const COLLAPSE_KEY = "acewater:admin-nav-collapsed";
+const COLLAPSE_EVENT = "acewater:admin-nav-toggle";
 
 /**
- * 어드민 사이드바.
- *
- * 기존에는 16개 탭이 가로 한 줄에 스크롤로 붙어 있어 현재 위치를 알기 어려웠습니다.
- * 그룹 헤더가 있는 세로 사이드바로 바꿔 "지금 어느 영역을 보고 있는지" 가 항상 보입니다.
- * 데스크톱은 고정 사이드바, 모바일(<lg)은 상단 바 + 슬라이드 드로어입니다.
+ * 접힘 상태는 localStorage 에 있는 "외부 상태" 라서 useSyncExternalStore 로 읽는다.
+ * useEffect + setState 로 복원하면 마운트마다 렌더가 한 번 더 도는(cascading render) 데다
+ * 서버 HTML 과도 어긋난다. 서버 스냅샷을 false 로 주면 하이드레이션 불일치도 없다.
  */
-const COLLAPSE_KEY = 'acewater:admin-nav-collapsed'
+function subscribeCollapsed(onChange: () => void) {
+  window.addEventListener(COLLAPSE_EVENT, onChange);
+  window.addEventListener("storage", onChange); // 다른 탭에서 바꾼 경우
+  return () => {
+    window.removeEventListener(COLLAPSE_EVENT, onChange);
+    window.removeEventListener("storage", onChange);
+  };
+}
 
 export default function AdminNav() {
-  const pathname = usePathname()
-  const [open, setOpen] = useState(false)
-  const [collapsed, setCollapsed] = useState(false)
-  const active = findActive(pathname)
+  const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+  const active = findActive(pathname);
 
-  // 접힘 상태 복원 — 서버 HTML 과 어긋나지 않도록 마운트 후에 읽는다
-  useEffect(() => {
-    setCollapsed(localStorage.getItem(COLLAPSE_KEY) === '1')
-  }, [])
+  const collapsed = useSyncExternalStore(
+    subscribeCollapsed,
+    () => localStorage.getItem(COLLAPSE_KEY) === "1",
+    () => false, // 서버 렌더에서는 항상 펼친 상태
+  );
 
   const toggleCollapsed = () => {
-    setCollapsed((prev) => {
-      const next = !prev
-      localStorage.setItem(COLLAPSE_KEY, next ? '1' : '0')
-      // 본문 여백을 맞추기 위해 레이아웃에 알린다
-      document.documentElement.dataset.adminNav = next ? 'collapsed' : 'expanded'
-      return next
-    })
-  }
+    localStorage.setItem(COLLAPSE_KEY, collapsed ? "0" : "1");
+    window.dispatchEvent(new Event(COLLAPSE_EVENT));
+  };
 
-  // 복원된 값도 레이아웃에 반영
+  // 본문 여백(--admin-nav-w)을 맞추기 위해 DOM 에 반영 — 외부 시스템 동기화라 effect 가 맞다.
   useEffect(() => {
-    document.documentElement.dataset.adminNav = collapsed ? 'collapsed' : 'expanded'
-  }, [collapsed])
-
-  // 라우트가 바뀌면 모바일 드로어를 닫는다
-  useEffect(() => {
-    setOpen(false)
-  }, [pathname])
+    document.documentElement.dataset.adminNav = collapsed
+      ? "collapsed"
+      : "expanded";
+  }, [collapsed]);
 
   // 드로어가 열려 있을 때 배경 스크롤 잠금 + ESC 로 닫기
   useEffect(() => {
-    if (!open) return
-    const { overflow } = document.body.style
-    document.body.style.overflow = 'hidden'
+    if (!open) return;
+    const { overflow } = document.body.style;
+    document.body.style.overflow = "hidden";
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpen(false)
-    }
-    window.addEventListener('keydown', onKey)
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
     return () => {
-      document.body.style.overflow = overflow
-      window.removeEventListener('keydown', onKey)
-    }
-  }, [open])
+      document.body.style.overflow = overflow;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
 
   return (
     <>
@@ -85,10 +87,10 @@ export default function AdminNav() {
         </button>
         <div className="min-w-0">
           <p className="truncate text-[0.6875rem] font-medium text-neutral-400">
-            {active?.group.title ?? '어드민'}
+            {active?.group.title ?? "어드민"}
           </p>
           <p className="truncate text-[0.9375rem] font-semibold leading-tight">
-            {active?.item.label ?? '어드민'}
+            {active?.item.label ?? "어드민"}
           </p>
         </div>
       </div>
@@ -106,27 +108,32 @@ export default function AdminNav() {
       {/* ── 사이드바 (데스크톱 고정 / 모바일 드로어) ── */}
       <aside
         className={
-          'fixed inset-y-0 left-0 z-50 flex flex-col border-r border-neutral-200 bg-white ' +
-          'transition-[transform,width] duration-200 ease-out lg:translate-x-0 ' +
+          "fixed inset-y-0 left-0 z-50 flex flex-col border-r border-neutral-200 bg-white " +
+          "transition-[transform,width] duration-200 ease-out lg:translate-x-0 " +
           // 모바일 드로어는 항상 펼친 너비로 보여준다
-          (collapsed ? 'w-[17rem] lg:w-[4.5rem]' : 'w-[17rem]') +
-          (open ? ' translate-x-0' : ' -translate-x-full')
+          (collapsed ? "w-[17rem] lg:w-[4.5rem]" : "w-[17rem]") +
+          (open ? " translate-x-0" : " -translate-x-full")
         }
       >
         {/* 브랜드 */}
         <div
           className={
-            'flex h-16 shrink-0 items-center border-b border-neutral-100 ' +
-            (collapsed ? 'justify-between px-5 lg:justify-center lg:px-0' : 'justify-between px-5')
+            "flex h-16 shrink-0 items-center border-b border-neutral-100 " +
+            (collapsed
+              ? "justify-between px-5 lg:justify-center lg:px-0"
+              : "justify-between px-5")
           }
         >
           <Link
             href="/mng"
+            onClick={() => setOpen(false)}
             className={
-              'flex items-baseline gap-2 ' + (collapsed ? 'lg:hidden' : '')
+              "flex items-baseline gap-2 " + (collapsed ? "lg:hidden" : "")
             }
           >
-            <span className="text-[0.9375rem] font-bold tracking-tight">ACEWATER</span>
+            <span className="text-[0.9375rem] font-bold tracking-tight">
+              ACEWATER
+            </span>
             <span className="text-[0.6875rem] font-semibold uppercase tracking-[0.2em] text-blue-700">
               Admin
             </span>
@@ -168,8 +175,8 @@ export default function AdminNav() {
               {/* 접힌 상태에서는 그룹명 대신 구분선만 — 아이콘 열의 리듬은 유지 */}
               <p
                 className={
-                  'px-3 pb-1.5 text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-neutral-400 ' +
-                  (collapsed ? 'lg:hidden' : '')
+                  "px-3 pb-1.5 text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-neutral-400 " +
+                  (collapsed ? "lg:hidden" : "")
                 }
               >
                 {group.title}
@@ -179,33 +186,41 @@ export default function AdminNav() {
               )}
               <ul className="space-y-0.5">
                 {group.items.map((item) => {
-                  const isActive = active?.item.href === item.href
+                  const isActive = active?.item.href === item.href;
                   return (
                     <li key={item.href}>
                       <Link
                         href={item.href}
-                        aria-current={isActive ? 'page' : undefined}
+                        // 라우트 변경 effect 대신 클릭 시점에 드로어를 닫는다
+                        onClick={() => setOpen(false)}
+                        aria-current={isActive ? "page" : undefined}
                         // 접었을 때는 라벨이 안 보이므로 네이티브 툴팁으로 보완
-                        title={collapsed ? `${group.title} · ${item.label}` : undefined}
+                        title={
+                          collapsed
+                            ? `${group.title} · ${item.label}`
+                            : undefined
+                        }
                         className={
-                          'flex items-center gap-2.5 rounded-lg px-3 py-2 text-[0.8125rem] transition ' +
-                          (collapsed ? 'lg:justify-center lg:px-0 ' : '') +
+                          "flex items-center gap-2.5 rounded-lg px-3 py-2 text-[0.8125rem] transition " +
+                          (collapsed ? "lg:justify-center lg:px-0 " : "") +
                           (isActive
-                            ? 'bg-neutral-900 font-semibold text-white'
-                            : 'font-medium text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900')
+                            ? "bg-neutral-900 font-semibold text-white"
+                            : "font-medium text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900")
                         }
                       >
                         <AdminNavIcon
                           name={item.icon}
                           className={
-                            'h-[1.125rem] w-[1.125rem] shrink-0 ' +
-                            (isActive ? 'text-white' : 'text-neutral-400')
+                            "h-[1.125rem] w-[1.125rem] shrink-0 " +
+                            (isActive ? "text-white" : "text-neutral-400")
                           }
                         />
-                        <span className={collapsed ? 'lg:hidden' : ''}>{item.label}</span>
+                        <span className={collapsed ? "lg:hidden" : ""}>
+                          {item.label}
+                        </span>
                       </Link>
                     </li>
-                  )
+                  );
                 })}
               </ul>
             </div>
@@ -218,10 +233,10 @@ export default function AdminNav() {
             href="/"
             target="_blank"
             rel="noreferrer"
-            title={collapsed ? '사이트 보기' : undefined}
+            title={collapsed ? "사이트 보기" : undefined}
             className={
-              'flex items-center gap-2.5 rounded-lg px-3 py-2 text-[0.8125rem] font-medium text-neutral-600 transition hover:bg-neutral-100 hover:text-neutral-900 ' +
-              (collapsed ? 'lg:justify-center lg:px-0' : '')
+              "flex items-center gap-2.5 rounded-lg px-3 py-2 text-[0.8125rem] font-medium text-neutral-600 transition hover:bg-neutral-100 hover:text-neutral-900 " +
+              (collapsed ? "lg:justify-center lg:px-0" : "")
             }
           >
             <svg
@@ -238,18 +253,18 @@ export default function AdminNav() {
               <path d="M10 14 21 3" />
               <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
             </svg>
-            <span className={collapsed ? 'lg:hidden' : ''}>사이트 보기</span>
+            <span className={collapsed ? "lg:hidden" : ""}>사이트 보기</span>
           </a>
 
           {/* 접기/펼치기 — 데스크톱 전용 (모바일은 드로어라 의미 없음) */}
           <button
             type="button"
             onClick={toggleCollapsed}
-            aria-label={collapsed ? '메뉴 펼치기' : '메뉴 접기'}
-            title={collapsed ? '메뉴 펼치기' : '메뉴 접기'}
+            aria-label={collapsed ? "메뉴 펼치기" : "메뉴 접기"}
+            title={collapsed ? "메뉴 펼치기" : "메뉴 접기"}
             className={
-              'hidden w-full items-center gap-2.5 rounded-lg px-3 py-2 text-[0.8125rem] font-medium text-neutral-600 transition hover:bg-neutral-100 hover:text-neutral-900 lg:flex ' +
-              (collapsed ? 'lg:justify-center lg:px-0' : '')
+              "hidden w-full items-center gap-2.5 rounded-lg px-3 py-2 text-[0.8125rem] font-medium text-neutral-600 transition hover:bg-neutral-100 hover:text-neutral-900 lg:flex " +
+              (collapsed ? "lg:justify-center lg:px-0" : "")
             }
           >
             <svg
@@ -264,12 +279,16 @@ export default function AdminNav() {
             >
               <rect width="18" height="18" x="3" y="3" rx="2" />
               <path d="M9 3v18" />
-              {collapsed ? <path d="m14 9 3 3-3 3" /> : <path d="m17 9-3 3 3 3" />}
+              {collapsed ? (
+                <path d="m14 9 3 3-3 3" />
+              ) : (
+                <path d="m17 9-3 3 3 3" />
+              )}
             </svg>
-            <span className={collapsed ? 'lg:hidden' : ''}>메뉴 접기</span>
+            <span className={collapsed ? "lg:hidden" : ""}>메뉴 접기</span>
           </button>
         </div>
       </aside>
     </>
-  )
+  );
 }

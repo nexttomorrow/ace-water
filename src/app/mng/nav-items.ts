@@ -41,6 +41,7 @@ export type IconKey =
   | 'popup'
   | 'quickMenu'
   | 'client'
+  | 'certificate'
   | 'optimize'
 
 export const NAV_GROUPS: NavGroup[] = [
@@ -83,6 +84,8 @@ export const NAV_GROUPS: NavGroup[] = [
       { label: '팝업', href: '/mng/popups', icon: 'popup' },
       { label: '퀵메뉴', href: '/mng/quick-menu', icon: 'quickMenu' },
       { label: '고객사 로고', href: '/mng/clients', icon: 'client' },
+      // 회사소개 페이지의 인증서 섹션
+      { label: '인증서', href: '/mng/certifications', icon: 'certificate' },
     ],
   },
   {

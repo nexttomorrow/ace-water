@@ -912,6 +912,126 @@ export async function deleteHeroSlide(id: number) {
   revalidatePath('/')
 }
 
+// ---------- certifications (회사소개 인증서) ----------
+
+export async function createCertification(formData: FormData) {
+  const { supabase } = await ensureAdmin()
+
+  const title = String(formData.get('title') ?? '').trim()
+  const subtitle = String(formData.get('subtitle') ?? '').trim()
+  const sortOrder = Number(formData.get('sort_order') ?? 0) || 0
+  const file = formData.get('image') as File | null
+
+  if (!title || !file || file.size === 0) {
+    redirect(
+      '/mng/certifications/new?error=' +
+        encodeURIComponent('타이틀과 이미지를 입력해주세요')
+    )
+  }
+
+  const ext = file.name.split('.').pop() ?? 'jpg'
+  const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
+
+  const { error: uploadError } = await supabase.storage
+    .from('certifications')
+    .upload(path, file, { contentType: file.type, upsert: false })
+  if (uploadError) {
+    redirect('/mng/certifications/new?error=' + encodeURIComponent(uploadError.message))
+  }
+
+  const { error } = await supabase.from('certifications').insert({
+    title,
+    subtitle,
+    image_path: path,
+    sort_order: sortOrder,
+  })
+  if (error) {
+    await supabase.storage.from('certifications').remove([path])
+    redirect('/mng/certifications/new?error=' + encodeURIComponent(error.message))
+  }
+
+  revalidatePath('/mng/certifications')
+  revalidatePath('/about')
+  redirect('/mng/certifications')
+}
+
+export async function updateCertification(id: number, formData: FormData) {
+  const { supabase } = await ensureAdmin()
+
+  const title = String(formData.get('title') ?? '').trim()
+  const subtitle = String(formData.get('subtitle') ?? '').trim()
+  const sortOrder = Number(formData.get('sort_order') ?? 0) || 0
+  const file = formData.get('image') as File | null
+
+  if (!title) {
+    redirect(
+      `/mng/certifications/${id}/edit?error=` + encodeURIComponent('타이틀을 입력해주세요')
+    )
+  }
+
+  const update: {
+    title: string
+    subtitle: string
+    sort_order: number
+    image_path?: string
+  } = { title, subtitle, sort_order: sortOrder }
+
+  let oldPath: string | null = null
+  if (file && file.size > 0) {
+    const { data: existing } = await supabase
+      .from('certifications')
+      .select('image_path')
+      .eq('id', id)
+      .single()
+    oldPath = existing?.image_path ?? null
+
+    const ext = file.name.split('.').pop() ?? 'jpg'
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
+    const { error: uploadError } = await supabase.storage
+      .from('certifications')
+      .upload(path, file, { contentType: file.type })
+    if (uploadError) {
+      redirect(
+        `/mng/certifications/${id}/edit?error=` + encodeURIComponent(uploadError.message)
+      )
+    }
+    update.image_path = path
+  }
+
+  const { error } = await supabase.from('certifications').update(update).eq('id', id)
+  if (error) {
+    redirect(`/mng/certifications/${id}/edit?error=` + encodeURIComponent(error.message))
+  }
+
+  if (oldPath && update.image_path) {
+    await supabase.storage.from('certifications').remove([oldPath])
+  }
+
+  revalidatePath('/mng/certifications')
+  revalidatePath('/about')
+  redirect('/mng/certifications')
+}
+
+export async function deleteCertification(id: number) {
+  const { supabase } = await ensureAdmin()
+
+  const { data: existing } = await supabase
+    .from('certifications')
+    .select('image_path')
+    .eq('id', id)
+    .single()
+
+  const { error } = await supabase.from('certifications').delete().eq('id', id)
+  if (error) throw new Error(error.message)
+
+  if (existing?.image_path) {
+    await supabase.storage.from('certifications').remove([existing.image_path])
+  }
+
+  revalidatePath('/mng/certifications')
+  revalidatePath('/about')
+}
+
 // ---------- quick menu (우측 플로팅) ----------
 
 function parseQuickMenuFields(formData: FormData) {

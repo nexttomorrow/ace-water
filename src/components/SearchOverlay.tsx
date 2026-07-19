@@ -174,25 +174,31 @@ export default function SearchOverlay({ onClose }: { onClose: () => void }) {
     [onClose, router]
   )
 
-  // 키보드 내비게이션
-  const onKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      e.preventDefault()
-      onClose()
-    } else if (e.key === 'ArrowDown') {
-      e.preventDefault()
-      setActiveIndex((i) => Math.min(i + 1, results.length - 1))
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault()
-      setActiveIndex((i) => Math.max(i - 1, 0))
-    } else if (e.key === 'Enter') {
-      const r = results[activeIndex]
-      if (r) {
+  // 키보드 내비게이션 — window 에 걸어야 포커스가 어디에 있든(패널 여백 클릭 등으로
+  // body 로 빠져도) 동작합니다. 다이얼로그 엘리먼트의 onKeyDown 은 포커스가 그 안에
+  // 있을 때만 불려서 ESC 가 먹지 않는 경우가 생깁니다.
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
         e.preventDefault()
-        go(r.href)
+        onClose()
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault()
+        setActiveIndex((i) => Math.min(i + 1, results.length - 1))
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault()
+        setActiveIndex((i) => Math.max(i - 1, 0))
+      } else if (e.key === 'Enter') {
+        const r = results[activeIndex]
+        if (r) {
+          e.preventDefault()
+          go(r.href)
+        }
       }
     }
-  }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [results, activeIndex, go, onClose])
 
   // 활성 항목이 보이도록 스크롤
   useEffect(() => {
@@ -287,7 +293,6 @@ export default function SearchOverlay({ onClose }: { onClose: () => void }) {
       role="dialog"
       aria-modal="true"
       aria-label="통합검색"
-      onKeyDown={onKeyDown}
     >
       {/* 배경 */}
       <button
@@ -325,9 +330,6 @@ export default function SearchOverlay({ onClose }: { onClose: () => void }) {
               </svg>
             </button>
           )}
-          <kbd className="hidden shrink-0 rounded border border-neutral-200 bg-neutral-50 px-1.5 py-0.5 text-[0.6875rem] font-medium text-neutral-400 sm:inline">
-            ESC
-          </kbd>
         </div>
 
         {/* 카테고리(유형) 필터 칩 */}
