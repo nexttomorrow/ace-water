@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
+import { getViewer } from '@/lib/auth'
 import MainNav, { type NavTopCategory } from './MainNav'
 import NoticeTicker, { type TickerNotice } from './NoticeTicker'
 import { applyProductCategoryHrefs } from '@/lib/products'
@@ -13,21 +14,11 @@ import {
 export default async function Header() {
   const supabase = await createClient()
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  let isAdmin = false
-  let nickname: string | null = null
-  if (user) {
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role, nickname')
-      .eq('id', user.id)
-      .single()
-    isAdmin = profile?.role === 'admin'
-    nickname = profile?.nickname ?? null
-  }
+  // getViewer 는 요청 단위 캐시라, 페이지에서 또 호출해도 왕복이 늘지 않는다.
+  const viewer = await getViewer()
+  const isAdmin = viewer?.isAdmin ?? false
+  const nickname = viewer?.nickname ?? null
+  const user = viewer
 
   // admin은 비활성 카테고리도 본다
   let categoryQuery = supabase
@@ -36,7 +27,20 @@ export default async function Header() {
     .order('sort_order', { ascending: true })
     .order('id', { ascending: true })
   if (!isAdmin) categoryQuery = categoryQuery.eq('is_active', true)
-  const { data: catData } = await categoryQuery
+
+  // 서로 의존하지 않는 3개 조회는 병렬로 — 직렬이면 왕복이 3번 쌓인다.
+  const [{ data: catData }, { data: noticeData }, { data: logoRows }] = await Promise.all([
+    categoryQuery,
+    supabase
+      .from('notices')
+      .select('id, title')
+      .order('created_at', { ascending: false })
+      .limit(5),
+    supabase
+      .from('site_settings')
+      .select('key, value')
+      .in('key', [SITE_LOGO_TEXT_KEY, SITE_LOGO_IMAGE_KEY]),
+  ])
 
   // build tree (제품안내 자식들의 href를 자동으로 /products?category={id} 로 매핑)
   const cats = applyProductCategoryHrefs((catData ?? []) as Category[])
@@ -50,18 +54,9 @@ export default async function Header() {
     }))
 
   // 최신 공지 5개 (테이블이 없거나 비어있어도 안전하게 처리)
-  const { data: noticeData } = await supabase
-    .from('notices')
-    .select('id, title')
-    .order('created_at', { ascending: false })
-    .limit(5)
   const tickerNotices: TickerNotice[] = (noticeData ?? []) as TickerNotice[]
 
   // 사이트 로고 설정 (테이블/행이 없어도 안전하게 기본 텍스트로 폴백)
-  const { data: logoRows } = await supabase
-    .from('site_settings')
-    .select('key, value')
-    .in('key', [SITE_LOGO_TEXT_KEY, SITE_LOGO_IMAGE_KEY])
   const logoMap = new Map((logoRows ?? []).map((r) => [r.key as string, r.value as string]))
   const logoText = logoMap.get(SITE_LOGO_TEXT_KEY)?.trim() || SITE_LOGO_DEFAULT_TEXT
   const logoImagePath = logoMap.get(SITE_LOGO_IMAGE_KEY)?.trim() || null

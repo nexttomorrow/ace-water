@@ -68,3 +68,15 @@ select {
 select::-ms-expand {
   display: none;
 }
+
+/* ─────────────────────────────────────────────────────────
+   어드민 사이드바 폭
+   AdminNav 가 html[data-admin-nav] 를 토글하면 본문 여백(lg:pl-[var(--admin-nav-w)])이
+   따라 움직인다. 값이 CSS 에 있으므로 리렌더 없이 전환된다.
+   ──────────────────────────────────────────────────────── */
+:root {
+  --admin-nav-w: 17rem;
+}
+:root[data-admin-nav='collapsed'] {
+  --admin-nav-w: 4.5rem;
+}
