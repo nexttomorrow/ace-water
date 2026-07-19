@@ -7,8 +7,8 @@ import type { Popup } from '@/lib/types'
  * 이미지는 외부/스토리지 임의 URL 이 올 수 있어 next/image 대신 <img> 사용
  * (unoptimized 도메인 설정 불필요, 원본 크기/비율 유지).
  *
- * body_html 은 저장 시 서버 액션에서 DOMPurify 로 정화된 값이므로 여기서 재정화하지 않는다.
- * (클라이언트 번들에 DOMPurify 를 싣지 않아 모든 페이지의 로딩 비용을 아낌)
+ * body_html 은 저장 시 서버 액션에서 sanitize-html 로 정화된 값이므로 여기서 재정화하지 않는다.
+ * (클라이언트 번들에 sanitizer 를 싣지 않아 모든 페이지의 로딩 비용을 아낌)
  */
 export default function PopupContent({ popup }: { popup: Popup }) {
   const inner =

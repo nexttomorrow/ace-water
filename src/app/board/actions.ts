@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-import DOMPurify from 'isomorphic-dompurify'
+import { sanitizeRichText } from '@/lib/sanitizeHtml'
 import { createClient } from '@/lib/supabase/server'
 
 async function ensureAdmin() {
@@ -20,10 +20,7 @@ async function ensureAdmin() {
 }
 
 function sanitize(html: string) {
-  return DOMPurify.sanitize(html, {
-    USE_PROFILES: { html: true },
-    ADD_ATTR: ['target', 'rel', 'colspan', 'rowspan', 'colwidth', 'style'],
-  })
+  return sanitizeRichText(html)
 }
 
 const POSTS_BUCKET = 'posts'

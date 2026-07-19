@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import DOMPurify from 'isomorphic-dompurify'
+import { sanitizeRichText } from '@/lib/sanitizeHtml'
 import {
   HERO_SLIDES_MAX,
   CASE_ADDITIONAL_MAX,
@@ -1104,10 +1104,7 @@ export async function deleteQuickMenuItem(id: number) {
 // ---------- popups (팝업 시스템) ----------
 
 function sanitizePopupHtml(html: string): string {
-  return DOMPurify.sanitize(html, {
-    USE_PROFILES: { html: true },
-    ADD_ATTR: ['target', 'rel', 'style'],
-  })
+  return sanitizeRichText(html)
 }
 
 /** datetime-local(로컬시간) → ISO. 값 없으면 null. */
