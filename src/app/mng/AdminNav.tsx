@@ -168,67 +168,8 @@ export default function AdminNav() {
           </button>
         </div>
 
-        {/* 메뉴 */}
-        <nav className="flex-1 overflow-y-auto px-3 py-4">
-          {NAV_GROUPS.map((group) => (
-            <div key={group.title} className="mb-5 last:mb-0">
-              {/* 접힌 상태에서는 그룹명 대신 구분선만 — 아이콘 열의 리듬은 유지 */}
-              <p
-                className={
-                  "px-3 pb-1.5 text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-neutral-400 " +
-                  (collapsed ? "lg:hidden" : "")
-                }
-              >
-                {group.title}
-              </p>
-              {collapsed && (
-                <div className="mx-3 mb-1.5 hidden border-t border-neutral-100 lg:block" />
-              )}
-              <ul className="space-y-0.5">
-                {group.items.map((item) => {
-                  const isActive = active?.item.href === item.href;
-                  return (
-                    <li key={item.href}>
-                      <Link
-                        href={item.href}
-                        // 라우트 변경 effect 대신 클릭 시점에 드로어를 닫는다
-                        onClick={() => setOpen(false)}
-                        aria-current={isActive ? "page" : undefined}
-                        // 접었을 때는 라벨이 안 보이므로 네이티브 툴팁으로 보완
-                        title={
-                          collapsed
-                            ? `${group.title} · ${item.label}`
-                            : undefined
-                        }
-                        className={
-                          "flex items-center gap-2.5 rounded-lg px-3 py-2 text-[0.8125rem] transition " +
-                          (collapsed ? "lg:justify-center lg:px-0 " : "") +
-                          (isActive
-                            ? "bg-neutral-900 font-semibold text-white"
-                            : "font-medium text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900")
-                        }
-                      >
-                        <AdminNavIcon
-                          name={item.icon}
-                          className={
-                            "h-[1.125rem] w-[1.125rem] shrink-0 " +
-                            (isActive ? "text-white" : "text-neutral-400")
-                          }
-                        />
-                        <span className={collapsed ? "lg:hidden" : ""}>
-                          {item.label}
-                        </span>
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          ))}
-        </nav>
-
-        {/* 하단: 사이트 바로가기 + 접기/펼치기 */}
-        <div className="shrink-0 space-y-0.5 border-t border-neutral-100 p-3">
+        {/* 상단 유틸: 사이트 바로가기 + 접기/펼치기 */}
+        <div className="shrink-0 space-y-0.5 border-b border-neutral-100 p-3">
           <a
             href="/"
             target="_blank"
@@ -288,6 +229,66 @@ export default function AdminNav() {
             <span className={collapsed ? "lg:hidden" : ""}>메뉴 접기</span>
           </button>
         </div>
+
+        {/* 메뉴 */}
+        <nav className="flex-1 overflow-y-auto px-3 py-4">
+          {NAV_GROUPS.map((group) => (
+            <div key={group.title} className="mb-5 last:mb-0">
+              {/* 접힌 상태에서는 그룹명 대신 구분선만 — 아이콘 열의 리듬은 유지 */}
+              <p
+                className={
+                  "px-3 pb-1.5 text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-neutral-400 " +
+                  (collapsed ? "lg:hidden" : "")
+                }
+              >
+                {group.title}
+              </p>
+              {collapsed && (
+                <div className="mx-3 mb-1.5 hidden border-t border-neutral-100 lg:block" />
+              )}
+              <ul className="space-y-0.5">
+                {group.items.map((item) => {
+                  const isActive = active?.item.href === item.href;
+                  return (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        // 라우트 변경 effect 대신 클릭 시점에 드로어를 닫는다
+                        onClick={() => setOpen(false)}
+                        aria-current={isActive ? "page" : undefined}
+                        // 접었을 때는 라벨이 안 보이므로 네이티브 툴팁으로 보완
+                        title={
+                          collapsed
+                            ? `${group.title} · ${item.label}`
+                            : undefined
+                        }
+                        className={
+                          "flex items-center gap-2.5 rounded-lg px-3 py-2 text-[0.8125rem] transition " +
+                          (collapsed ? "lg:justify-center lg:px-0 " : "") +
+                          (isActive
+                            ? "bg-neutral-900 font-semibold text-white"
+                            : "font-medium text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900")
+                        }
+                      >
+                        <AdminNavIcon
+                          name={item.icon}
+                          className={
+                            "h-[1.125rem] w-[1.125rem] shrink-0 " +
+                            (isActive ? "text-white" : "text-neutral-400")
+                          }
+                        />
+                        <span className={collapsed ? "lg:hidden" : ""}>
+                          {item.label}
+                        </span>
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ))}
+        </nav>
+
       </aside>
     </>
   );
